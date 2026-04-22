@@ -146,8 +146,8 @@ export default function LandingPage() {
               </div>
             ) : (
               <>
-                <div className="flex items-center border border-gray-300 rounded-xl overflow-hidden focus-within:ring-4 focus-within:ring-[#e8f3fb] focus-within:border-[#268ad8] bg-white shadow-sm transition-all">
-                  <span className="pl-5 text-gray-400 text-base select-none shrink-0">
+                <div className="flex flex-col sm:flex-row sm:items-center border border-gray-300 rounded-xl overflow-hidden focus-within:ring-4 focus-within:ring-[#e8f3fb] focus-within:border-[#268ad8] bg-white shadow-sm transition-all">
+                  <span className="hidden sm:inline pl-5 text-gray-400 text-base select-none shrink-0">
                     https://
                   </span>
                   <input
@@ -159,13 +159,13 @@ export default function LandingPage() {
                       setUrlError("");
                     }}
                     placeholder="yourwebsite.com"
-                    className="flex-1 py-4 px-2 text-[#282f42] placeholder-gray-400 outline-none text-base"
+                    className="flex-1 py-4 px-4 sm:px-2 text-[#282f42] placeholder-gray-400 outline-none text-base"
                     onKeyDown={(e) => e.key === "Enter" && handleScan("basic")}
                   />
                   <button
                     onClick={() => handleScan("basic")}
                     disabled={loading !== null}
-                    className="m-1.5 px-6 py-2.5 rounded-lg bg-[#268ad8] text-white text-sm font-semibold hover:bg-[#1e6fb0] transition-colors disabled:opacity-60 shrink-0"
+                    className="m-1.5 px-6 py-3 sm:py-2.5 rounded-lg bg-[#268ad8] text-white text-sm font-semibold hover:bg-[#1e6fb0] transition-colors disabled:opacity-60 shrink-0"
                   >
                     Audit my site →
                   </button>
@@ -182,11 +182,11 @@ export default function LandingPage() {
         </div>
 
         {/* Mock preview dashboard */}
-        <div className="max-w-4xl mx-auto mt-20 relative group">
+        <div className="max-w-4xl mx-auto mt-[111px] relative group">
           <img
             src="/mascot.png"
             alt="Maki Mascot"
-            className="absolute -top-[120px] right-8 sm:right-16 w-32 sm:w-48 h-auto z-[9] -mr-[50px] transition-transform duration-500 group-hover:-translate-y-4"
+            className="absolute -top-[90px] left-0 right-0 mx-auto sm:left-auto sm:right-16 w-32 sm:w-48 h-auto z-[9] sm:-mr-[50px] transition-transform duration-500 group-hover:-translate-y-4"
           />
           <div className="bg-white border border-gray-200 rounded-2xl shadow-xl overflow-hidden relative z-10">
             {/* Browser chrome */}
@@ -236,7 +236,7 @@ export default function LandingPage() {
                           }`}
                       />
                     </div>
-                    <p className={`text-2xl font-bold ${m.color}`}>{m.value}</p>
+                    <p className={`text-[18px] font-bold ${m.color}`}>{m.value}</p>
                   </div>
                 ))}
               </div>
@@ -578,7 +578,7 @@ export default function LandingPage() {
                 key={step.n}
                 className="relative border border-gray-200 rounded-2xl p-6 hover:border-gray-300 transition-colors"
               >
-                <span className="text-xs font-bold text-gray-300 mb-4 block">
+                <span className="text-sm font-bold text-gray-400 mb-4 block">
                   {step.n}
                 </span>
                 <div className="w-10 h-10 rounded-lg bg-[#268ad8] text-white flex items-center justify-center mb-4">
