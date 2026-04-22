@@ -38,9 +38,9 @@ const s = StyleSheet.create({
     fontFamily: "Helvetica",
     fontSize: 9,
     color: colors.gray900,
-    paddingTop: 40,
-    paddingBottom: 40,
-    paddingHorizontal: 40,
+    paddingTop: 30,
+    paddingBottom: 30,
+    paddingHorizontal: 30,
   },
   pageNumber: {
     position: "absolute",
@@ -114,8 +114,8 @@ const s = StyleSheet.create({
   // Score cards
   scoreRow: {
     flexDirection: "row",
-    gap: 12,
-    marginBottom: 24,
+    gap: 10,
+    marginBottom: 16,
   },
   scoreCard: {
     flex: 1,
@@ -141,8 +141,8 @@ const s = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.gray200,
     borderRadius: 8,
-    padding: 12,
-    marginBottom: 12,
+    padding: 10,
+    marginBottom: 8,
   },
   metricHeader: {
     flexDirection: "row",
@@ -547,93 +547,104 @@ export function PDFReport({ audit }: { audit: AuditResult }) {
           )}
         </View>
       </Page>
-
-      {/* Page 2: Site Info + Scores + Summary */}
+ 
+      {/* Page 2: Site Info + Scores + Summary + Metrics */}
       <Page size="A4" style={s.page}>
-        <Text style={[s.sectionTitle, s.sectionTitleFirst]}>Site Technology</Text>
-        <View style={s.siteInfoRow}>
-          <View style={s.siteInfoItem}>
-            <Text style={s.siteInfoLabel}>Platform</Text>
-            <Text style={s.siteInfoValue}>
-              {PLATFORM_LABELS[siteInfo.detectedPlatform] ?? "Unknown"}
-            </Text>
-          </View>
-          <View style={s.siteInfoItem}>
-            <Text style={s.siteInfoLabel}>Server</Text>
-            <Text style={s.siteInfoValue}>{siteInfo.serverSoftware ?? "—"}</Text>
-          </View>
-          <View style={s.siteInfoItem}>
-            <Text style={s.siteInfoLabel}>Origin</Text>
-            <Text style={s.siteInfoValue}>{siteInfo.serverCountry ?? "—"}</Text>
-          </View>
-        </View>
-
-        <Text style={s.sectionTitle}>Lighthouse Performance Score</Text>
-        <View style={s.scoreRow}>
-          <View style={s.scoreCard}>
-            <Text style={[s.scoreValue, { color: scoreColor(audit.mobileScore) }]}>
-              {audit.mobileScore}
-            </Text>
-            <Text style={s.scoreLabel}>Mobile</Text>
-          </View>
-          <View style={s.scoreCard}>
-            <Text style={[s.scoreValue, { color: scoreColor(audit.desktopScore) }]}>
-              {audit.desktopScore}
-            </Text>
-            <Text style={s.scoreLabel}>Desktop</Text>
-          </View>
-          {audit.lighthouseCategories && (
-            <>
-              <View style={s.scoreCard}>
-                <Text style={[s.scoreValue, { color: scoreColor(audit.lighthouseCategories.accessibility) }]}>
-                  {audit.lighthouseCategories.accessibility}
-                </Text>
-                <Text style={s.scoreLabel}>Accessibility</Text>
-              </View>
-              <View style={s.scoreCard}>
-                <Text style={[s.scoreValue, { color: scoreColor(audit.lighthouseCategories.seo) }]}>
-                  {audit.lighthouseCategories.seo}
-                </Text>
-                <Text style={s.scoreLabel}>SEO</Text>
-              </View>
-            </>
-          )}
-        </View>
-
-        <Text style={s.sectionTitle}>Analysis Summary</Text>
-        <Text style={s.summaryText}>{audit.summaryParagraph}</Text>
-
-        <Text style={s.sectionTitle}>Core Web Vitals</Text>
-        {[
-          { key: "LCP", label: "Largest Contentful Paint", metric: audit.cwvScores.lcp },
-          { key: "INP", label: "Interaction to Next Paint", metric: audit.cwvScores.inp },
-          { key: "CLS", label: "Cumulative Layout Shift", metric: audit.cwvScores.cls },
-        ].map(({ key, label, metric }) => (
-          <View key={key} style={s.metricRow}>
-            <View style={s.metricHeader}>
-              <View style={s.metricHeaderLeft}>
-                <Text style={s.metricName}>{label}</Text>
-                <MetricBadge status={metric.status} />
-              </View>
-              <Text style={s.metricValue}>{metric.value}</Text>
+        <View wrap={false}>
+          <Text style={[s.sectionTitle, s.sectionTitleFirst]}>Site Technology</Text>
+          <View style={s.siteInfoRow}>
+            <View style={s.siteInfoItem}>
+              <Text style={s.siteInfoLabel}>Platform</Text>
+              <Text style={s.siteInfoValue}>
+                {PLATFORM_LABELS[siteInfo.detectedPlatform] ?? "Unknown"}
+              </Text>
             </View>
-            <Text style={s.metricMeaning}>{metric.meaning}</Text>
+            <View style={s.siteInfoItem}>
+              <Text style={s.siteInfoLabel}>Server</Text>
+              <Text style={s.siteInfoValue}>{siteInfo.serverSoftware ?? "—"}</Text>
+            </View>
+            <View style={s.siteInfoItem}>
+              <Text style={s.siteInfoLabel}>Origin</Text>
+              <Text style={s.siteInfoValue}>{siteInfo.serverCountry ?? "—"}</Text>
+            </View>
           </View>
-        ))}
-      </Page>
-
-      {/* Page 3: Quick Win + Initial Fixes */}
-      <Page size="A4" style={s.page}>
-        <Text style={[s.sectionTitle, s.sectionTitleFirst]}>Quick Win — Under 10 Minutes</Text>
-        <View style={s.quickWinBox}>
-          <Text style={s.quickWinTitle}>{audit.quickWin.title}</Text>
-          {audit.quickWin.steps.map((step, i) => (
-            <Text key={i} style={s.quickWinStep}>
-              {i + 1}. {step}
-            </Text>
-          ))}
         </View>
-
+ 
+        <View wrap={false}>
+          <Text style={s.sectionTitle}>Lighthouse Performance Score</Text>
+          <View style={s.scoreRow}>
+            <View style={s.scoreCard}>
+              <Text style={[s.scoreValue, { color: scoreColor(audit.mobileScore) }]}>
+                {audit.mobileScore}
+              </Text>
+              <Text style={s.scoreLabel}>Mobile</Text>
+            </View>
+            <View style={s.scoreCard}>
+              <Text style={[s.scoreValue, { color: scoreColor(audit.desktopScore) }]}>
+                {audit.desktopScore}
+              </Text>
+              <Text style={s.scoreLabel}>Desktop</Text>
+            </View>
+            {audit.lighthouseCategories && (
+              <>
+                <View style={s.scoreCard}>
+                  <Text style={[s.scoreValue, { color: scoreColor(audit.lighthouseCategories.accessibility) }]}>
+                    {audit.lighthouseCategories.accessibility}
+                  </Text>
+                  <Text style={s.scoreLabel}>Accessibility</Text>
+                </View>
+                <View style={s.scoreCard}>
+                  <Text style={[s.scoreValue, { color: scoreColor(audit.lighthouseCategories.seo) }]}>
+                    {audit.lighthouseCategories.seo}
+                  </Text>
+                  <Text style={s.scoreLabel}>SEO</Text>
+                </View>
+              </>
+            )}
+          </View>
+        </View>
+ 
+        <View wrap={false}>
+          <Text style={s.sectionTitle}>Analysis Summary</Text>
+          <Text style={s.summaryText}>{audit.summaryParagraph}</Text>
+        </View>
+ 
+        <View wrap={false}>
+          <Text style={s.sectionTitle}>Core Web Vitals</Text>
+          <View style={{ flexDirection: "row", gap: 8 }}>
+            {[
+              { key: "LCP", label: "LCP", metric: audit.cwvScores.lcp },
+              { key: "INP", label: "INP", metric: audit.cwvScores.inp },
+              { key: "CLS", label: "CLS", metric: audit.cwvScores.cls },
+            ].map(({ key, label, metric }) => (
+              <View key={key} style={[s.metricRow, { flex: 1, marginBottom: 0 }]}>
+                <View style={s.metricHeader}>
+                  <Text style={s.metricName}>{label}</Text>
+                  <MetricBadge status={metric.status} />
+                </View>
+                <Text style={s.metricValue}>{metric.value}</Text>
+              </View>
+            ))}
+          </View>
+        </View>
+      </Page>
+ 
+      {/* Page 3: Quick Win + Top Fixes */}
+      <Page size="A4" style={s.page}>
+        <View wrap={false}>
+          <Text style={[s.sectionTitle, s.sectionTitleFirst]}>Quick Win & Priority Fixes</Text>
+          <View style={s.quickWinBox}>
+            <Text style={s.quickWinTitle}>{audit.quickWin.title}</Text>
+            <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 12 }}>
+              {audit.quickWin.steps.map((step, i) => (
+                <Text key={i} style={[s.quickWinStep, { width: "45%", marginBottom: 4 }]}>
+                  • {step}
+                </Text>
+              ))}
+            </View>
+          </View>
+        </View>
+ 
         <Text style={s.sectionTitle}>Top Fixes (1 of 2)</Text>
         {fixes.slice(0, 3).map((fix: TopFix) => (
           <FixCard key={fix.rank} fix={fix} />
