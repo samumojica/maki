@@ -629,75 +629,50 @@ export function PDFReport({ audit }: { audit: AuditResult }) {
         </View>
       </Page>
  
-      {/* Page 3: Quick Win + Top Fixes */}
+      {/* Fixes Pages - let react-pdf flow naturally */}
       <Page size="A4" style={s.page}>
         <View wrap={false}>
-          <Text style={[s.sectionTitle, s.sectionTitleFirst]}>Quick Win & Priority Fixes</Text>
+          <Text style={[s.sectionTitle, s.sectionTitleFirst]}>Quick Win</Text>
           <View style={s.quickWinBox}>
             <Text style={s.quickWinTitle}>{audit.quickWin.title}</Text>
-            <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 12 }}>
-              {audit.quickWin.steps.map((step, i) => (
-                <Text key={i} style={[s.quickWinStep, { width: "45%", marginBottom: 4 }]}>
-                  • {step}
-                </Text>
-              ))}
-            </View>
+            {audit.quickWin.steps.map((step, i) => (
+              <Text key={i} style={s.quickWinStep}>
+                {i + 1}. {step}
+              </Text>
+            ))}
           </View>
         </View>
- 
-        <Text style={s.sectionTitle}>Top Fixes (1 of 2)</Text>
-        {fixes.slice(0, 3).map((fix: TopFix) => (
+
+        <Text style={s.sectionTitle}>Your Top {fixes.length} Fixes</Text>
+        {fixes.map((fix: TopFix) => (
           <FixCard key={fix.rank} fix={fix} />
         ))}
       </Page>
 
-      {/* Subsequent Fixes */}
+      {/* SEO Snippets + Checklist + Infrastructure + Glossary + Disclaimer */}
       <Page size="A4" style={s.page}>
-        <Text style={[s.sectionTitle, s.sectionTitleFirst]}>Top Fixes (2 of 2)</Text>
-        {fixes.slice(3, 7).map((fix: TopFix) => (
-          <FixCard key={fix.rank} fix={fix} />
-        ))}
-      </Page>
-
-      <Page size="A4" style={s.page}>
-        <Text style={[s.sectionTitle, s.sectionTitleFirst]}>Additional Resources</Text>
- 
-         {audit.seoSnippets && audit.seoSnippets.length > 0 && (
-           <>
-             <Text style={s.sectionTitle}>Featured SEO Snippet</Text>
-             <View style={s.seoCard} wrap={false}>
-               <Text style={s.seoTitle}>{audit.seoSnippets[0].title}</Text>
-               <Text style={s.seoDesc}>{audit.seoSnippets[0].description}</Text>
-               <View style={s.codeBlock}>
-                 <Text style={s.codeText}>{audit.seoSnippets[0].code}</Text>
-               </View>
-             </View>
-           </>
-         )}
-      </Page>
-
-      {/* SEO Snippets Page */}
-      {audit.seoSnippets && audit.seoSnippets.length > 1 && (
-        <Page size="A4" style={s.page}>
-          <Text style={[s.sectionTitle, s.sectionTitleFirst]}>Additional SEO Snippets</Text>
-          {audit.seoSnippets.slice(1).map((snippet, i) => (
-            <View key={i} style={s.seoCard}>
-              <Text style={s.seoTitle}>{snippet.title}</Text>
-              <Text style={s.seoDesc}>{snippet.description}</Text>
-              <View style={s.codeBlock}>
-                <Text style={s.codeText}>{snippet.code}</Text>
+        {audit.seoSnippets && audit.seoSnippets.length > 0 && (
+          <>
+            <Text style={[s.sectionTitle, s.sectionTitleFirst]}>SEO Snippets</Text>
+            <Text style={[s.summaryText, { marginBottom: 12 }]}>
+              Ready-to-paste code to improve your search engine visibility.
+            </Text>
+            {audit.seoSnippets.map((snippet, i) => (
+              <View key={i} style={s.seoCard} wrap={false}>
+                <Text style={s.seoTitle}>{snippet.title}</Text>
+                <Text style={s.seoDesc}>{snippet.description}</Text>
+                <View style={s.codeBlock}>
+                  <Text style={s.codeText}>{snippet.code}</Text>
+                </View>
               </View>
-            </View>
-          ))}
-        </Page>
-      )}
+            ))}
+          </>
+        )}
 
-      {/* Combined Checklist, Infrastructure, and Glossary */}
-      <Page size="A4" style={s.page}>
         <View wrap={false}>
-          <Text style={[s.sectionTitle, s.sectionTitleFirst]}>Verification Checklist</Text>
-          <Text style={[s.summaryText, { marginBottom: 16 }]}>
-            After applying the fixes above, use this checklist to confirm everything is working correctly.
+          <Text style={s.sectionTitle}>After You Apply the Fixes</Text>
+          <Text style={[s.summaryText, { marginBottom: 12 }]}>
+            Use this checklist to confirm everything is working correctly.
           </Text>
           {audit.checklistAfter.map((item, i) => (
             <View key={i} style={s.checklistItem}>
@@ -706,45 +681,42 @@ export function PDFReport({ audit }: { audit: AuditResult }) {
             </View>
           ))}
         </View>
- 
-        <View style={{ marginTop: 20 }} wrap={false}>
-          <Text style={s.sectionTitle}>General Infrastructure</Text>
-          <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 10 }}>
-            {STATIC_TIPS.map((tip) => (
-              <View key={tip.title} style={[s.tipCard, { flex: "1 0 45%" }]}>
-                <Text style={s.tipTitle}>{tip.title}</Text>
-                <Text style={s.tipBody}>{tip.body}</Text>
-              </View>
-            ))}
+
+        <Text style={s.sectionTitle}>General Infrastructure</Text>
+        <Text style={[s.summaryText, { marginBottom: 12 }]}>
+          Not in your top fixes, but every fast site does these.
+        </Text>
+        {STATIC_TIPS.map((tip) => (
+          <View key={tip.title} style={s.tipCard} wrap={false}>
+            <Text style={s.tipTitle}>{tip.title}</Text>
+            <Text style={s.tipBody}>{tip.body}</Text>
           </View>
-        </View>
- 
-        <View style={{ marginTop: 20 }} wrap={false}>
+        ))}
+
+        <View wrap={false} style={{ marginTop: 16 }}>
           <Text style={s.sectionTitle}>Glossary</Text>
-          <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
-            {[
-              { term: "LCP", def: "Largest Contentful Paint" },
-              { term: "INP", def: "Interaction to Next Paint" },
-              { term: "CLS", def: "Cumulative Layout Shift" },
-              { term: "CrUX", def: "Real-world user data" },
-              { term: "Lighthouse", def: "Google's audit engine" },
-            ].map((item) => (
-              <View key={item.term} style={{ width: "30%", marginBottom: 4 }}>
-                <Text style={s.glossaryTerm}>{item.term}</Text>
-                <Text style={s.glossaryDef}>{item.def}</Text>
-              </View>
-            ))}
-          </View>
+          {[
+            { term: "LCP", def: "Largest Contentful Paint: Measures how long it takes for the largest visible element to load." },
+            { term: "INP", def: "Interaction to Next Paint: Measures how quickly the page responds to user interactions." },
+            { term: "CLS", def: "Cumulative Layout Shift: Measures visual stability and layout jumps." },
+            { term: "CrUX", def: "Real-world performance data from actual Chrome users visiting your site." },
+            { term: "Lighthouse", def: "Google's audit engine used to simulate and score page performance." },
+          ].map((item) => (
+            <View key={item.term} style={s.glossaryItem}>
+              <Text style={s.glossaryTerm}>{item.term}</Text>
+              <Text style={s.glossaryDef}>{item.def}</Text>
+            </View>
+          ))}
         </View>
- 
-        <View style={[s.disclaimerBox, { marginTop: 24 }]} wrap={false}>
+
+        <View style={[s.disclaimerBox, { marginTop: 16 }]} wrap={false}>
           <Text style={s.disclaimerTitle}>Support & Feedback</Text>
           <Text style={[s.disclaimerText, { marginBottom: 8 }]}>
-            Contact us at support@getmaki.app.
+            Have questions about your report or need technical assistance? Contact us at support@getmaki.app.
           </Text>
           <Text style={s.disclaimerTitle}>Important Disclaimer</Text>
           <Text style={s.disclaimerText}>
-            Google&apos;s field data (CrUX) updates on a 28-day rolling cycle. All sales are final.
+            Google&apos;s field data (CrUX) updates on a 28-day rolling cycle. Results depend on many factors including hosting and how changes are implemented. All sales are final.
           </Text>
         </View>
       </Page>
