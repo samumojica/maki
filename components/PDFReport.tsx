@@ -38,9 +38,9 @@ const s = StyleSheet.create({
     fontFamily: "Helvetica",
     fontSize: 9,
     color: colors.gray900,
-    paddingTop: 48,
-    paddingBottom: 60,
-    paddingHorizontal: 48,
+    paddingTop: 40,
+    paddingBottom: 40,
+    paddingHorizontal: 40,
   },
   pageNumber: {
     position: "absolute",
@@ -100,13 +100,13 @@ const s = StyleSheet.create({
   },
   // Section headers
   sectionTitle: {
-    fontSize: 9,
+    fontSize: 8.5,
     fontFamily: "Helvetica-Bold",
     color: colors.gray500,
     textTransform: "uppercase",
     letterSpacing: 1.2,
-    marginBottom: 16,
-    marginTop: 24,
+    marginBottom: 12,
+    marginTop: 20,
   },
   sectionTitleFirst: {
     marginTop: 0,
@@ -634,39 +634,35 @@ export function PDFReport({ audit }: { audit: AuditResult }) {
           ))}
         </View>
 
-        <Text style={s.sectionTitle}>Top Fixes (1 of 3)</Text>
-        {fixes.slice(0, 2).map((fix: TopFix) => (
+        <Text style={s.sectionTitle}>Top Fixes (1 of 2)</Text>
+        {fixes.slice(0, 3).map((fix: TopFix) => (
           <FixCard key={fix.rank} fix={fix} />
         ))}
       </Page>
 
       {/* Subsequent Fixes */}
       <Page size="A4" style={s.page}>
-        <Text style={[s.sectionTitle, s.sectionTitleFirst]}>Top Fixes (2 of 3)</Text>
-        {fixes.slice(2, 5).map((fix: TopFix) => (
+        <Text style={[s.sectionTitle, s.sectionTitleFirst]}>Top Fixes (2 of 2)</Text>
+        {fixes.slice(3, 7).map((fix: TopFix) => (
           <FixCard key={fix.rank} fix={fix} />
         ))}
       </Page>
 
       <Page size="A4" style={s.page}>
-        <Text style={[s.sectionTitle, s.sectionTitleFirst]}>Top Fixes (3 of 3)</Text>
-        {fixes.slice(5, 7).map((fix: TopFix) => (
-          <FixCard key={fix.rank} fix={fix} />
-        ))}
-
-        {audit.seoSnippets && audit.seoSnippets.length > 0 && (
-          <>
-            <View style={s.divider} />
-            <Text style={s.sectionTitle}>Featured SEO Snippet</Text>
-            <View style={s.seoCard}>
-              <Text style={s.seoTitle}>{audit.seoSnippets[0].title}</Text>
-              <Text style={s.seoDesc}>{audit.seoSnippets[0].description}</Text>
-              <View style={s.codeBlock}>
-                <Text style={s.codeText}>{audit.seoSnippets[0].code}</Text>
-              </View>
-            </View>
-          </>
-        )}
+        <Text style={[s.sectionTitle, s.sectionTitleFirst]}>Additional Resources</Text>
+ 
+         {audit.seoSnippets && audit.seoSnippets.length > 0 && (
+           <>
+             <Text style={s.sectionTitle}>Featured SEO Snippet</Text>
+             <View style={s.seoCard} wrap={false}>
+               <Text style={s.seoTitle}>{audit.seoSnippets[0].title}</Text>
+               <Text style={s.seoDesc}>{audit.seoSnippets[0].description}</Text>
+               <View style={s.codeBlock}>
+                 <Text style={s.codeText}>{audit.seoSnippets[0].code}</Text>
+               </View>
+             </View>
+           </>
+         )}
       </Page>
 
       {/* SEO Snippets Page */}
@@ -685,58 +681,59 @@ export function PDFReport({ audit }: { audit: AuditResult }) {
         </Page>
       )}
 
-      {/* Verification Checklist */}
+      {/* Combined Checklist, Infrastructure, and Glossary */}
       <Page size="A4" style={s.page}>
-        <Text style={[s.sectionTitle, s.sectionTitleFirst]}>Verification Checklist</Text>
-        <Text style={[s.summaryText, { marginBottom: 24 }]}>
-          After applying the fixes above, use this checklist to confirm everything is working correctly.
-        </Text>
-        {audit.checklistAfter.map((item, i) => (
-          <View key={i} style={s.checklistItem}>
-            <View style={s.checkBox} />
-            <Text style={s.checklistText}>{item}</Text>
+        <View wrap={false}>
+          <Text style={[s.sectionTitle, s.sectionTitleFirst]}>Verification Checklist</Text>
+          <Text style={[s.summaryText, { marginBottom: 16 }]}>
+            After applying the fixes above, use this checklist to confirm everything is working correctly.
+          </Text>
+          {audit.checklistAfter.map((item, i) => (
+            <View key={i} style={s.checklistItem}>
+              <View style={s.checkBox} />
+              <Text style={s.checklistText}>{item}</Text>
+            </View>
+          ))}
+        </View>
+ 
+        <View style={{ marginTop: 20 }} wrap={false}>
+          <Text style={s.sectionTitle}>General Infrastructure</Text>
+          <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 10 }}>
+            {STATIC_TIPS.map((tip) => (
+              <View key={tip.title} style={[s.tipCard, { flex: "1 0 45%" }]}>
+                <Text style={s.tipTitle}>{tip.title}</Text>
+                <Text style={s.tipBody}>{tip.body}</Text>
+              </View>
+            ))}
           </View>
-        ))}
-      </Page>
-
-      {/* General Infrastructure */}
-      <Page size="A4" style={s.page}>
-        <Text style={[s.sectionTitle, s.sectionTitleFirst]}>General Infrastructure</Text>
-        <Text style={[s.summaryText, { marginBottom: 20 }]}>
-          Foundational layer optimizations that every fast site should implement.
-        </Text>
-        {STATIC_TIPS.map((tip) => (
-          <View key={tip.title} style={s.tipCard}>
-            <Text style={s.tipTitle}>{tip.title}</Text>
-            <Text style={s.tipBody}>{tip.body}</Text>
+        </View>
+ 
+        <View style={{ marginTop: 20 }} wrap={false}>
+          <Text style={s.sectionTitle}>Glossary</Text>
+          <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
+            {[
+              { term: "LCP", def: "Largest Contentful Paint" },
+              { term: "INP", def: "Interaction to Next Paint" },
+              { term: "CLS", def: "Cumulative Layout Shift" },
+              { term: "CrUX", def: "Real-world user data" },
+              { term: "Lighthouse", def: "Google's audit engine" },
+            ].map((item) => (
+              <View key={item.term} style={{ width: "30%", marginBottom: 4 }}>
+                <Text style={s.glossaryTerm}>{item.term}</Text>
+                <Text style={s.glossaryDef}>{item.def}</Text>
+              </View>
+            ))}
           </View>
-        ))}
-      </Page>
-
-      {/* Glossary + Disclaimer */}
-      <Page size="A4" style={s.page}>
-        <Text style={[s.sectionTitle, s.sectionTitleFirst]}>Glossary</Text>
-        {[
-          { term: "LCP", def: "Largest Contentful Paint: Measures how long it takes for the largest visible element to load." },
-          { term: "INP", def: "Interaction to Next Paint: Measures how quickly the page responds to user interactions." },
-          { term: "CLS", def: "Cumulative Layout Shift: Measures visual stability and layout jumps." },
-          { term: "CrUX", def: "Real-world performance data from actual Chrome users visiting your site." },
-          { term: "Lighthouse", def: "Google's audit engine used to simulate and score page performance." },
-        ].map((item) => (
-          <View key={item.term} style={s.glossaryItem}>
-            <Text style={s.glossaryTerm}>{item.term}</Text>
-            <Text style={s.glossaryDef}>{item.def}</Text>
-          </View>
-        ))}
-
-        <View style={s.disclaimerBox}>
+        </View>
+ 
+        <View style={[s.disclaimerBox, { marginTop: 24 }]} wrap={false}>
           <Text style={s.disclaimerTitle}>Support & Feedback</Text>
-          <Text style={[s.disclaimerText, { marginBottom: 12 }]}>
-            Have questions about your report or need technical assistance? Contact us at support@getmaki.app.
+          <Text style={[s.disclaimerText, { marginBottom: 8 }]}>
+            Contact us at support@getmaki.app.
           </Text>
           <Text style={s.disclaimerTitle}>Important Disclaimer</Text>
           <Text style={s.disclaimerText}>
-            Google&apos;s field data (CrUX) updates on a 28-day rolling cycle. Results depend on many factors including hosting and how changes are implemented. All sales are final.
+            Google&apos;s field data (CrUX) updates on a 28-day rolling cycle. All sales are final.
           </Text>
         </View>
       </Page>

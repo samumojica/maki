@@ -115,15 +115,7 @@ export function Speedometer({ verdict, score }: { verdict: Verdict; score: numbe
       ctx.lineCap = "round";
       ctx.stroke();
 
-      // Score Text
-      ctx.fillStyle = config.color;
-      ctx.font = "900 48px Inter, system-ui, sans-serif";
-      ctx.textAlign = "center";
-      ctx.fillText(Math.round(currentScore).toString(), cx, cy - 10);
-      
-      ctx.fillStyle = "#6b7280";
-      ctx.font = "700 12px Inter, system-ui, sans-serif";
-      ctx.fillText(config.label.toUpperCase(), cx, cy + 15);
+      // Score Text removed as requested - using badge in parent instead
 
       // Needle
       const needleCanvas = Math.PI + ((angle + 90) / 180) * Math.PI;
