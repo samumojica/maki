@@ -28,13 +28,84 @@ function StatusBadge({ status }: { status: "pass" | "fail" }) {
   );
 }
 
-function ScoreRing({ score }: { score: number }) {
+function ScoreRing({ score, label }: { score: number; label: string }) {
   const color =
     score >= 90 ? "text-green-600" : score >= 50 ? "text-yellow-500" : "text-red-500";
   return (
-    <div className={`text-3xl font-semibold ${color}`}>{score}</div>
+    <div className="border border-gray-200 rounded-xl p-4 text-center">
+      <div className={`text-3xl font-semibold ${color}`}>{score}</div>
+      <p className="text-xs text-gray-500 mt-1">{label}</p>
+    </div>
   );
 }
+
+function CopyButton({ text }: { text: string }) {
+  const [copied, setCopied] = useState(false);
+
+  return (
+    <button
+      onClick={() => {
+        navigator.clipboard.writeText(text);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      }}
+      className="absolute top-2 right-2 flex items-center gap-1 px-2 py-1 text-xs rounded bg-gray-700 text-gray-300 hover:bg-gray-600 hover:text-white transition-colors"
+    >
+      {copied ? (
+        <>
+          <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+          </svg>
+          Copied
+        </>
+      ) : (
+        <>
+          <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+          </svg>
+          Copy
+        </>
+      )}
+    </button>
+  );
+}
+
+function CodeBlock({ code, lang }: { code: string; lang?: string }) {
+  return (
+    <div className="relative group mt-3">
+      <div className="bg-[#1e1e2e] rounded-lg overflow-hidden">
+        {lang && (
+          <div className="px-3 py-1.5 bg-[#2a2a3e] text-[10px] text-gray-400 uppercase tracking-wider font-mono border-b border-gray-700/50">
+            {lang}
+          </div>
+        )}
+        <pre className="p-4 text-sm text-gray-200 font-mono overflow-x-auto whitespace-pre-wrap leading-relaxed">
+          <code>{code}</code>
+        </pre>
+      </div>
+      <CopyButton text={code} />
+    </div>
+  );
+}
+
+const PLATFORM_LABELS: Record<string, string> = {
+  wordpress: "WordPress",
+  shopify: "Shopify",
+  webflow: "Webflow",
+  squarespace: "Squarespace",
+  wix: "Wix",
+  static: "Static Site",
+  custom: "Custom Stack",
+  unknown: "Unknown",
+};
+
+const COUNTRY_FLAGS: Record<string, string> = {
+  US: "🇺🇸", DE: "🇩🇪", GB: "🇬🇧", FR: "🇫🇷", NL: "🇳🇱", JP: "🇯🇵",
+  AU: "🇦🇺", CA: "🇨🇦", BR: "🇧🇷", IN: "🇮🇳", SG: "🇸🇬", IE: "🇮🇪",
+  SE: "🇸🇪", FI: "🇫🇮", KR: "🇰🇷", ES: "🇪🇸", IT: "🇮🇹", MX: "🇲🇽",
+  AR: "🇦🇷", CL: "🇨🇱", CO: "🇨🇴", PL: "🇵🇱", CZ: "🇨🇿", RO: "🇷🇴",
+  HK: "🇭🇰", TW: "🇹🇼", RU: "🇷🇺", ZA: "🇿🇦",
+};
 
 export default function ResultsPage({ audit }: Props) {
   const [downloading, setDownloading] = useState(false);
@@ -66,6 +137,9 @@ export default function ResultsPage({ audit }: Props) {
   }
 
   const { lcp, inp, cls } = audit.cwvScores;
+  const siteInfo = audit.siteInfo ?? {
+    detectedPlatform: audit.detectedPlatform ?? "unknown",
+  };
 
   return (
     <main className="min-h-screen bg-white">
@@ -97,20 +171,91 @@ export default function ResultsPage({ audit }: Props) {
           </p>
         </div>
 
+        {/* Site Info Card */}
+        {siteInfo && (
+          <section className="bg-gray-50 border border-gray-200 rounded-xl p-5">
+            <h2 className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-4">
+              Site Technology
+            </h2>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+              <div>
+                <p className="text-[10px] uppercase tracking-wider text-gray-400 mb-1">Platform</p>
+                <p className="text-sm font-semibold text-[#282f42]">
+                  {PLATFORM_LABELS[siteInfo.detectedPlatform] ?? "Unknown"}
+                </p>
+              </div>
+              {siteInfo.serverSoftware && (
+                <div>
+                  <p className="text-[10px] uppercase tracking-wider text-gray-400 mb-1">Server</p>
+                  <p className="text-sm font-semibold text-[#282f42]">{siteInfo.serverSoftware}</p>
+                </div>
+              )}
+              {siteInfo.cdnDetected && (
+                <div>
+                  <p className="text-[10px] uppercase tracking-wider text-gray-400 mb-1">CDN</p>
+                  <p className="text-sm font-semibold text-[#282f42]">{siteInfo.cdnDetected}</p>
+                </div>
+              )}
+              {siteInfo.serverCountry && (
+                <div>
+                  <p className="text-[10px] uppercase tracking-wider text-gray-400 mb-1">Origin</p>
+                  <p className="text-sm font-semibold text-[#282f42]">
+                    {COUNTRY_FLAGS[siteInfo.serverCountry] ?? "🌐"} {siteInfo.serverCountry}
+                  </p>
+                </div>
+              )}
+            </div>
+            {siteInfo.technologies && siteInfo.technologies.length > 0 && (
+              <div className="mt-4 pt-3 border-t border-gray-200">
+                <p className="text-[10px] uppercase tracking-wider text-gray-400 mb-2">Technologies Detected</p>
+                <div className="flex flex-wrap gap-1.5">
+                  {siteInfo.technologies.map((tech) => (
+                    <span key={tech} className="px-2 py-0.5 bg-white border border-gray-200 rounded-full text-xs text-gray-600 font-medium">
+                      {tech}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+          </section>
+        )}
+
+        {/* Data source notice */}
+        <div className="flex items-start gap-2 bg-blue-50 border border-blue-100 rounded-lg px-4 py-3">
+          <svg className="w-4 h-4 text-blue-500 mt-0.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <p className="text-xs text-blue-700">
+            {audit.fieldDataAvailable
+              ? "These scores are based on real Chrome user visits from the past 28 days (CrUX field data) — not synthetic tests."
+              : "This site doesn't have enough traffic for real user data yet. These scores are from Lighthouse lab tests — a simulated page load."}
+          </p>
+        </div>
+
         {/* Lighthouse Scores */}
         <section>
-          <h2 className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-4">
-            Lighthouse Score
-          </h2>
-          <div className="grid grid-cols-2 gap-4">
-            <div className="border border-gray-200 rounded-xl p-4 text-center">
-              <ScoreRing score={audit.mobileScore} />
-              <p className="text-xs text-gray-500 mt-1">Mobile</p>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-sm font-medium text-gray-500 uppercase tracking-wide">
+              Lighthouse Scores
+            </h2>
+            <div className="flex items-center gap-2 opacity-30 grayscale scale-75 origin-right">
+              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Powered by</span>
+              <img 
+                src="/assets/lighthouse.svg" 
+                alt="Lighthouse" 
+                className="h-4 w-auto"
+              />
             </div>
-            <div className="border border-gray-200 rounded-xl p-4 text-center">
-              <ScoreRing score={audit.desktopScore} />
-              <p className="text-xs text-gray-500 mt-1">Desktop</p>
-            </div>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            <ScoreRing score={audit.mobileScore} label="Mobile" />
+            <ScoreRing score={audit.desktopScore} label="Desktop" />
+            {audit.lighthouseCategories && (
+              <>
+                <ScoreRing score={audit.lighthouseCategories.accessibility} label="Accessibility" />
+                <ScoreRing score={audit.lighthouseCategories.seo} label="SEO" />
+              </>
+            )}
           </div>
         </section>
 
@@ -177,7 +322,7 @@ export default function ResultsPage({ audit }: Props) {
         {/* Top Fixes */}
         <section>
           <h2 className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-4">
-            Your Top Fixes
+            Your Top {audit.topFixes.length} Fixes
           </h2>
           <div className="space-y-4">
             {audit.topFixes.map((fix) => (
@@ -189,16 +334,69 @@ export default function ResultsPage({ audit }: Props) {
                   <h3 className="font-medium text-[#282f42]">{fix.problemHeadline}</h3>
                 </div>
                 <p className="text-sm text-gray-600 mb-3 ml-9">{fix.whyItMatters}</p>
-                <div className="ml-9 bg-gray-50 rounded-lg p-3 text-sm text-gray-700 whitespace-pre-line">
-                  {fix.whatToDo}
+
+                {/* How to fix it */}
+                <div className="ml-9">
+                  <p className="text-xs font-semibold text-[#268ad8] uppercase tracking-wide mb-2">
+                    How to fix it
+                  </p>
+                  <div className="bg-gray-50 rounded-lg p-3 text-sm text-gray-700 whitespace-pre-line">
+                    {fix.whatToDo}
+                  </div>
                 </div>
-                <p className="text-xs text-green-600 font-medium mt-2 ml-9">
+
+                {/* Code snippet */}
+                {fix.codeSnippet && (
+                  <div className="ml-9">
+                    <CodeBlock code={fix.codeSnippet} lang={fix.snippetLang} />
+                  </div>
+                )}
+
+                {/* Resource link */}
+                {fix.resourceUrl && (
+                  <div className="ml-9 mt-3">
+                    <a
+                      href={fix.resourceUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 text-sm text-[#268ad8] hover:text-[#1e6fb0] transition-colors font-medium"
+                    >
+                      <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                      </svg>
+                      {fix.resourceLabel ?? "Learn more"}
+                    </a>
+                  </div>
+                )}
+
+                <p className="text-xs text-green-600 font-medium mt-3 ml-9">
                   {fix.estimatedImpact}
                 </p>
               </div>
             ))}
           </div>
         </section>
+
+        {/* SEO Snippets */}
+        {audit.seoSnippets && audit.seoSnippets.length > 0 && (
+          <section>
+            <h2 className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-1">
+              SEO Snippets
+            </h2>
+            <p className="text-sm text-gray-500 mb-4">
+              Ready-to-paste code to improve your search engine visibility.
+            </p>
+            <div className="space-y-4">
+              {audit.seoSnippets.map((snippet, i) => (
+                <div key={i} className="border border-gray-200 rounded-xl p-5">
+                  <h3 className="text-sm font-semibold text-[#282f42] mb-1">{snippet.title}</h3>
+                  <p className="text-xs text-gray-500 mb-2">{snippet.description}</p>
+                  <CodeBlock code={snippet.code} lang={snippet.lang} />
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
 
         {/* Checklist */}
         <section>
@@ -221,7 +419,7 @@ export default function ResultsPage({ audit }: Props) {
             General Infrastructure Tips
           </h2>
           <p className="text-sm text-gray-500 mb-4">
-            Not in your top 5 fixes, but every fast site does these.
+            Not in your top fixes, but every fast site does these.
           </p>
           <div className="space-y-3">
             {STATIC_TIPS.map((tip) => (
@@ -238,6 +436,24 @@ export default function ResultsPage({ audit }: Props) {
           </div>
         </section>
 
+        {/* Disclaimer */}
+        <div className="bg-amber-50 border border-amber-200 rounded-xl px-5 py-4">
+          <div className="flex items-start gap-2">
+            <svg className="w-4 h-4 text-amber-500 mt-0.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+            <div>
+              <p className="text-xs font-semibold text-amber-800 mb-1">Important Disclaimer</p>
+              <p className="text-xs text-amber-700 leading-relaxed">
+                Implementing these recommendations does not guarantee an immediate improvement in your Core Web Vitals scores or search rankings.
+                Google&apos;s field data (CrUX) updates on a 28-day rolling cycle, so changes typically take 2-4 weeks to reflect in scores.
+                Results depend on many factors including your hosting, traffic patterns, and how the changes are implemented.
+                All sales are final.
+              </p>
+            </div>
+          </div>
+        </div>
+
         {/* Download CTA */}
         <div className="border-t border-gray-100 pt-8 text-center">
           <p className="text-sm text-gray-500 mb-4">
@@ -253,6 +469,13 @@ export default function ResultsPage({ audit }: Props) {
             </svg>
             {downloading ? "Generating PDF…" : "Download Full Report (PDF)"}
           </button>
+
+          <div className="mt-8 text-xs text-gray-400">
+            Have questions or feedback? Contact us at{" "}
+            <a href="mailto:support@getmaki.app" className="text-[#268ad8] hover:underline font-medium">
+              support@getmaki.app
+            </a>
+          </div>
         </div>
       </div>
     </main>

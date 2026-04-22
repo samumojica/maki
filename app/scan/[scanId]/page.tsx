@@ -2,6 +2,7 @@ import Link from "next/link";
 import { getScan } from "@/lib/scan-store";
 import { verdictLabel, verdictSublabel, verdictColor } from "@/lib/verdict";
 import type { TeaserResult } from "@/lib/types";
+import { Speedometer } from "./unlock-button";
 import UnlockButton from "./unlock-button";
 import { Logo } from "@/components/Logo";
 
@@ -37,6 +38,8 @@ export default async function ScanTeaserPage({
   const teaser: TeaserResult = {
     url: entry.audit.url,
     verdict: entry.audit.verdict,
+    mobileScore: entry.audit.mobileScore ?? 0,
+    desktopScore: entry.audit.desktopScore ?? 0,
     summaryParagraph: entry.audit.summaryParagraph,
     createdAt: entry.createdAt,
   };
@@ -55,30 +58,48 @@ export default async function ScanTeaserPage({
       </header>
 
       <section className="px-6 py-20">
-        <div className="max-w-2xl mx-auto">
+        <div className="max-w-3xl mx-auto">
           <p className="text-sm text-gray-500 mb-2 truncate">
             Results for{" "}
             <span className="font-mono text-gray-700">{teaser.url}</span>
           </p>
-          <h1 className="text-3xl sm:text-4xl font-bold mb-10">
+          <h1 className="text-3xl sm:text-4xl font-black mb-10 tracking-tight">
             Your site&apos;s verdict
           </h1>
 
           <div
-            className={`rounded-2xl border ${colors.border} ${colors.bg} p-10 mb-8 text-center`}
+            className={`animate-in fade-in slide-in-from-bottom-8 duration-1000 ease-out rounded-[2.5rem] border-2 ${colors.border} ${colors.bg} p-8 sm:p-12 mb-8 flex flex-col sm:flex-row items-center gap-8 sm:gap-10 text-center sm:text-left overflow-hidden relative shadow-xl shadow-gray-200/50`}
           >
-            <div
-              className={`inline-block text-5xl sm:text-6xl font-bold ${colors.text} mb-4 tracking-tight`}
-            >
-              {verdictLabel(teaser.verdict)}
+            <div className="shrink-0">
+              <Speedometer verdict={teaser.verdict} score={teaser.mobileScore} />
             </div>
-            <p className="text-lg text-gray-700 max-w-md mx-auto">
-              {verdictSublabel(teaser.verdict)}
-            </p>
+            
+            <div className="flex-1">
+              <div className="flex flex-col items-center sm:items-start mb-1">
+                <div 
+                  className="px-3 py-1 rounded-full bg-white/50 border border-current font-black text-sm tracking-widest uppercase mb-2"
+                  style={{ color: colors.hex }}
+                >
+                  Score: {teaser.mobileScore}
+                </div>
+              </div>
+              <div
+                className={`font-black mb-2 leading-none ${
+                  teaser.verdict === "poor" 
+                    ? "text-4xl sm:text-5xl text-red-500" 
+                    : `text-5xl sm:text-6xl ${colors.text}`
+                }`}
+              >
+                {verdictLabel(teaser.verdict)}
+              </div>
+              <p className="text-lg sm:text-xl font-bold text-gray-800 leading-tight">
+                {verdictSublabel(teaser.verdict)}
+              </p>
+            </div>
           </div>
 
-          <div className="bg-white border border-gray-200 rounded-2xl p-6 sm:p-8 mb-8">
-            <h2 className="text-xs font-semibold tracking-wider uppercase text-gray-500 mb-3">
+          <div className="bg-white border border-gray-200 rounded-3xl p-6 sm:p-8 mb-8 shadow-sm">
+            <h2 className="text-xs font-semibold tracking-wider uppercase text-gray-500 mb-4">
               What&apos;s behind this verdict
             </h2>
             <div className="space-y-3 text-gray-600">
@@ -93,7 +114,7 @@ export default async function ScanTeaserPage({
               <div className="flex items-start gap-3">
                 <span className="text-[#268ad8] mt-0.5">✦</span>
                 <span>
-                  The 5 biggest problems on your site — ranked by impact
+                  The 7 biggest problems on your site — ranked by impact
                 </span>
               </div>
               <div className="flex items-start gap-3">
@@ -111,7 +132,7 @@ export default async function ScanTeaserPage({
             </div>
           </div>
 
-          <UnlockButton scanId={scanId} tier={entry.tier} />
+          <UnlockButton scanId={scanId} score={teaser.mobileScore} />
 
           <p className="text-center text-xs text-gray-500 mt-6">
             One-time payment · No subscription · Instant PDF

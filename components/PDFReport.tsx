@@ -5,14 +5,14 @@ import {
   View,
   StyleSheet,
   Font,
+  Link,
+  Svg,
+  Path,
+  Polygon,
+  Rect,
 } from "@react-pdf/renderer";
 import { AuditResult, TopFix } from "@/lib/types";
 import { STATIC_TIPS } from "@/lib/static-tips";
-
-Font.register({
-  family: "Helvetica",
-  fonts: [],
-});
 
 const colors = {
   pass: "#16a34a",
@@ -21,19 +21,22 @@ const colors = {
   failLight: "#fef2f2",
   blue: "#268ad8",
   blueLight: "#e8f3fb",
+  amber: "#d97706",
+  amberLight: "#fffbeb",
   gray50: "#f9fafb",
   gray100: "#f3f4f6",
   gray200: "#e5e7eb",
   gray400: "#9ca3af",
   gray500: "#6b7280",
-  gray700: "#374151",
-  gray900: "#282f42",
+  gray700: "#4b5563",
+  gray800: "#1f2937",
+  gray900: "#111827",
 };
 
 const s = StyleSheet.create({
   page: {
     fontFamily: "Helvetica",
-    fontSize: 10,
+    fontSize: 9,
     color: colors.gray900,
     paddingTop: 48,
     paddingBottom: 60,
@@ -43,7 +46,7 @@ const s = StyleSheet.create({
     position: "absolute",
     bottom: 24,
     right: 48,
-    fontSize: 9,
+    fontSize: 8,
     color: colors.gray400,
   },
   // Cover
@@ -51,24 +54,28 @@ const s = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
   },
+  logoContainer: {
+    marginBottom: 40,
+  },
   coverLabel: {
     fontSize: 9,
     color: colors.blue,
     textTransform: "uppercase",
-    letterSpacing: 1.5,
-    marginBottom: 16,
+    letterSpacing: 2,
+    marginBottom: 12,
+    fontFamily: "Helvetica-Bold",
   },
   coverTitle: {
-    fontSize: 28,
+    fontSize: 32,
     fontFamily: "Helvetica-Bold",
     color: colors.gray900,
     marginBottom: 8,
-    lineHeight: 1.3,
+    lineHeight: 1.1,
   },
   coverUrl: {
-    fontSize: 13,
+    fontSize: 14,
     color: colors.gray500,
-    marginBottom: 32,
+    marginBottom: 40,
   },
   verdictBox: {
     flexDirection: "row",
@@ -82,13 +89,14 @@ const s = StyleSheet.create({
     borderRadius: 5,
   },
   verdictText: {
-    fontSize: 13,
+    fontSize: 14,
     fontFamily: "Helvetica-Bold",
   },
   coverMeta: {
     fontSize: 9,
     color: colors.gray400,
     marginTop: 8,
+    lineHeight: 1.4,
   },
   // Section headers
   sectionTitle: {
@@ -97,13 +105,17 @@ const s = StyleSheet.create({
     color: colors.gray500,
     textTransform: "uppercase",
     letterSpacing: 1.2,
-    marginBottom: 12,
+    marginBottom: 16,
+    marginTop: 24,
+  },
+  sectionTitleFirst: {
+    marginTop: 0,
   },
   // Score cards
   scoreRow: {
     flexDirection: "row",
-    gap: 10,
-    marginBottom: 20,
+    gap: 12,
+    marginBottom: 24,
   },
   scoreCard: {
     flex: 1,
@@ -114,21 +126,23 @@ const s = StyleSheet.create({
     alignItems: "center",
   },
   scoreValue: {
-    fontSize: 26,
+    fontSize: 24,
     fontFamily: "Helvetica-Bold",
     marginBottom: 2,
   },
   scoreLabel: {
     fontSize: 8,
     color: colors.gray500,
+    textTransform: "uppercase",
+    letterSpacing: 0.5,
   },
   // CWV metric rows
   metricRow: {
     borderWidth: 1,
     borderColor: colors.gray200,
     borderRadius: 8,
-    padding: 14,
-    marginBottom: 8,
+    padding: 12,
+    marginBottom: 12,
   },
   metricHeader: {
     flexDirection: "row",
@@ -140,38 +154,22 @@ const s = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     flex: 1,
-    gap: 6,
-    flexWrap: "wrap",
+    gap: 8,
   },
   metricName: {
     fontSize: 11,
     fontFamily: "Helvetica-Bold",
     color: colors.gray900,
   },
-  metricKeyChip: {
-    fontSize: 8,
-    fontFamily: "Helvetica-Bold",
-    color: colors.gray700,
-    backgroundColor: colors.gray100,
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-    borderRadius: 4,
-    letterSpacing: 0.5,
-  },
   metricValue: {
-    fontSize: 18,
+    fontSize: 16,
     fontFamily: "Helvetica-Bold",
     color: colors.gray900,
-  },
-  metricDescription: {
-    fontSize: 8,
-    color: colors.gray400,
-    marginBottom: 6,
   },
   metricMeaning: {
     fontSize: 9,
     color: colors.gray500,
-    lineHeight: 1.5,
+    lineHeight: 1.6,
   },
   badge: {
     fontSize: 8,
@@ -179,7 +177,6 @@ const s = StyleSheet.create({
     paddingHorizontal: 6,
     paddingVertical: 2,
     borderRadius: 10,
-    marginLeft: 6,
   },
   // Summary
   summaryText: {
@@ -193,27 +190,19 @@ const s = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#d1e7f6",
     borderRadius: 8,
-    padding: 14,
-    marginTop: 16,
-  },
-  quickWinLabel: {
-    fontSize: 8,
-    fontFamily: "Helvetica-Bold",
-    color: colors.blue,
-    textTransform: "uppercase",
-    letterSpacing: 1,
-    marginBottom: 6,
+    padding: 16,
+    marginBottom: 24,
   },
   quickWinTitle: {
-    fontSize: 11,
+    fontSize: 12,
     fontFamily: "Helvetica-Bold",
     color: colors.gray900,
-    marginBottom: 8,
+    marginBottom: 10,
   },
   quickWinStep: {
     fontSize: 9,
     color: colors.gray700,
-    marginBottom: 4,
+    marginBottom: 6,
     lineHeight: 1.5,
   },
   // Fix cards
@@ -221,83 +210,113 @@ const s = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.gray200,
     borderRadius: 8,
-    padding: 14,
-    marginBottom: 10,
+    padding: 16,
+    marginBottom: 16,
   },
   fixHeader: {
     flexDirection: "row",
     alignItems: "flex-start",
-    gap: 8,
-    marginBottom: 6,
+    gap: 10,
+    marginBottom: 8,
   },
   fixRankBubble: {
-    width: 18,
-    height: 18,
-    borderRadius: 9,
+    width: 20,
+    height: 20,
+    borderRadius: 10,
     backgroundColor: colors.gray100,
     alignItems: "center",
     justifyContent: "center",
   },
   fixRankText: {
-    fontSize: 8,
+    fontSize: 9,
     fontFamily: "Helvetica-Bold",
     color: colors.gray700,
   },
   fixHeadline: {
     flex: 1,
-    fontSize: 11,
+    fontSize: 12,
     fontFamily: "Helvetica-Bold",
     color: colors.gray900,
   },
   fixWhy: {
     fontSize: 9,
     color: colors.gray500,
-    lineHeight: 1.5,
-    marginBottom: 8,
-    marginLeft: 26,
+    lineHeight: 1.6,
+    marginBottom: 10,
+    marginLeft: 30,
+  },
+  howToFixLabel: {
+    fontSize: 8,
+    fontFamily: "Helvetica-Bold",
+    color: colors.blue,
+    textTransform: "uppercase",
+    letterSpacing: 1,
+    marginLeft: 30,
+    marginBottom: 6,
   },
   fixSteps: {
     backgroundColor: colors.gray50,
     borderRadius: 6,
-    padding: 10,
-    marginLeft: 26,
-    marginBottom: 6,
+    padding: 12,
+    marginLeft: 30,
+    marginBottom: 8,
   },
   fixStepsText: {
     fontSize: 9,
     color: colors.gray700,
     lineHeight: 1.6,
   },
-  fixImpact: {
+  codeBlock: {
+    backgroundColor: colors.gray800,
+    borderRadius: 6,
+    padding: 12,
+    marginLeft: 30,
+    marginBottom: 8,
+    marginTop: 4,
+  },
+  codeText: {
     fontSize: 8,
+    fontFamily: "Courier",
+    color: "#e2e8f0",
+    lineHeight: 1.5,
+  },
+  resourceLink: {
+    fontSize: 9,
+    color: colors.blue,
+    marginLeft: 30,
+    marginBottom: 6,
+    textDecoration: "underline",
+  },
+  fixImpact: {
+    fontSize: 9,
     fontFamily: "Helvetica-Bold",
     color: colors.pass,
-    marginLeft: 26,
+    marginLeft: 30,
   },
   // Checklist
   checklistItem: {
     flexDirection: "row",
     alignItems: "flex-start",
-    gap: 8,
-    marginBottom: 6,
+    gap: 10,
+    marginBottom: 8,
   },
   checkBox: {
-    width: 12,
-    height: 12,
+    width: 14,
+    height: 14,
     borderWidth: 1,
     borderColor: colors.gray400,
-    borderRadius: 2,
+    borderRadius: 3,
     marginTop: 1,
   },
   checklistText: {
     flex: 1,
-    fontSize: 9,
+    fontSize: 10,
     color: colors.gray700,
     lineHeight: 1.5,
   },
   // Glossary
   glossaryItem: {
-    marginBottom: 10,
+    marginBottom: 12,
   },
   glossaryTerm: {
     fontSize: 10,
@@ -313,7 +332,7 @@ const s = StyleSheet.create({
   divider: {
     borderBottomWidth: 1,
     borderBottomColor: colors.gray200,
-    marginVertical: 16,
+    marginVertical: 20,
   },
   // Tips
   tipCard: {
@@ -321,7 +340,7 @@ const s = StyleSheet.create({
     borderColor: colors.gray200,
     borderRadius: 8,
     padding: 12,
-    marginBottom: 8,
+    marginBottom: 10,
   },
   tipTitle: {
     fontSize: 10,
@@ -334,18 +353,102 @@ const s = StyleSheet.create({
     color: colors.gray500,
     lineHeight: 1.6,
   },
-  tipsIntro: {
+  // Site info
+  siteInfoRow: {
+    flexDirection: "row",
+    gap: 12,
+    marginBottom: 16,
+  },
+  siteInfoItem: {
+    flex: 1,
+    borderWidth: 1,
+    borderColor: colors.gray200,
+    borderRadius: 8,
+    padding: 12,
+  },
+  siteInfoLabel: {
+    fontSize: 8,
+    color: colors.gray400,
+    textTransform: "uppercase",
+    letterSpacing: 0.8,
+    marginBottom: 4,
+  },
+  siteInfoValue: {
+    fontSize: 11,
+    fontFamily: "Helvetica-Bold",
+    color: colors.gray900,
+  },
+  // Disclaimer
+  disclaimerBox: {
+    backgroundColor: colors.amberLight,
+    borderWidth: 1,
+    borderColor: "#fde68a",
+    borderRadius: 8,
+    padding: 16,
+    marginTop: 24,
+  },
+  disclaimerTitle: {
+    fontSize: 10,
+    fontFamily: "Helvetica-Bold",
+    color: colors.amber,
+    marginBottom: 6,
+  },
+  disclaimerText: {
+    fontSize: 9,
+    color: colors.gray700,
+    lineHeight: 1.6,
+  },
+  // SEO snippets
+  seoCard: {
+    borderWidth: 1,
+    borderColor: colors.gray200,
+    borderRadius: 8,
+    padding: 14,
+    marginBottom: 12,
+  },
+  seoTitle: {
+    fontSize: 11,
+    fontFamily: "Helvetica-Bold",
+    color: colors.gray900,
+    marginBottom: 4,
+  },
+  seoDesc: {
     fontSize: 9,
     color: colors.gray500,
-    marginBottom: 12,
+    marginBottom: 8,
     lineHeight: 1.5,
   },
 });
 
-const TOTAL_PAGES = 8;
+const PLATFORM_LABELS: Record<string, string> = {
+  wordpress: "WordPress",
+  shopify: "Shopify",
+  webflow: "Webflow",
+  squarespace: "Squarespace",
+  wix: "Wix",
+  static: "Static Site",
+  custom: "Custom Stack",
+  unknown: "Unknown",
+};
 
-function PageNumber({ n }: { n: number }) {
-  return <Text style={s.pageNumber}>{n} / {TOTAL_PAGES}</Text>;
+function PDFLogo({ color = colors.blue }: { color?: string }) {
+  return (
+    <Svg viewBox="0 0 707.22 170.25" style={{ height: 24 }}>
+      <Path
+        fill={color}
+        d="M106.52,18.63l-13.64-15.62H.74l-.74.65v165.93l.74.65h78.36l.74-.65v-23.19c0-.08,1.27-1.2,1.47-1.08l26.38,24.41,26.36-24.63c.42-.61.99.81.99.87v23.63l.74.65h78.36l.74-.65V3.67l-.74-.65h-94.87l-12.75,15.62Z"
+      />
+      <Path
+        fill={color}
+        d="M511.56,24.34l15.77-21.32h90.44c.3,0,1.05.89.54,1.33l-47.01,82.36,47,82.67-.53.88h-87.23l-19.96-26.93v26.28l-.74.65h-78.85l-.74-.65V3.67l-.74-.65h78.85l.74.65.98,20.68Z"
+      />
+      <Polygon
+        fill={color}
+        points="322.07 153.38 323.72 154.95 332.67 170.25 421.13 170.25 421.81 169.23 323.72 1.57 322.07 0 320.15 2.2 222.48 169.37 223.01 170.25 311.59 170.25 320.15 155.58 322.07 153.38"
+      />
+      <Rect fill={color} x="626.89" y="3.02" width="80.33" height="167.23" />
+    </Svg>
+  );
 }
 
 function VerdictBadge({ status }: { status: "pass" | "fail" }) {
@@ -383,14 +486,49 @@ function scoreColor(score: number) {
   return colors.fail;
 }
 
-export function PDFReport({ audit }: { audit: AuditResult }) {
+function FixCard({ fix }: { fix: TopFix }) {
   return (
-    <Document title={`Maki — ${audit.url}`}>
+    <View style={s.fixCard} wrap={false}>
+      <View style={s.fixHeader}>
+        <View style={s.fixRankBubble}>
+          <Text style={s.fixRankText}>{fix.rank}</Text>
+        </View>
+        <Text style={s.fixHeadline}>{fix.problemHeadline}</Text>
+      </View>
+      <Text style={s.fixWhy}>{fix.whyItMatters}</Text>
+      <Text style={s.howToFixLabel}>How to fix it</Text>
+      <View style={s.fixSteps}>
+        <Text style={s.fixStepsText}>{fix.whatToDo}</Text>
+      </View>
+      {fix.codeSnippet && (
+        <View style={s.codeBlock}>
+          <Text style={s.codeText}>{fix.codeSnippet}</Text>
+        </View>
+      )}
+      {fix.resourceUrl && (
+        <Link src={fix.resourceUrl} style={s.resourceLink}>
+          {fix.resourceLabel ?? fix.resourceUrl}
+        </Link>
+      )}
+      <Text style={s.fixImpact}>{fix.estimatedImpact}</Text>
+    </View>
+  );
+}
+
+export function PDFReport({ audit }: { audit: AuditResult }) {
+  const siteInfo = audit.siteInfo ?? { detectedPlatform: audit.detectedPlatform ?? "unknown" };
+  const fixes = audit.topFixes ?? [];
+
+  return (
+    <Document title={`Maki Report — ${audit.url}`}>
       {/* Page 1: Cover */}
       <Page size="A4" style={s.page}>
         <View style={s.coverPage}>
-          <Text style={s.coverLabel}>Maki — Core Web Vitals Report</Text>
-          <Text style={s.coverTitle}>Performance Report</Text>
+          <View style={s.logoContainer}>
+            <PDFLogo />
+          </View>
+          <Text style={s.coverLabel}>Core Web Vitals Report</Text>
+          <Text style={s.coverTitle}>Performance Diagnostic</Text>
           <Text style={s.coverUrl}>{audit.url}</Text>
           <VerdictBadge status={audit.overallVerdict} />
           <Text style={s.coverMeta}>
@@ -400,12 +538,36 @@ export function PDFReport({ audit }: { audit: AuditResult }) {
               year: "numeric",
             })}
           </Text>
+          {audit.fieldDataAvailable !== undefined && (
+            <Text style={[s.coverMeta, { marginTop: 4 }]}>
+              {audit.fieldDataAvailable
+                ? "Based on real Chrome user data (CrUX) from the past 28 days"
+                : "Based on Lighthouse lab tests (insufficient traffic for field data)"}
+            </Text>
+          )}
         </View>
-        <PageNumber n={1} />
       </Page>
 
-      {/* Page 2: Score Summary */}
+      {/* Page 2: Site Info + Scores + Summary */}
       <Page size="A4" style={s.page}>
+        <Text style={[s.sectionTitle, s.sectionTitleFirst]}>Site Technology</Text>
+        <View style={s.siteInfoRow}>
+          <View style={s.siteInfoItem}>
+            <Text style={s.siteInfoLabel}>Platform</Text>
+            <Text style={s.siteInfoValue}>
+              {PLATFORM_LABELS[siteInfo.detectedPlatform] ?? "Unknown"}
+            </Text>
+          </View>
+          <View style={s.siteInfoItem}>
+            <Text style={s.siteInfoLabel}>Server</Text>
+            <Text style={s.siteInfoValue}>{siteInfo.serverSoftware ?? "—"}</Text>
+          </View>
+          <View style={s.siteInfoItem}>
+            <Text style={s.siteInfoLabel}>Origin</Text>
+            <Text style={s.siteInfoValue}>{siteInfo.serverCountry ?? "—"}</Text>
+          </View>
+        </View>
+
         <Text style={s.sectionTitle}>Lighthouse Performance Score</Text>
         <View style={s.scoreRow}>
           <View style={s.scoreCard}>
@@ -420,42 +582,50 @@ export function PDFReport({ audit }: { audit: AuditResult }) {
             </Text>
             <Text style={s.scoreLabel}>Desktop</Text>
           </View>
+          {audit.lighthouseCategories && (
+            <>
+              <View style={s.scoreCard}>
+                <Text style={[s.scoreValue, { color: scoreColor(audit.lighthouseCategories.accessibility) }]}>
+                  {audit.lighthouseCategories.accessibility}
+                </Text>
+                <Text style={s.scoreLabel}>Accessibility</Text>
+              </View>
+              <View style={s.scoreCard}>
+                <Text style={[s.scoreValue, { color: scoreColor(audit.lighthouseCategories.seo) }]}>
+                  {audit.lighthouseCategories.seo}
+                </Text>
+                <Text style={s.scoreLabel}>SEO</Text>
+              </View>
+            </>
+          )}
         </View>
 
-        <View style={s.divider} />
-        <Text style={s.sectionTitle}>Core Web Vitals</Text>
+        <Text style={s.sectionTitle}>Analysis Summary</Text>
+        <Text style={s.summaryText}>{audit.summaryParagraph}</Text>
 
+        <Text style={s.sectionTitle}>Core Web Vitals</Text>
         {[
-          { key: "LCP", label: "Largest Contentful Paint", description: "How fast the biggest thing on your page appears.", metric: audit.cwvScores.lcp },
-          { key: "INP", label: "Interaction to Next Paint", description: "How quickly your page responds when someone taps or clicks.", metric: audit.cwvScores.inp },
-          { key: "CLS", label: "Cumulative Layout Shift", description: "How much stuff jumps around as the page loads.", metric: audit.cwvScores.cls },
-        ].map(({ key, label, description, metric }) => (
+          { key: "LCP", label: "Largest Contentful Paint", metric: audit.cwvScores.lcp },
+          { key: "INP", label: "Interaction to Next Paint", metric: audit.cwvScores.inp },
+          { key: "CLS", label: "Cumulative Layout Shift", metric: audit.cwvScores.cls },
+        ].map(({ key, label, metric }) => (
           <View key={key} style={s.metricRow}>
             <View style={s.metricHeader}>
               <View style={s.metricHeaderLeft}>
                 <Text style={s.metricName}>{label}</Text>
-                <Text style={s.metricKeyChip}>{key}</Text>
                 <MetricBadge status={metric.status} />
               </View>
               <Text style={s.metricValue}>{metric.value}</Text>
             </View>
-            <Text style={s.metricDescription}>{description}</Text>
             <Text style={s.metricMeaning}>{metric.meaning}</Text>
           </View>
         ))}
-        <PageNumber n={2} />
       </Page>
 
-      {/* Page 3: What This Means */}
+      {/* Page 3: Quick Win + Initial Fixes */}
       <Page size="A4" style={s.page}>
-        <Text style={s.sectionTitle}>What This Means for Your Visitors</Text>
-        <Text style={s.summaryText}>{audit.summaryParagraph}</Text>
-
-        <View style={s.divider} />
-
-        <Text style={s.sectionTitle}>Quick Win — Under 10 Minutes</Text>
+        <Text style={[s.sectionTitle, s.sectionTitleFirst]}>Quick Win — Under 10 Minutes</Text>
         <View style={s.quickWinBox}>
-          <Text style={s.quickWinLabel}>Quick Win</Text>
           <Text style={s.quickWinTitle}>{audit.quickWin.title}</Text>
           {audit.quickWin.steps.map((step, i) => (
             <Text key={i} style={s.quickWinStep}>
@@ -463,42 +633,63 @@ export function PDFReport({ audit }: { audit: AuditResult }) {
             </Text>
           ))}
         </View>
-        <PageNumber n={3} />
+
+        <Text style={s.sectionTitle}>Top Fixes (1 of 3)</Text>
+        {fixes.slice(0, 2).map((fix: TopFix) => (
+          <FixCard key={fix.rank} fix={fix} />
+        ))}
       </Page>
 
-      {/* Pages 4-5: Top Fixes */}
-      {[
-        audit.topFixes.slice(0, 3),
-        audit.topFixes.slice(3),
-      ].map((chunk, pageIdx) => (
-        <Page key={pageIdx} size="A4" style={s.page}>
-          <Text style={s.sectionTitle}>
-            {pageIdx === 0 ? "Your Top 5 Fixes (1 of 2)" : "Your Top 5 Fixes (2 of 2)"}
-          </Text>
-          {chunk.map((fix: TopFix) => (
-            <View key={fix.rank} style={s.fixCard}>
-              <View style={s.fixHeader}>
-                <View style={s.fixRankBubble}>
-                  <Text style={s.fixRankText}>{fix.rank}</Text>
-                </View>
-                <Text style={s.fixHeadline}>{fix.problemHeadline}</Text>
+      {/* Subsequent Fixes */}
+      <Page size="A4" style={s.page}>
+        <Text style={[s.sectionTitle, s.sectionTitleFirst]}>Top Fixes (2 of 3)</Text>
+        {fixes.slice(2, 5).map((fix: TopFix) => (
+          <FixCard key={fix.rank} fix={fix} />
+        ))}
+      </Page>
+
+      <Page size="A4" style={s.page}>
+        <Text style={[s.sectionTitle, s.sectionTitleFirst]}>Top Fixes (3 of 3)</Text>
+        {fixes.slice(5, 7).map((fix: TopFix) => (
+          <FixCard key={fix.rank} fix={fix} />
+        ))}
+
+        {audit.seoSnippets && audit.seoSnippets.length > 0 && (
+          <>
+            <View style={s.divider} />
+            <Text style={s.sectionTitle}>Featured SEO Snippet</Text>
+            <View style={s.seoCard}>
+              <Text style={s.seoTitle}>{audit.seoSnippets[0].title}</Text>
+              <Text style={s.seoDesc}>{audit.seoSnippets[0].description}</Text>
+              <View style={s.codeBlock}>
+                <Text style={s.codeText}>{audit.seoSnippets[0].code}</Text>
               </View>
-              <Text style={s.fixWhy}>{fix.whyItMatters}</Text>
-              <View style={s.fixSteps}>
-                <Text style={s.fixStepsText}>{fix.whatToDo}</Text>
+            </View>
+          </>
+        )}
+      </Page>
+
+      {/* SEO Snippets Page */}
+      {audit.seoSnippets && audit.seoSnippets.length > 1 && (
+        <Page size="A4" style={s.page}>
+          <Text style={[s.sectionTitle, s.sectionTitleFirst]}>Additional SEO Snippets</Text>
+          {audit.seoSnippets.slice(1).map((snippet, i) => (
+            <View key={i} style={s.seoCard}>
+              <Text style={s.seoTitle}>{snippet.title}</Text>
+              <Text style={s.seoDesc}>{snippet.description}</Text>
+              <View style={s.codeBlock}>
+                <Text style={s.codeText}>{snippet.code}</Text>
               </View>
-              <Text style={s.fixImpact}>{fix.estimatedImpact}</Text>
             </View>
           ))}
-          <PageNumber n={pageIdx + 4} />
         </Page>
-      ))}
+      )}
 
-      {/* Page 6: Verification Checklist */}
+      {/* Verification Checklist */}
       <Page size="A4" style={s.page}>
-        <Text style={s.sectionTitle}>Verification Checklist</Text>
-        <Text style={[s.summaryText, { marginBottom: 16 }]}>
-          After applying the fixes above, use this checklist to confirm everything worked.
+        <Text style={[s.sectionTitle, s.sectionTitleFirst]}>Verification Checklist</Text>
+        <Text style={[s.summaryText, { marginBottom: 24 }]}>
+          After applying the fixes above, use this checklist to confirm everything is working correctly.
         </Text>
         {audit.checklistAfter.map((item, i) => (
           <View key={i} style={s.checklistItem}>
@@ -506,14 +697,13 @@ export function PDFReport({ audit }: { audit: AuditResult }) {
             <Text style={s.checklistText}>{item}</Text>
           </View>
         ))}
-        <PageNumber n={6} />
       </Page>
 
-      {/* Page 7: General Infrastructure Tips */}
+      {/* General Infrastructure */}
       <Page size="A4" style={s.page}>
-        <Text style={s.sectionTitle}>General Infrastructure Tips</Text>
-        <Text style={s.tipsIntro}>
-          These aren&apos;t in your top 5 fixes, but every fast site does them. If you haven&apos;t already, these are the foundational layer underneath the specific fixes above.
+        <Text style={[s.sectionTitle, s.sectionTitleFirst]}>General Infrastructure</Text>
+        <Text style={[s.summaryText, { marginBottom: 20 }]}>
+          Foundational layer optimizations that every fast site should implement.
         </Text>
         {STATIC_TIPS.map((tip) => (
           <View key={tip.title} style={s.tipCard}>
@@ -521,48 +711,34 @@ export function PDFReport({ audit }: { audit: AuditResult }) {
             <Text style={s.tipBody}>{tip.body}</Text>
           </View>
         ))}
-        <PageNumber n={7} />
       </Page>
 
-      {/* Page 8: Glossary */}
+      {/* Glossary + Disclaimer */}
       <Page size="A4" style={s.page}>
-        <Text style={s.sectionTitle}>Glossary</Text>
+        <Text style={[s.sectionTitle, s.sectionTitleFirst]}>Glossary</Text>
         {[
-          {
-            term: "LCP — Largest Contentful Paint",
-            def: "Measures how long it takes for the largest visible element on the page (usually your hero image or main heading) to load. Google wants this under 2.5 seconds. Slower means visitors see a blank or partial page for too long.",
-          },
-          {
-            term: "INP — Interaction to Next Paint",
-            def: "Measures how quickly your page responds when a visitor clicks, taps, or types. Google wants this under 200ms. A slow INP means buttons feel unresponsive — like the page is frozen.",
-          },
-          {
-            term: "CLS — Cumulative Layout Shift",
-            def: "Measures how much the page layout moves around while loading. Google wants this below 0.1. High CLS means text or buttons jump around while the visitor is trying to read or click — very frustrating.",
-          },
-          {
-            term: "TTFB — Time to First Byte",
-            def: "How long it takes for the browser to receive the first piece of data from your server. A slow TTFB usually means your hosting server is slow or far from your visitors.",
-          },
-          {
-            term: "Lighthouse",
-            def: "Google's free auditing tool built into Chrome DevTools. It runs a simulated page load and scores your site on Performance, Accessibility, Best Practices, and SEO. This report uses real Lighthouse data from Google's servers.",
-          },
-          {
-            term: "Core Web Vitals",
-            def: "Three specific metrics (LCP, INP, CLS) that Google uses as signals for its search ranking algorithm. A site that passes all three is considered to have a 'good page experience' — which can boost rankings.",
-          },
-          {
-            term: "PageSpeed Insights",
-            def: "Google's free tool that shows both lab data (from Lighthouse) and real-world field data from actual Chrome users visiting your site. This report is powered by the PageSpeed Insights API.",
-          },
+          { term: "LCP", def: "Largest Contentful Paint: Measures how long it takes for the largest visible element to load." },
+          { term: "INP", def: "Interaction to Next Paint: Measures how quickly the page responds to user interactions." },
+          { term: "CLS", def: "Cumulative Layout Shift: Measures visual stability and layout jumps." },
+          { term: "CrUX", def: "Real-world performance data from actual Chrome users visiting your site." },
+          { term: "Lighthouse", def: "Google's audit engine used to simulate and score page performance." },
         ].map((item) => (
           <View key={item.term} style={s.glossaryItem}>
             <Text style={s.glossaryTerm}>{item.term}</Text>
             <Text style={s.glossaryDef}>{item.def}</Text>
           </View>
         ))}
-        <PageNumber n={8} />
+
+        <View style={s.disclaimerBox}>
+          <Text style={s.disclaimerTitle}>Support & Feedback</Text>
+          <Text style={[s.disclaimerText, { marginBottom: 12 }]}>
+            Have questions about your report or need technical assistance? Contact us at support@getmaki.app.
+          </Text>
+          <Text style={s.disclaimerTitle}>Important Disclaimer</Text>
+          <Text style={s.disclaimerText}>
+            Google&apos;s field data (CrUX) updates on a 28-day rolling cycle. Results depend on many factors including hosting and how changes are implemented. All sales are final.
+          </Text>
+        </View>
       </Page>
     </Document>
   );

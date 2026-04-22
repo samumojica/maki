@@ -48,7 +48,7 @@ export async function POST(req: NextRequest) {
     } catch {
       return NextResponse.json({ error: "Invalid URL" }, { status: 400 });
     }
-    if (tier !== "basic" && tier !== "pro") {
+    if (tier !== "basic") {
       return NextResponse.json({ error: "Invalid tier" }, { status: 400 });
     }
 
@@ -60,16 +60,38 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const [{ fetchBothStrategies }, { translatePSIWithFallback }, { putScan }] =
-      await Promise.all([
-        import("@/lib/psi-client"),
-        import("@/lib/gemini-client"),
-        import("@/lib/scan-store"),
-      ]);
+    const [
+      { fetchBothStrategies, detectServerGeo, extractSiteInfo },
+      { translatePSIWithFallback },
+      { putScan },
+    ] = await Promise.all([
+      import("@/lib/psi-client"),
+      import("@/lib/gemini-client"),
+      import("@/lib/scan-store"),
+    ]);
 
     console.log(`[scan] Starting scan for ${url}`);
-    const psiData = await fetchBothStrategies(url);
-    const audit = await translatePSIWithFallback(psiData, url);
+
+    // Fetch PSI data and geo in parallel
+    const [psiData, serverCountry] = await Promise.all([
+      fetchBothStrategies(url),
+      detectServerGeo(url),
+    ]);
+
+    // Extract technology info from PSI response
+    const siteInfoExtracted = extractSiteInfo(psiData);
+
+    // Build server context for the AI prompt
+    const serverContext = {
+      serverCountry,
+      serverSoftware: siteInfoExtracted.serverSoftware,
+      cdnDetected: siteInfoExtracted.cdnDetected,
+      technologies: siteInfoExtracted.technologies,
+    };
+
+    console.log(`[scan] Server context:`, serverContext);
+
+    const audit = await translatePSIWithFallback(psiData, url, serverContext);
 
     const scanId = crypto.randomUUID();
     putScan({ scanId, url, tier, audit, createdAt: Date.now() });
@@ -77,6 +99,8 @@ export async function POST(req: NextRequest) {
     const teaser: TeaserResult = {
       url: audit.url,
       verdict: audit.verdict,
+      mobileScore: audit.mobileScore,
+      desktopScore: audit.desktopScore,
       summaryParagraph: audit.summaryParagraph,
       createdAt: Date.now(),
     };

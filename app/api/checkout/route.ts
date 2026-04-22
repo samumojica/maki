@@ -11,6 +11,7 @@ export async function POST(req: NextRequest) {
     ]);
 
     const body: CheckoutRequest = await req.json();
+    const MAX_PER_WINDOW = 100;
     const { scanId } = body;
 
     if (!scanId) {
@@ -29,8 +30,8 @@ export async function POST(req: NextRequest) {
 
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? "http://localhost:3000";
 
+    // Create an embedded checkout session (ui_mode: 'embedded')
     const session = await stripe.checkout.sessions.create({
-      payment_method_types: ["card"],
       line_items: [
         {
           price_data: {
@@ -45,14 +46,23 @@ export async function POST(req: NextRequest) {
         },
       ],
       mode: "payment",
-      success_url: `${baseUrl}/results?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${baseUrl}/scan/${scanId}`,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      ui_mode: "embedded" as any,
+      return_url: `${baseUrl}/results?session_id={CHECKOUT_SESSION_ID}`,
       metadata: { scanId, url, tier },
     });
 
-    return NextResponse.json({ sessionId: session.id, checkoutUrl: session.url });
+    return NextResponse.json({
+      clientSecret: session.client_secret,
+      // Also keep checkoutUrl as fallback for non-embedded browsers
+      checkoutUrl: session.url,
+    });
   } catch (err) {
-    console.error("Checkout error:", err);
-    return NextResponse.json({ error: "Failed to create checkout session" }, { status: 500 });
+    const error = err as any;
+    console.error("Checkout error:", error.message || error);
+    return NextResponse.json({ 
+      error: "Failed to create checkout session", 
+      details: error.message || String(error) 
+    }, { status: 500 });
   }
 }

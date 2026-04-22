@@ -1,8 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Logo } from "./Logo";
+import { SchemaMarkup } from "./SchemaMarkup";
+import { PrivacyModal, TermsModal } from "./LegalModals";
+import { FAQ_ITEMS } from "@/lib/faq-data";
 
 type Tier = "basic" | "pro";
 
@@ -11,6 +14,9 @@ export default function LandingPage() {
   const [url, setUrl] = useState("");
   const [urlError, setUrlError] = useState("");
   const [loading, setLoading] = useState<Tier | null>(null);
+  const [scanProgress, setScanProgress] = useState(0);
+  const [privacyOpen, setPrivacyOpen] = useState(false);
+  const [termsOpen, setTermsOpen] = useState(false);
 
   function validateUrl(value: string): boolean {
     try {
@@ -27,6 +33,8 @@ export default function LandingPage() {
     const trimmed = url.trim();
     if (!trimmed) {
       setUrlError("Please enter a website URL.");
+      document.getElementById("url-input")?.scrollIntoView({ behavior: "smooth", block: "center" });
+      document.getElementById("url-input")?.focus({ preventScroll: true });
       return;
     }
 
@@ -37,10 +45,18 @@ export default function LandingPage() {
 
     if (!validateUrl(normalized)) {
       setUrlError("Please enter a valid URL (e.g. https://example.com).");
+      document.getElementById("url-input")?.scrollIntoView({ behavior: "smooth", block: "center" });
+      document.getElementById("url-input")?.focus({ preventScroll: true });
       return;
     }
 
     setLoading(tier);
+    setScanProgress(0);
+
+    // Animate progress bar
+    const interval = setInterval(() => {
+      setScanProgress((p) => (p >= 90 ? 90 : p + Math.random() * 15));
+    }, 600);
 
     try {
       const res = await fetch("/api/scan", {
@@ -52,8 +68,13 @@ export default function LandingPage() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? "Scan failed");
 
+      clearInterval(interval);
+      setScanProgress(100);
+      await new Promise((r) => setTimeout(r, 400));
       router.push(`/scan/${data.scanId}`);
     } catch (err) {
+      clearInterval(interval);
+      setScanProgress(0);
       console.error(err);
       setUrlError((err as Error).message || "Something went wrong. Please try again.");
       setLoading(null);
@@ -70,7 +91,7 @@ export default function LandingPage() {
           </div>
           <a
             href="#pricing"
-            className="text-sm text-gray-600 hover:text-[#282f42] transition-colors"
+            className="text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-lg px-4 py-2 hover:bg-gray-50 hover:text-[#282f42] transition-colors shadow-sm"
           >
             Pricing
           </a>
@@ -78,7 +99,7 @@ export default function LandingPage() {
       </header>
 
       {/* Hero */}
-      <section className="px-6 pt-20 pb-28">
+      <section className="px-6 pt-16 pb-28">
         <div className="max-w-5xl mx-auto text-center">
           {/* Eyebrow badge */}
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-gray-200 bg-white mb-8">
@@ -107,41 +128,67 @@ export default function LandingPage() {
 
           {/* URL Input + CTA */}
           <div className="w-full max-w-xl mx-auto">
-            <div className="flex items-center border border-gray-300 rounded-xl overflow-hidden focus-within:ring-4 focus-within:ring-[#e8f3fb] focus-within:border-[#268ad8] bg-white shadow-sm transition-all">
-              <span className="pl-5 text-gray-400 text-base select-none shrink-0">
-                https://
-              </span>
-              <input
-                type="text"
-                value={url}
-                onChange={(e) => {
-                  setUrl(e.target.value);
-                  setUrlError("");
-                }}
-                placeholder="yourwebsite.com"
-                className="flex-1 py-4 px-2 text-[#282f42] placeholder-gray-400 outline-none text-base"
-                onKeyDown={(e) => e.key === "Enter" && handleScan("basic")}
-              />
-              <button
-                onClick={() => handleScan("basic")}
-                disabled={loading !== null}
-                className="m-1.5 px-6 py-2.5 rounded-lg bg-[#268ad8] text-white text-sm font-semibold hover:bg-[#1e6fb0] transition-colors disabled:opacity-60 shrink-0"
-              >
-                {loading === "basic" ? "Scanning…" : "Audit my site →"}
-              </button>
-            </div>
-            {urlError && (
-              <p className="text-red-500 text-sm mt-2 text-left">{urlError}</p>
+            {loading ? (
+              <div className="border border-gray-200 rounded-xl p-5 bg-white shadow-sm">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-5 h-5 border-2 border-gray-200 border-t-[#268ad8] rounded-full animate-spin shrink-0" />
+                  <span className="text-sm font-medium text-[#282f42]">
+                    {scanProgress < 30 ? "Fetching PageSpeed data from Google…" : scanProgress < 60 ? "Analyzing your Core Web Vitals…" : scanProgress < 90 ? "Generating your tailored report…" : "Almost done…"}
+                  </span>
+                </div>
+                <div className="w-full bg-gray-100 rounded-full h-2 overflow-hidden">
+                  <div
+                    className="bg-[#268ad8] h-2 rounded-full transition-all duration-500 ease-out"
+                    style={{ width: `${scanProgress}%` }}
+                  />
+                </div>
+                <p className="text-xs text-gray-400 mt-2">This usually takes 15–25 seconds</p>
+              </div>
+            ) : (
+              <>
+                <div className="flex items-center border border-gray-300 rounded-xl overflow-hidden focus-within:ring-4 focus-within:ring-[#e8f3fb] focus-within:border-[#268ad8] bg-white shadow-sm transition-all">
+                  <span className="pl-5 text-gray-400 text-base select-none shrink-0">
+                    https://
+                  </span>
+                  <input
+                    id="url-input"
+                    type="text"
+                    value={url}
+                    onChange={(e) => {
+                      setUrl(e.target.value);
+                      setUrlError("");
+                    }}
+                    placeholder="yourwebsite.com"
+                    className="flex-1 py-4 px-2 text-[#282f42] placeholder-gray-400 outline-none text-base"
+                    onKeyDown={(e) => e.key === "Enter" && handleScan("basic")}
+                  />
+                  <button
+                    onClick={() => handleScan("basic")}
+                    disabled={loading !== null}
+                    className="m-1.5 px-6 py-2.5 rounded-lg bg-[#268ad8] text-white text-sm font-semibold hover:bg-[#1e6fb0] transition-colors disabled:opacity-60 shrink-0"
+                  >
+                    Audit my site →
+                  </button>
+                </div>
+                {urlError && (
+                  <p className="text-red-500 text-sm mt-2 text-left">{urlError}</p>
+                )}
+              </>
             )}
             <p className="text-xs text-gray-400 mt-4">
-              Free scan · See your verdict first · Pay $9 only if you want the full fix list
+              Free scan · No account needed · Pay $9 only if you want the full fix list
             </p>
           </div>
         </div>
 
         {/* Mock preview dashboard */}
-        <div className="max-w-4xl mx-auto mt-20 relative">
-          <div className="bg-white border border-gray-200 rounded-2xl shadow-xl overflow-hidden">
+        <div className="max-w-4xl mx-auto mt-20 relative group">
+          <img
+            src="/mascot.png"
+            alt="Maki Mascot"
+            className="absolute -top-[120px] right-8 sm:right-16 w-32 sm:w-48 h-auto z-[9] -mr-[50px] transition-transform duration-500 group-hover:-translate-y-4"
+          />
+          <div className="bg-white border border-gray-200 rounded-2xl shadow-xl overflow-hidden relative z-10">
             {/* Browser chrome */}
             <div className="border-b border-gray-100 px-4 py-3 flex items-center gap-2 bg-gray-50">
               <div className="flex gap-1.5">
@@ -220,9 +267,128 @@ export default function LandingPage() {
           </div>
 
           {/* Floating badge */}
-          <div className="hidden sm:flex absolute -bottom-4 -right-4 items-center gap-2 bg-white border border-gray-200 shadow-lg rounded-full px-4 py-2">
+          <div className="hidden sm:flex absolute -bottom-4 -right-4 items-center gap-2 bg-white border border-gray-200 shadow-lg rounded-full px-4 py-2 z-[11]">
             <span className="w-2 h-2 bg-green-500 rounded-full" />
             <span className="text-xs font-medium">Real Chrome user data</span>
+          </div>
+        </div>
+      </section>
+
+      {/* Powered by / Browser compatibility strip */}
+      <section className="border-t border-gray-100 px-6 py-12 bg-white">
+        <div className="max-w-4xl mx-auto flex flex-col md:flex-row items-center justify-center gap-8 md:gap-16">
+          <div className="flex flex-col items-center gap-3">
+            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Powered By</p>
+            <div className="flex items-center gap-2 text-gray-600 font-semibold">
+              <svg className="w-7 h-7" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M 20 80 A 40 40 0 1 1 80 80" stroke="#EFF6FF" strokeWidth="14" strokeLinecap="round" />
+                <path d="M 20 80 A 40 40 0 0 1 65 21" stroke="#0057E7" strokeWidth="14" strokeLinecap="round" />
+                <path d="M 65 21 A 40 40 0 0 1 80 80" stroke="#A855F7" strokeWidth="14" strokeLinecap="round" />
+                <path d="M 42 63 L 75 25 L 58 67 Z" fill="#38BDF8" />
+                <circle cx="50" cy="65" r="14" fill="#38BDF8" />
+                <circle cx="50" cy="65" r="6" fill="#0057E7" />
+              </svg>
+              PageSpeed Insights
+            </div>
+          </div>
+          <div className="hidden md:block w-px h-10 bg-gray-200" />
+          <div className="flex flex-col items-center gap-3">
+            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Works with data from all major browsers</p>
+            <div className="flex flex-wrap justify-center items-center gap-6">
+              <div className="flex items-center gap-2 text-gray-500 font-medium">
+                <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/chrome/chrome-original.svg" alt="Chrome" className="w-5 h-5" />
+                Chrome
+              </div>
+              <div className="flex items-center gap-2 text-gray-500 font-medium">
+                <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/firefox/firefox-original.svg" alt="Firefox" className="w-5 h-5" />
+                Firefox
+              </div>
+              <div className="flex items-center gap-2 text-gray-500 font-medium">
+                <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/safari/safari-original.svg" alt="Safari" className="w-5 h-5" />
+                Safari
+              </div>
+              <div className="flex items-center gap-2 text-gray-500 font-medium">
+                <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/opera/opera-original.svg" alt="Opera" className="w-5 h-5" />
+                Opera
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* What are Core Web Vitals? */}
+      <section className="px-6 py-24 bg-gray-50 border-b border-gray-100">
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center mb-14">
+            <p className="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-3">
+              Understanding the metrics
+            </p>
+            <h2 className="text-3xl sm:text-4xl font-bold max-w-2xl mx-auto leading-tight">
+              What are Core Web Vitals?
+            </h2>
+            <p className="text-gray-500 mt-4 max-w-2xl mx-auto">
+              Core Web Vitals are three metrics Google uses to measure how fast and smooth your website feels to real visitors. Since 2021, they directly affect your Google search ranking.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+            {[
+              {
+                code: "LCP",
+                name: "Largest Contentful Paint",
+                desc: "How fast the biggest element loads. Think: your hero image or main heading appearing on screen.",
+                good: "≤ 2.5s",
+                poor: "> 4.0s",
+                color: "#268ad8",
+              },
+              {
+                code: "INP",
+                name: "Interaction to Next Paint",
+                desc: "How quickly your page responds when someone clicks, taps, or types. Slow INP = buttons feel frozen.",
+                good: "≤ 200ms",
+                poor: "> 500ms",
+                color: "#16a34a",
+              },
+              {
+                code: "CLS",
+                name: "Cumulative Layout Shift",
+                desc: "How much stuff jumps around as the page loads. High CLS = visitors accidentally click the wrong thing.",
+                good: "≤ 0.1",
+                poor: "> 0.25",
+                color: "#d97706",
+              },
+            ].map((metric) => (
+              <div key={metric.code} className="bg-white border border-gray-200 rounded-2xl p-6">
+                <div className="flex items-center gap-3 mb-4">
+                  <div
+                    className="w-10 h-10 rounded-lg flex items-center justify-center text-white font-bold text-sm"
+                    style={{ backgroundColor: metric.color }}
+                  >
+                    {metric.code}
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold text-[#282f42]">{metric.name}</p>
+                    <p className="text-[10px] font-mono text-gray-400">{metric.code}</p>
+                  </div>
+                </div>
+                <p className="text-sm text-gray-600 leading-relaxed mb-4">{metric.desc}</p>
+                <div className="flex gap-2">
+                  <span className="text-xs bg-green-50 text-green-700 border border-green-200 rounded-full px-2.5 py-1 font-medium">
+                    Good: {metric.good}
+                  </span>
+                  <span className="text-xs bg-red-50 text-red-700 border border-red-200 rounded-full px-2.5 py-1 font-medium">
+                    Poor: {metric.poor}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="text-center mt-10">
+            <p className="text-sm text-gray-500 max-w-lg mx-auto">
+              Failing these metrics means Google may rank your site lower — and visitors bounce before they see your content.{" "}
+              <strong className="text-[#282f42]">Maki tells you exactly how to fix them.</strong>
+            </p>
           </div>
         </div>
       </section>
@@ -428,12 +594,69 @@ export default function LandingPage() {
         </div>
       </section>
 
+
+      {/* Why not GTmetrix / DebugBear? */}
+      <section className="bg-white border-b border-gray-100 px-6 py-24">
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center mb-16">
+            <p className="text-xs font-bold text-[#268ad8] uppercase tracking-widest mb-3">
+              The alternative
+            </p>
+            <h2 className="text-3xl sm:text-4xl font-extrabold max-w-2xl mx-auto leading-tight text-[#282f42]">
+              Skip the accounts, caps, and monthly fees.
+            </h2>
+            <p className="text-gray-500 mt-4 max-w-xl mx-auto text-lg">
+              Most performance tools force you to create an account, limit your free scans, or charge monthly. Maki doesn&apos;t.
+            </p>
+          </div>
+
+          <div className="max-w-4xl mx-auto bg-white rounded-3xl shadow-xl overflow-hidden border border-gray-100">
+            <div className="grid grid-cols-4 text-xs sm:text-sm md:text-base">
+              {/* Header */}
+              <div className="p-3 sm:p-5 md:p-6 font-semibold text-gray-400 border-b border-r border-gray-100 bg-gray-50 flex items-center">Feature</div>
+              <div className="p-3 sm:p-5 md:p-6 font-semibold text-gray-500 text-center border-b border-r border-gray-100 bg-gray-50 flex items-center justify-center">GTmetrix</div>
+              <div className="p-3 sm:p-5 md:p-6 font-semibold text-gray-500 text-center border-b border-r border-gray-100 bg-gray-50 flex items-center justify-center">DebugBear</div>
+              <div className="p-3 sm:p-5 md:p-6 font-bold text-white text-center border-b bg-[#282f42] flex items-center justify-center">Maki</div>
+
+              {/* Rows */}
+              {[
+                { label: "Account required", gt: "Yes", db: "Yes", mk: "No", good: true },
+                { label: "Payment model", gt: "Subscription", db: "Subscription", mk: "Pay per report", good: true },
+                { label: "Cost", gt: "$14.95+/mo", db: "$19+/mo", mk: "$9 once", good: true },
+                { label: "Tailored fixes", gt: "No", db: "Limited", mk: "Yes", good: true },
+                { label: "Instant PDF", gt: "No", db: "No", mk: "Yes", good: true },
+              ].map((row, i, arr) => {
+                const isLast = i === arr.length - 1;
+                return (
+                  <React.Fragment key={i}>
+                    <div className={`p-3 sm:p-4 md:p-6 text-gray-700 font-medium border-r border-gray-100 flex items-center ${!isLast ? 'border-b' : ''}`}>{row.label}</div>
+                    <div className={`p-3 sm:p-4 md:p-6 text-gray-500 text-center border-r border-gray-100 flex items-center justify-center ${!isLast ? 'border-b' : ''}`}>{row.gt}</div>
+                    <div className={`p-3 sm:p-4 md:p-6 text-gray-500 text-center border-r border-gray-100 flex items-center justify-center ${!isLast ? 'border-b' : ''}`}>{row.db}</div>
+                    <div className={`p-3 sm:p-4 md:p-6 text-[#268ad8] text-center font-bold bg-[#e8f3fb] flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 ${!isLast ? 'border-b border-[#d1e7f6]' : ''}`}>
+                      {row.mk}
+                      {row.good && <svg className="w-3 h-3 sm:w-4 sm:h-4 text-[#268ad8]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>}
+                    </div>
+                  </React.Fragment>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Pricing */}
       <section
         id="pricing"
-        className="border-t border-gray-100 bg-gray-50 px-6 py-24"
+        className="border-t border-gray-100 bg-gray-50 px-6 py-24 overflow-hidden relative group"
       >
-        <div className="max-w-4xl mx-auto">
+        {/* Celebrate mascot */}
+        <img
+          src="/celebrate.png"
+          alt="Celebrate Mascot"
+          className="absolute top-[324px] left-[114px] w-[476px] h-auto z-[9] transition-transform duration-500 group-hover:-rotate-2 group-hover:-translate-y-2 pointer-events-none opacity-100 hidden md:block"
+        />
+
+        <div className="max-w-4xl mx-auto relative z-10">
           <div className="text-center mb-14">
             <p className="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-3">
               Pricing
@@ -446,32 +669,35 @@ export default function LandingPage() {
             </p>
           </div>
 
-          <div className="grid sm:grid-cols-2 gap-4 max-w-3xl mx-auto">
-            {/* Basic */}
-            <div className="bg-white border border-gray-200 rounded-2xl p-8 flex flex-col">
-              <div className="mb-6">
-                <p className="text-sm font-semibold text-gray-500 mb-2">
-                  Basic
-                </p>
-                <div className="flex items-baseline gap-1">
-                  <span className="text-5xl font-bold tracking-tight">$9</span>
-                  <span className="text-gray-400">/ once</span>
+          <div className="max-w-md mx-auto relative z-10">
+            {/* Single Tier */}
+            <div className="bg-[#282f42] text-white border border-[#1e2435] rounded-3xl p-8 flex flex-col shadow-2xl relative ring-4 ring-[#268ad8]/20 z-10">
+              <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#268ad8] text-white text-xs font-bold px-4 py-1.5 rounded-full uppercase tracking-widest shadow-sm">
+                Full Report
+              </span>
+              <div className="mb-8 mt-2 text-center">
+                <div className="flex items-baseline justify-center gap-1">
+                  <span className="text-6xl font-extrabold tracking-tight text-white">$9</span>
+                  <span className="text-gray-400 font-medium">/ once</span>
                 </div>
-                <p className="text-sm text-gray-500 mt-2">
-                  Perfect for a single site audit
+                <p className="text-sm text-gray-400 mt-3">
+                  Everything you need to fix your Core Web Vitals
                 </p>
               </div>
-              <ul className="text-sm text-gray-700 space-y-3 mb-8 flex-1">
+              <ul className="text-sm text-gray-200 space-y-4 mb-8 flex-1 px-4">
                 {[
-                  "1 URL audited",
-                  "LCP, INP, CLS scores",
-                  "Top 5 ranked fixes",
+                  "Complete performance audit",
+                  "LCP, INP, CLS + Lighthouse scores",
+                  "Top 7 ranked fixes with code snippets",
+                  "Technology & server detection",
+                  "Plugin links & resource guides",
+                  "SEO snippets (copy-paste ready)",
                   "Quick win (under 10 min)",
-                  "Downloadable PDF report",
+                  "Instant PDF download",
                 ].map((f) => (
-                  <li key={f} className="flex items-start gap-2">
+                  <li key={f} className="flex items-start gap-3">
                     <svg
-                      className="w-4 h-4 text-green-600 mt-0.5 shrink-0"
+                      className="w-5 h-5 text-[#268ad8] shrink-0"
                       fill="none"
                       viewBox="0 0 24 24"
                       stroke="currentColor"
@@ -483,67 +709,21 @@ export default function LandingPage() {
                         d="M5 13l4 4L19 7"
                       />
                     </svg>
-                    {f}
+                    <span className="font-medium">{f}</span>
                   </li>
                 ))}
               </ul>
               <button
                 onClick={() => handleScan("basic")}
                 disabled={loading !== null}
-                className="w-full py-3 rounded-xl bg-white border border-[#268ad8] text-[#268ad8] text-sm font-semibold hover:bg-[#e8f3fb] transition-colors disabled:opacity-60"
+                className="w-full py-4 rounded-xl bg-[#268ad8] text-white text-base font-bold hover:bg-[#1e6fb0] transition-colors disabled:opacity-60 shadow-lg shadow-[#268ad8]/30"
               >
-                {loading === "basic" ? "Scanning…" : "Get Basic — $9"}
+                {loading === "basic" ? "Scanning…" : "Audit my site now"}
               </button>
-            </div>
-
-            {/* Pro */}
-            <div className="bg-[#282f42] text-white rounded-2xl p-8 flex flex-col relative ring-4 ring-[#268ad8]/10">
-              <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-green-500 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
-                Best value
-              </span>
-              <div className="mb-6">
-                <p className="text-sm font-semibold text-gray-400 mb-2">Pro</p>
-                <div className="flex items-baseline gap-1">
-                  <span className="text-5xl font-bold tracking-tight">$29</span>
-                  <span className="text-gray-500">/ once</span>
-                </div>
-                <p className="text-sm text-gray-400 mt-2">
-                  For agencies & multi-page sites
-                </p>
+              <div className="flex items-center justify-center gap-1.5 mt-4 opacity-80">
+                <span className="text-xs text-gray-400">Secure checkout via</span>
+                <span className="font-bold tracking-tight italic text-[#635BFF] text-[15px] font-sans">stripe</span>
               </div>
-              <ul className="text-sm text-gray-200 space-y-3 mb-8 flex-1">
-                {[
-                  "5 URLs audited",
-                  "Everything in Basic",
-                  "Mobile + Desktop scores",
-                  "Compare pages side-by-side",
-                  "Priority data refresh",
-                ].map((f) => (
-                  <li key={f} className="flex items-start gap-2">
-                    <svg
-                      className="w-4 h-4 text-green-400 mt-0.5 shrink-0"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                      strokeWidth={3}
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M5 13l4 4L19 7"
-                      />
-                    </svg>
-                    {f}
-                  </li>
-                ))}
-              </ul>
-              <button
-                onClick={() => handleScan("pro")}
-                disabled={loading !== null}
-                className="w-full py-3 rounded-xl bg-[#268ad8] text-white text-sm font-semibold hover:bg-[#1e6fb0] transition-colors disabled:opacity-60"
-              >
-                {loading === "pro" ? "Scanning…" : "Get Pro — $29"}
-              </button>
             </div>
           </div>
 
@@ -564,28 +744,7 @@ export default function LandingPage() {
           </div>
 
           <div className="space-y-3">
-            {[
-              {
-                q: "How is this different from running PageSpeed Insights myself?",
-                a: "PSI gives you a wall of technical jargon. We translate it into ranked, actionable fixes — with exact plugin names, settings, and steps. Ready for you or your developer.",
-              },
-              {
-                q: "Do I need a WordPress site?",
-                a: "No. This works for any website — WordPress, Shopify, Webflow, custom code, whatever. The fixes are tailored to your stack.",
-              },
-              {
-                q: "Will this actually improve my Google ranking?",
-                a: "Core Web Vitals are a confirmed Google ranking signal. Fixing them won't guarantee a ranking boost, but failing them definitely hurts. This report tells you exactly what to fix first.",
-              },
-              {
-                q: "What if the report doesn't help me?",
-                a: "Email us within 7 days and we'll refund you, no questions asked.",
-              },
-              {
-                q: "Do you store my data?",
-                a: "No. We don't keep your URL, report, or any personal info. Once you download the PDF, it's gone from our end.",
-              },
-            ].map((item, i) => (
+            {FAQ_ITEMS.map((item, i) => (
               <details
                 key={i}
                 className="group border border-gray-200 rounded-xl bg-white"
@@ -612,6 +771,36 @@ export default function LandingPage() {
               </details>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* No fuss strip */}
+      <section className="px-6 py-16 bg-gray-50 border-y border-gray-100">
+        <div className="max-w-4xl mx-auto grid grid-cols-1 sm:grid-cols-3 gap-8 text-center">
+          {[
+            {
+              icon: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" /></svg>,
+              label: "No account", sub: "Zero signup required"
+            },
+            {
+              icon: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z" /></svg>,
+              label: "No login", sub: "Just paste your URL"
+            },
+            {
+              icon: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" /></svg>,
+              label: "One-time $9", sub: "No subscription ever"
+            },
+          ].map((item) => (
+            <div key={item.label} className="flex flex-col items-center gap-3">
+              <div className="w-10 h-10 rounded-lg bg-[#268ad8] text-white flex items-center justify-center mb-1 shadow-sm">
+                {item.icon}
+              </div>
+              <div>
+                <p className="text-base font-bold text-[#282f42]">{item.label}</p>
+                <p className="text-sm text-gray-500">{item.sub}</p>
+              </div>
+            </div>
+          ))}
         </div>
       </section>
 
@@ -652,30 +841,67 @@ export default function LandingPage() {
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-[#1e2435] bg-[#282f42] text-gray-500 px-6 py-8">
-        <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2">
-            <Logo className="h-5 w-auto" color="white" />
-            <span className="text-xs">
-              © {new Date().getFullYear()} Maki
+      <footer className="border-t border-[#1e2435] bg-[#282f42] text-gray-500 px-6 py-12">
+        <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="flex flex-col gap-4">
+            <div className="flex items-center gap-2">
+              <Logo className="h-6 w-auto" color="white" />
+              <span className="text-sm font-medium text-white hidden">Maki</span>
+            </div>
+            <span className="text-xs text-gray-400 max-w-sm">
+              Instant Core Web Vitals audits and tailored performance reports.
+            </span>
+            <span className="text-[10px] text-gray-500 max-w-sm mt-4">
+              Not affiliated with, endorsed by, or associated with Google or Alphabet Inc.
             </span>
           </div>
-          <div className="flex gap-6 text-xs">
-            <a href="/privacy" className="hover:text-white transition-colors">
-              Privacy
-            </a>
-            <a href="/terms" className="hover:text-white transition-colors">
-              Terms
-            </a>
+
+          <div className="flex flex-col gap-3 text-sm">
+            <h4 className="text-white font-semibold mb-1">Product</h4>
+            <a href="#pricing" className="hover:text-white transition-colors">Pricing</a>
+            <a href="https://developers.google.com/speed/docs/insights/v5/about" target="_blank" rel="noreferrer" className="hover:text-white transition-colors">PageSpeed Insights API</a>
+            <a href="https://web.dev/vitals/" target="_blank" rel="noreferrer" className="hover:text-white transition-colors">About Core Web Vitals</a>
+          </div>
+
+          <div className="flex flex-col gap-3 text-sm">
+            <h4 className="text-white font-semibold mb-1">Legal & Contact</h4>
+            <button
+              onClick={() => setPrivacyOpen(true)}
+              className="text-left hover:text-white transition-colors"
+            >
+              Privacy Policy
+            </button>
+            <button
+              onClick={() => setTermsOpen(true)}
+              className="text-left hover:text-white transition-colors"
+            >
+              Terms & Conditions
+            </button>
             <a
-              href="mailto:hello@getmaki.app"
+              href="mailto:support@getmaki.app"
               className="hover:text-white transition-colors"
             >
-              Contact
+              support@getmaki.app
             </a>
+
+          </div>
+        </div>
+
+        <div className="max-w-6xl mx-auto mt-12 pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4 text-xs">
+          <span>© {new Date().getFullYear()} Maki. All rights reserved.</span>
+          <div className="flex gap-4">
+            {/* Backlinks for SEO */}
+            <a href="https://getmaki.app" className="hover:text-white transition-colors">Core Web Vitals Checker</a>
+            <a href="https://getmaki.app" className="hover:text-white transition-colors">PageSpeed Report</a>
+            <a href="https://getmaki.app" className="hover:text-white transition-colors">GTmetrix Alternative</a>
           </div>
         </div>
       </footer>
+
+      {/* Modals & Schema */}
+      <PrivacyModal open={privacyOpen} onClose={() => setPrivacyOpen(false)} />
+      <TermsModal open={termsOpen} onClose={() => setTermsOpen(false)} />
+      <SchemaMarkup />
     </main>
   );
 }
