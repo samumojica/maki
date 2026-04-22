@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Logo } from "./Logo";
 import { SchemaMarkup } from "./SchemaMarkup";
@@ -17,6 +17,10 @@ export default function LandingPage() {
   const [scanProgress, setScanProgress] = useState(0);
   const [privacyOpen, setPrivacyOpen] = useState(false);
   const [termsOpen, setTermsOpen] = useState(false);
+
+  useEffect(() => {
+    console.log("Maki v1.0.4 - " + new Date().toISOString());
+  }, []);
 
   function validateUrl(value: string): boolean {
     try {
@@ -84,7 +88,7 @@ export default function LandingPage() {
   return (
     <main className="min-h-screen bg-white flex flex-col text-[#282f42]">
       {/* Nav */}
-      <header className="border-b border-gray-100 px-6 py-4">
+      <header className="px-6 py-4 bg-[#d8e7ee]">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Logo className="h-8 w-auto" />
@@ -99,7 +103,7 @@ export default function LandingPage() {
       </header>
 
       {/* Hero */}
-      <section className="px-6 pt-16 pb-28">
+      <section className="px-6 pt-16 pb-28 bg-[#d8e7ee]">
         <div className="max-w-5xl mx-auto text-center">
           {/* Eyebrow badge */}
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-gray-200 bg-white mb-8">
@@ -113,11 +117,11 @@ export default function LandingPage() {
           </div>
 
           <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold tracking-tight mb-6 leading-[1.05]">
-            Your site&apos;s real
+            Your site&apos;s <span className="text-[#c84367]">real</span>
             <br />
             performance score.
             <br />
-            <span className="text-[#268ad8]">Explained like a human.</span>
+            <span className="text-[#268ad8]">Stop guessing. Start fixing.</span>
           </h1>
 
           <p className="text-xl text-gray-500 max-w-2xl mx-auto mb-10 leading-relaxed">
@@ -317,10 +321,10 @@ export default function LandingPage() {
       </section>
 
       {/* What are Core Web Vitals? */}
-      <section className="px-6 py-24 bg-gray-50 border-b border-gray-100">
+      <section className="px-6 py-24 bg-white border-b border-gray-100">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-14">
-            <p className="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-3">
+            <p className="text-xs font-semibold text-[#c84367] uppercase tracking-widest mb-3">
               Understanding the metrics
             </p>
             <h2 className="text-3xl sm:text-4xl font-bold max-w-2xl mx-auto leading-tight">
@@ -394,10 +398,10 @@ export default function LandingPage() {
       </section>
 
       {/* AI can't do this */}
-      <section className="border-t border-gray-100 bg-gray-50 px-6 py-24">
+      <section className="px-6 py-24 bg-[#d8e7ee]">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-12">
-            <p className="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-3">
+            <p className="text-xs font-semibold text-[#268AD8] uppercase tracking-widest mb-3">
               The honest truth
             </p>
             <h2 className="text-3xl sm:text-4xl font-bold max-w-2xl mx-auto leading-tight">
@@ -500,10 +504,10 @@ export default function LandingPage() {
       </section>
 
       {/* How it works */}
-      <section className="border-t border-gray-100 px-6 py-24">
+      <section className="px-6 py-24 bg-gray-50 border-y border-gray-100">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-16">
-            <p className="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-3">
+            <p className="text-xs font-semibold text-[#c84367] uppercase tracking-widest mb-3">
               How it works
             </p>
             <h2 className="text-3xl sm:text-4xl font-bold">
@@ -602,7 +606,7 @@ export default function LandingPage() {
             <p className="text-xs font-bold text-[#268ad8] uppercase tracking-widest mb-3">
               The alternative
             </p>
-            <h2 className="text-3xl sm:text-4xl font-extrabold max-w-2xl mx-auto leading-tight text-[#282f42]">
+            <h2 className="text-3xl sm:text-4xl font-extrabold max-w-[490px] mx-auto leading-tight text-[#282f42]">
               Skip the accounts, caps, and monthly fees.
             </h2>
             <p className="text-gray-500 mt-4 max-w-xl mx-auto text-lg">
@@ -658,7 +662,7 @@ export default function LandingPage() {
 
         <div className="max-w-4xl mx-auto relative z-10">
           <div className="text-center mb-14">
-            <p className="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-3">
+            <p className="text-xs font-semibold text-[#c84367] uppercase tracking-widest mb-3">
               Pricing
             </p>
             <h2 className="text-3xl sm:text-4xl font-bold">
@@ -671,8 +675,8 @@ export default function LandingPage() {
 
           <div className="max-w-md mx-auto relative z-10">
             {/* Single Tier */}
-            <div className="bg-[#282f42] text-white border border-[#1e2435] rounded-3xl p-8 flex flex-col shadow-2xl relative ring-4 ring-[#268ad8]/20 z-10">
-              <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#268ad8] text-white text-xs font-bold px-4 py-1.5 rounded-full uppercase tracking-widest shadow-sm">
+            <div className="bg-[#282f42] text-white rounded-3xl p-8 flex flex-col shadow-2xl relative z-10">
+              <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#c84367] text-white text-xs font-bold px-4 py-1.5 rounded-full uppercase tracking-widest shadow-sm">
                 Full Report
               </span>
               <div className="mb-8 mt-2 text-center">
@@ -697,7 +701,7 @@ export default function LandingPage() {
                 ].map((f) => (
                   <li key={f} className="flex items-start gap-3">
                     <svg
-                      className="w-5 h-5 text-[#268ad8] shrink-0"
+                      className="w-5 h-5 text-[#c84367] shrink-0"
                       fill="none"
                       viewBox="0 0 24 24"
                       stroke="currentColor"
@@ -716,7 +720,7 @@ export default function LandingPage() {
               <button
                 onClick={() => handleScan("basic")}
                 disabled={loading !== null}
-                className="w-full py-4 rounded-xl bg-[#268ad8] text-white text-base font-bold hover:bg-[#1e6fb0] transition-colors disabled:opacity-60 shadow-lg shadow-[#268ad8]/30"
+                className="w-full py-4 rounded-xl bg-[#268ad8] text-white text-base font-bold hover:bg-[#1e6fb0] transition-colors disabled:opacity-60"
               >
                 {loading === "basic" ? "Scanning…" : "Audit my site now"}
               </button>
@@ -737,7 +741,7 @@ export default function LandingPage() {
       <section className="px-6 py-24">
         <div className="max-w-2xl mx-auto">
           <div className="text-center mb-12">
-            <p className="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-3">
+            <p className="text-xs font-semibold text-[#268ad8] uppercase tracking-widest mb-3">
               Questions
             </p>
             <h2 className="text-3xl sm:text-4xl font-bold">Good to know.</h2>
@@ -752,7 +756,7 @@ export default function LandingPage() {
                 <summary className="flex items-center justify-between px-5 py-4 cursor-pointer list-none">
                   <span className="font-medium text-[#282f42]">{item.q}</span>
                   <svg
-                    className="w-4 h-4 text-gray-400 transition-transform group-open:rotate-180"
+                    className="w-4 h-4 text-[#c84367] transition-transform group-open:rotate-180"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -775,7 +779,7 @@ export default function LandingPage() {
       </section>
 
       {/* No fuss strip */}
-      <section className="px-6 py-16 bg-gray-50 border-y border-gray-100">
+      <section className="px-6 py-16 bg-white">
         <div className="max-w-4xl mx-auto grid grid-cols-1 sm:grid-cols-3 gap-8 text-center">
           {[
             {
@@ -805,12 +809,12 @@ export default function LandingPage() {
       </section>
 
       {/* Final CTA */}
-      <section className="border-t border-gray-100 px-6 py-24 bg-[#282f42] text-white">
+      <section className="border-t border-gray-100 px-6 py-24 bg-[#D8E7EE] text-[#282f42]">
         <div className="max-w-2xl mx-auto text-center">
           <h2 className="text-3xl sm:text-4xl font-bold mb-4 tracking-tight">
-            Ready to see your real score?
+            <span className="text-[#268ad8]">Ready to see your <span className="text-[#c84367]">real</span> score?</span>
           </h2>
-          <p className="text-gray-400 mb-8">
+          <p className="text-gray-500 mb-8">
             Enter your URL above — PDF in your hands in 30 seconds.
           </p>
           <button

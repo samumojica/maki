@@ -47,7 +47,7 @@ export async function POST(req: NextRequest) {
       ],
       mode: "payment",
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      ui_mode: "embedded" as any,
+      ui_mode: "embedded_page" as any,
       return_url: `${baseUrl}/results?session_id={CHECKOUT_SESSION_ID}`,
       metadata: { scanId, url, tier },
     });
