@@ -1,0 +1,19 @@
+kind: "AppHostingYaml"
+apiVersion: "v1alpha"
+
+env:
+  # Public variables (Visible in client-side code)
+  - variable: NEXT_PUBLIC_BASE_URL
+    value: "https://getmaki.app"
+  - variable: NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
+    value: "pk_live_51TNDKG5jA5X7ss45xEygem1fonF7iq4FGkxiX7KRj6byMOenYWjtsIDl7WQJ3Sq8PCBNcMwnB1s70KGZ0eSd4vKR00z2dnpD3J"
+
+  # Secret variables (Server-side only, managed via Secret Manager)
+  - variable: STRIPE_SECRET_KEY
+    secret: STRIPE_SECRET_KEY
+  - variable: GOOGLE_GEMINI_API_KEY
+    secret: GOOGLE_GEMINI_API_KEY
+  - variable: GOOGLE_PSI_API_KEY
+    secret: GOOGLE_PSI_API_KEY
+  - variable: GROQ_API_KEY
+    secret: GROQ_API_KEY
