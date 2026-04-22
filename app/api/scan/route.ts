@@ -36,6 +36,7 @@ function clientIp(req: NextRequest): string {
 }
 
 export async function POST(req: NextRequest) {
+  try {
     console.log("API Scan Request v1.0.4 - URL:", (await req.clone().json() as any)?.url);
     const body: ScanRequest = await req.json();
     const { url, tier } = body;
