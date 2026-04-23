@@ -88,14 +88,14 @@ export default function LandingPage() {
   return (
     <main className="min-h-screen bg-white flex flex-col text-[#282f42]">
       {/* Nav */}
-      <header className="px-6 py-4 bg-[#d8e7ee]">
+      <header className="px-6 py-4 bg-[#f3fbff]">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Logo className="h-8 w-auto" />
           </div>
           <a
             href="#pricing"
-            className="text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-lg px-4 py-2 hover:bg-gray-50 hover:text-[#282f42] transition-colors shadow-sm"
+            className="text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-lg px-4 py-2 hover:bg-gray-50 hover:text-[#282f42] transition-colors"
           >
             Pricing
           </a>
@@ -103,7 +103,7 @@ export default function LandingPage() {
       </header>
 
       {/* Hero */}
-      <section className="px-6 pt-16 pb-28 bg-[#d8e7ee]">
+      <section className="px-6 pt-16 pb-28 bg-[#f3fbff]">
         <div className="max-w-5xl mx-auto text-center">
           {/* Eyebrow badge */}
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-gray-200 bg-white mb-8">
@@ -117,7 +117,11 @@ export default function LandingPage() {
           </div>
 
           <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold tracking-tight mb-6 leading-[1.05]">
-            Your site&apos;s <span className="text-[#c84367]">real</span>
+            Your site&apos;s{" "}
+            <span className="relative inline-block">
+              <img src="/sprinkles.png" alt="" className="absolute -top-8 left-[109%] -translate-x-1/2 w-12 h-12 pointer-events-none select-none" aria-hidden="true" />
+              <span className="text-[#c84367]">real</span>
+            </span>
             <br />
             performance score.
             <br />
@@ -133,7 +137,7 @@ export default function LandingPage() {
           {/* URL Input + CTA */}
           <div className="w-full max-w-xl mx-auto">
             {loading ? (
-              <div className="border border-gray-200 rounded-xl p-5 bg-white shadow-sm">
+              <div className="border border-gray-200 rounded-xl p-5 bg-white">
                 <div className="flex items-center gap-3 mb-3">
                   <div className="w-5 h-5 border-2 border-gray-200 border-t-[#268ad8] rounded-full animate-spin shrink-0" />
                   <span className="text-sm font-medium text-[#282f42]">
@@ -150,7 +154,7 @@ export default function LandingPage() {
               </div>
             ) : (
               <>
-                <div className="flex flex-col sm:flex-row sm:items-center border border-gray-300 rounded-xl overflow-hidden focus-within:ring-4 focus-within:ring-[#e8f3fb] focus-within:border-[#268ad8] bg-white shadow-sm transition-all">
+                <div className="flex flex-col sm:flex-row sm:items-center border border-gray-300 rounded-xl overflow-hidden focus-within:ring-4 focus-within:ring-[#e8f3fb] focus-within:border-[#268ad8] bg-white transition-all">
                   <span className="hidden sm:inline pl-5 text-gray-400 text-base select-none shrink-0">
                     https://
                   </span>
@@ -190,7 +194,7 @@ export default function LandingPage() {
           <img
             src="/mascot.png"
             alt="Maki Mascot"
-            className="absolute -top-[90px] left-0 right-0 mx-auto sm:left-auto sm:right-16 w-32 sm:w-48 h-auto z-[9] sm:-mr-[50px] transition-transform duration-500 group-hover:-translate-y-4"
+            className="absolute -top-[82px] left-0 right-0 mx-auto sm:left-0 sm:right-auto sm:ml-[20px] sm:-top-[130px] w-32 sm:w-48 h-auto z-[9] transition-transform duration-500 group-hover:-translate-y-4"
           />
           <div className="bg-white border border-gray-200 rounded-2xl shadow-xl overflow-hidden relative z-10">
             {/* Browser chrome */}
@@ -279,7 +283,7 @@ export default function LandingPage() {
       </section>
 
       {/* Powered by / Browser compatibility strip */}
-      <section className="border-t border-gray-100 px-6 py-12 bg-white">
+      <section className="px-6 py-12 bg-white">
         <div className="max-w-4xl mx-auto flex flex-col md:flex-row items-center justify-center gap-8 md:gap-16">
           <div className="flex flex-col items-center gap-3">
             <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Powered By</p>
@@ -321,7 +325,7 @@ export default function LandingPage() {
       </section>
 
       {/* What are Core Web Vitals? */}
-      <section className="px-6 py-24 bg-white border-b border-gray-100">
+      <section className="px-6 py-24 bg-white">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-14">
             <p className="text-xs font-semibold text-[#c84367] uppercase tracking-widest mb-3">
@@ -398,7 +402,7 @@ export default function LandingPage() {
       </section>
 
       {/* AI can't do this */}
-      <section className="px-6 py-24 bg-[#d8e7ee]">
+      <section className="px-6 py-24 bg-[#F9FAFB]">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-12">
             <p className="text-xs font-semibold text-[#268AD8] uppercase tracking-widest mb-3">
@@ -504,7 +508,7 @@ export default function LandingPage() {
       </section>
 
       {/* How it works */}
-      <section className="px-6 py-24 bg-gray-50 border-y border-gray-100">
+      <section className="px-6 py-24 bg-white">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-16">
             <p className="text-xs font-semibold text-[#c84367] uppercase tracking-widest mb-3">
@@ -600,7 +604,7 @@ export default function LandingPage() {
 
 
       {/* Why not GTmetrix / DebugBear? */}
-      <section className="bg-white border-b border-gray-100 px-6 py-24">
+      <section className="bg-white px-6 py-24">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-16">
             <p className="text-xs font-bold text-[#268ad8] uppercase tracking-widest mb-3">
@@ -614,35 +618,41 @@ export default function LandingPage() {
             </p>
           </div>
 
-          <div className="max-w-4xl mx-auto bg-white rounded-3xl shadow-xl overflow-hidden border border-gray-100">
-            <div className="grid grid-cols-4 text-xs sm:text-sm md:text-base">
+          <div className="max-w-4xl mx-auto">
+            <div className="grid grid-cols-4 gap-px bg-gray-200 rounded-xl overflow-hidden border border-gray-200">
               {/* Header */}
-              <div className="p-3 sm:p-5 md:p-6 font-semibold text-gray-400 border-b border-r border-gray-100 bg-gray-50 flex items-center">Feature</div>
-              <div className="p-3 sm:p-5 md:p-6 font-semibold text-gray-500 text-center border-b border-r border-gray-100 bg-gray-50 flex items-center justify-center">GTmetrix</div>
-              <div className="p-3 sm:p-5 md:p-6 font-semibold text-gray-500 text-center border-b border-r border-gray-100 bg-gray-50 flex items-center justify-center">DebugBear</div>
-              <div className="p-3 sm:p-5 md:p-6 font-bold text-white text-center border-b bg-[#282f42] flex items-center justify-center">Maki</div>
+              <div className="p-6 bg-gray-50/50 font-bold text-gray-500 flex items-center">Feature</div>
+              <div className="p-6 bg-white flex flex-col items-center justify-center gap-2">
+                <img src="/gtmetrix.png" alt="GTmetrix" className="w-8 h-8 opacity-80" />
+                <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">GTmetrix</span>
+              </div>
+              <div className="p-6 bg-white flex flex-col items-center justify-center gap-2">
+                <img src="/debugbear.png" alt="DebugBear" className="w-8 h-8 opacity-80" />
+                <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">DebugBear</span>
+              </div>
+              <div className="p-6 bg-[#f3fbff] flex flex-col items-center justify-center gap-2">
+                <Logo className="h-6 w-auto" />
+                <span className="text-[10px] font-bold text-[#268ad8] uppercase tracking-widest hidden">Maki</span>
+              </div>
 
               {/* Rows */}
               {[
                 { label: "Account required", gt: "Yes", db: "Yes", mk: "No", good: true },
-                { label: "Payment model", gt: "Subscription", db: "Subscription", mk: "Pay per report", good: true },
-                { label: "Cost", gt: "$14.95+/mo", db: "$19+/mo", mk: "$9 once", good: true },
+                { label: "Payment model", gt: "Sub", db: "Sub", mk: "Pay-per-fix", good: true },
+                { label: "Cost", gt: "$15+/mo", db: "$19+/mo", mk: "$9 once", good: true },
                 { label: "Tailored fixes", gt: "No", db: "Limited", mk: "Yes", good: true },
                 { label: "Instant PDF", gt: "No", db: "No", mk: "Yes", good: true },
-              ].map((row, i, arr) => {
-                const isLast = i === arr.length - 1;
-                return (
-                  <React.Fragment key={i}>
-                    <div className={`p-3 sm:p-4 md:p-6 text-gray-700 font-medium border-r border-gray-100 flex items-center ${!isLast ? 'border-b' : ''}`}>{row.label}</div>
-                    <div className={`p-3 sm:p-4 md:p-6 text-gray-500 text-center border-r border-gray-100 flex items-center justify-center ${!isLast ? 'border-b' : ''}`}>{row.gt}</div>
-                    <div className={`p-3 sm:p-4 md:p-6 text-gray-500 text-center border-r border-gray-100 flex items-center justify-center ${!isLast ? 'border-b' : ''}`}>{row.db}</div>
-                    <div className={`p-3 sm:p-4 md:p-6 text-[#268ad8] text-center font-bold bg-[#e8f3fb] flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 ${!isLast ? 'border-b border-[#d1e7f6]' : ''}`}>
-                      {row.mk}
-                      {row.good && <svg className="w-3 h-3 sm:w-4 sm:h-4 text-[#268ad8]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>}
-                    </div>
-                  </React.Fragment>
-                );
-              })}
+              ].map((row, i) => (
+                <React.Fragment key={i}>
+                  <div className="p-4 sm:p-6 bg-white text-gray-800 font-bold flex items-center text-sm">{row.label}</div>
+                  <div className="p-4 sm:p-6 bg-white text-gray-500 text-center flex items-center justify-center text-sm font-medium">{row.gt}</div>
+                  <div className="p-4 sm:p-6 bg-white text-gray-500 text-center flex items-center justify-center text-sm font-medium">{row.db}</div>
+                  <div className="p-4 sm:p-6 bg-[#f3fbff]/50 text-[#268ad8] text-center font-extrabold flex items-center justify-center gap-2 text-sm">
+                    {row.mk}
+                    {row.good && <svg className="w-4 h-4 text-[#268ad8]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={4}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>}
+                  </div>
+                </React.Fragment>
+              ))}
             </div>
           </div>
         </div>
@@ -651,13 +661,13 @@ export default function LandingPage() {
       {/* Pricing */}
       <section
         id="pricing"
-        className="border-t border-gray-100 bg-gray-50 px-6 py-24 overflow-hidden relative group"
+        className="bg-[#f3fbff] px-6 py-24 overflow-hidden relative group"
       >
         {/* Celebrate mascot */}
         <img
           src="/celebrate.png"
           alt="Celebrate Mascot"
-          className="absolute top-[324px] left-[114px] w-[476px] h-auto z-[9] transition-transform duration-500 group-hover:-rotate-2 group-hover:-translate-y-2 pointer-events-none opacity-100 hidden md:block"
+          className="absolute top-[394px] left-[114px] w-[476px] h-auto z-[9] transition-transform duration-500 group-hover:-rotate-2 group-hover:-translate-y-2 pointer-events-none opacity-100 hidden md:block"
         />
 
         <div className="max-w-4xl mx-auto relative z-10">
@@ -675,7 +685,7 @@ export default function LandingPage() {
 
           <div className="max-w-md mx-auto relative z-10">
             {/* Single Tier */}
-            <div className="bg-[#282f42] text-white rounded-3xl p-8 flex flex-col shadow-2xl relative z-10">
+            <div className="bg-[#282f42] text-white rounded-3xl p-8 flex flex-col relative z-10">
               <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#c84367] text-white text-xs font-bold px-4 py-1.5 rounded-full uppercase tracking-widest shadow-sm">
                 Full Report
               </span>
@@ -778,69 +788,66 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* No fuss strip */}
-      <section className="px-6 py-16 bg-white">
-        <div className="max-w-4xl mx-auto grid grid-cols-1 sm:grid-cols-3 gap-8 text-center">
-          {[
-            {
-              icon: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" /></svg>,
-              label: "No account", sub: "Zero signup required"
-            },
-            {
-              icon: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z" /></svg>,
-              label: "No login", sub: "Just paste your URL"
-            },
-            {
-              icon: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" /></svg>,
-              label: "One-time $9", sub: "No subscription ever"
-            },
-          ].map((item) => (
-            <div key={item.label} className="flex flex-col items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-[#268ad8] text-white flex items-center justify-center mb-1 shadow-sm">
-                {item.icon}
-              </div>
-              <div>
-                <p className="text-base font-bold text-[#282f42]">{item.label}</p>
-                <p className="text-sm text-gray-500">{item.sub}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Final CTA */}
-      <section className="border-t border-gray-100 px-6 py-24 bg-[#D8E7EE] text-[#282f42]">
-        <div className="max-w-2xl mx-auto text-center">
-          <h2 className="text-3xl sm:text-4xl font-bold mb-4 tracking-tight">
-            <span className="text-[#268ad8]">Ready to see your <span className="text-[#c84367]">real</span> score?</span>
+      {/* Final CTA Redesign */}
+      <section className="px-6 py-28 bg-[#F9FAFB] text-[#282f42] relative overflow-hidden">
+        <div className="max-w-4xl mx-auto text-center relative z-10">
+          <h2 className="text-4xl sm:text-5xl font-extrabold mb-6 tracking-tight leading-tight">
+            Ready to see your <span className="text-[#c84367]">real</span> score?
           </h2>
-          <p className="text-gray-500 mb-8">
+          <p className="text-lg text-gray-500 mb-12 max-w-xl mx-auto">
+            Get your PageSpeed fixes in plain English. No accounts, no waiting, just results.
+          </p>
+
+          <div className="flex flex-col items-center gap-10">
+            <button
+              onClick={() => {
+                window.scrollTo({ top: 0, behavior: "smooth" });
+                setTimeout(() => {
+                  document.querySelector("input")?.focus();
+                }, 500);
+              }}
+              className="group relative inline-flex items-center gap-3 px-10 py-5 bg-[#268ad8] text-white rounded-2xl text-lg font-bold hover:bg-[#1e6fb0] transition-all"
+            >
+              Audit my site now
+              <svg
+                className="w-5 h-5 transition-transform group-hover:translate-x-1"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2.5}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M17 8l4 4m0 0l-4 4m4-4H3"
+                />
+              </svg>
+            </button>
+
+            {/* Redesigned No-fuss badges */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 w-full max-w-3xl mt-4">
+              {[
+                {
+                  label: "No account", sub: "Zero signup required"
+                },
+                {
+                  label: "No login", sub: "Just paste your URL"
+                },
+                {
+                  label: "One-time $9", sub: "No subscription ever"
+                },
+              ].map((item) => (
+                <div key={item.label} className="bg-white border border-gray-200 rounded-2xl p-5">
+                  <p className="text-base font-bold text-[#282f42] mb-1">{item.label}</p>
+                  <p className="text-xs text-gray-500 font-medium">{item.sub}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <p className="text-xs text-gray-400 mt-12">
             Enter your URL above — PDF in your hands in 30 seconds.
           </p>
-          <button
-            onClick={() => {
-              window.scrollTo({ top: 0, behavior: "smooth" });
-              setTimeout(() => {
-                document.querySelector("input")?.focus();
-              }, 500);
-            }}
-            className="inline-flex items-center gap-2 px-6 py-3 bg-[#268ad8] text-white rounded-xl text-sm font-semibold hover:bg-[#1e6fb0] transition-colors"
-          >
-            Audit my site
-            <svg
-              className="w-4 h-4"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={2.5}
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M17 8l4 4m0 0l-4 4m4-4H3"
-              />
-            </svg>
-          </button>
         </div>
       </section>
 
