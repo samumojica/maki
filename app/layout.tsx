@@ -29,7 +29,7 @@ export const metadata: Metadata = {
     siteName: "Maki",
     images: [
       {
-        url: "/og-image.png",
+        url: "/social.png",
         width: 1200,
         height: 630,
         alt: "Maki — Core Web Vitals Checker",
@@ -41,7 +41,7 @@ export const metadata: Metadata = {
     title: "Maki — Core Web Vitals Checker",
     description:
       "Check your Core Web Vitals for free. Get a tailored performance report with exact fixes — no account needed.",
-    images: ["/og-image.png"],
+    images: ["/social.png"],
   },
   alternates: {
     canonical: "https://getmaki.app",
