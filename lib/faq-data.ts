@@ -1,5 +1,9 @@
 export const FAQ_ITEMS = [
   {
+    q: "I'm not technical at all. Will I understand the report?",
+    a: "Yes — that's exactly why we built Maki. PageSpeed Insights gives you raw numbers and technical jargon. Maki translates all of it into plain English: what's wrong, why it matters, and exactly what to do about it. If a fix requires a developer, we tell you that too — and give you the exact instructions to hand them. No guessing, no Googling.",
+  },
+  {
     q: "How is this different from running PageSpeed Insights myself?",
     a: "PSI gives you a wall of technical jargon and raw numbers. Maki translates it into ranked, actionable fixes — with exact steps tailored to your platform (WordPress, Shopify, Webflow, or custom). Ready for you or your developer.",
   },

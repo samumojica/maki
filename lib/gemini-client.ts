@@ -25,10 +25,14 @@ CRITICAL RULES FOR CODE SNIPPETS:
 5. EXPLAIN IMPACT: Always explain what the fix means for real human visitors (e.g., "This stops the page from jumping around while images load").
 6. LANGUAGE: Return ONLY valid JSON. No markdown blocks.
 
-Structure of seoSnippets:
-- Meta Description: Generate a professional 155-character description based on the actual site content.
-- JSON-LD: Generate a valid Schema.org script for a WebSite or Organization with real data.
-- Open Graph: Generate the <meta property="og:..."> tags with the site's actual URL.
+Structure of seoSnippets (MUST include exactly these 5):
+1. META TITLE: Use actual <title> detected, or generate "Domain | Best Services in [City]" (max 60 chars). Show char count in description.
+2. META DESCRIPTION: Use actual detected description, or generate one (max 155 chars). If missing, add note to description: "! No meta description found on your site. This is hurting your SEO. Use this as a starting point:". Show char count.
+3. OPEN GRAPH TAGS: Generate og:title, og:description, og:url using exact scanned URL.
+4. CANONICAL URL: Exact scanned URL (e.g. <link rel="canonical" href="...">).
+5. JSON-LD SCHEMA: Based on detected platform (WordPress=WebSite, Ecommerce=Store). Use real URL.
+
+All code MUST be copy-paste ready with real values. Mark un-detectable fields with <!-- Update this with your actual value -->.
 
 Rank the 7 topFixes by impact. Include one "quick win" (under 10 mins).`;
 
@@ -194,9 +198,9 @@ Analyze this data and return ONLY a valid JSON object with this exact structure:
   },
   "seoSnippets": [
     {
-      "title": "Add a proper meta description",
-      "description": "This tells Google what your page is about in search results.",
-      "code": "<meta name=\\"description\\" content=\\"A real description of the site based on what you see in the audit data\\">",
+      "title": "Meta Title",
+      "description": "Displays in search results. (55 characters)",
+      "code": "<title>Real Title Here | Best Services</title>",
       "lang": "html"
     }
   ],
@@ -209,8 +213,9 @@ Analyze this data and return ONLY a valid JSON object with this exact structure:
 IMPORTANT:
 - Return exactly 7 items in topFixes, ranked by impact.
 - codeSnippet MUST be real code a developer can paste and use. If there is no useful code for a fix, set codeSnippet to null. NEVER write comments-as-code like "// Use a tool like X".
-- Include 3-4 items in seoSnippets with ready-to-paste code pre-filled with the site's actual URL and inferred content.
-- Tailor ALL fixes to the detected platform.`;
+- Include exactly 5 items in seoSnippets (Title, Description, Open Graph, Canonical, JSON-LD) with ready-to-paste code pre-filled with the site's actual URL and inferred content.
+- Tailor ALL fixes to the detected platform.
+- Return all URLs as plain strings with no surrounding quotes, backticks, or punctuation characters.`;
 }
 
 function extractScores(psiData: { mobile: unknown; desktop: unknown }): {
@@ -387,23 +392,53 @@ async function callLlama(
   } as AuditResult;
 }
 
+function sanitizeUrl(str: string | undefined): string {
+  if (!str) return '';
+  return str
+    .replace(/[\u2018\u2019\u201C\u201D'"]/g, '')
+    .trim();
+}
+
+function sanitizeCodeSnippet(str: string | undefined): string {
+  if (!str) return '';
+  return str
+    .trim()
+    .replace(/^[\u2018\u2019\u201C\u201D'"]+/, '')
+    .replace(/[\u2018\u2019\u201C\u201D'"]+$/, '')
+    .trim();
+}
+
+function sanitizeAuditResult(result: AuditResult): AuditResult {
+  if (result.topFixes && Array.isArray(result.topFixes)) {
+    result.topFixes = result.topFixes.map((fix) => ({
+      ...fix,
+      resourceUrl: fix.resourceUrl ? sanitizeUrl(fix.resourceUrl) : undefined,
+      resourceLabel: fix.resourceLabel ? sanitizeUrl(fix.resourceLabel) : undefined,
+      codeSnippet: fix.codeSnippet ? sanitizeCodeSnippet(fix.codeSnippet) : undefined,
+    }));
+  }
+  return result;
+}
+
 export async function translatePSIWithFallback(
   psiData: object,
   url: string,
   serverContext: { serverCountry?: string | null; serverSoftware?: string; cdnDetected?: string; technologies?: string[] } = { technologies: [] }
 ): Promise<AuditResult> {
+  let result: AuditResult;
   try {
     console.log("[audit] Trying Gemini 2.5 Flash...");
-    return await callGemini(psiData, url, "gemini-2.5-flash", serverContext);
+    result = await callGemini(psiData, url, "gemini-2.5-flash", serverContext);
   } catch (err) {
     console.warn("[audit] Gemini Flash failed:", (err as Error).message);
     try {
       console.log("[audit] Trying Gemini 2.5 Flash Lite...");
-      return await callGemini(psiData, url, "gemini-2.5-flash-lite-preview-06-17", serverContext);
+      result = await callGemini(psiData, url, "gemini-2.5-flash-lite-preview-06-17", serverContext);
     } catch (err2) {
       console.warn("[audit] Gemini Lite failed:", (err2 as Error).message);
       console.log("[audit] Trying Groq Llama 3.3 70B...");
-      return await callLlama(psiData, url, serverContext);
+      result = await callLlama(psiData, url, serverContext);
     }
   }
+  return sanitizeAuditResult(result);
 }

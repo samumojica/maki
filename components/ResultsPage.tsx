@@ -113,15 +113,8 @@ export default function ResultsPage({ audit }: Props) {
   async function handleDownload() {
     setDownloading(true);
     try {
-      const [{ pdf }, { PDFReport }, React] = await Promise.all([
-        import("@react-pdf/renderer"),
-        import("./PDFReport"),
-        import("react"),
-      ]);
-
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const doc = React.createElement(PDFReport as any, { audit }) as any;
-      const blob = await pdf(doc).toBlob();
+      const { generateMakiPdfBlob } = await import("@/lib/makiPdfRenderer");
+      const blob = await generateMakiPdfBlob(audit, audit.url);
       const blobUrl = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = blobUrl;

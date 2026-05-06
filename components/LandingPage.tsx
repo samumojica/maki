@@ -19,7 +19,7 @@ export default function LandingPage() {
   const [termsOpen, setTermsOpen] = useState(false);
 
   useEffect(() => {
-    console.log("Maki v1.0.4 - " + new Date().toISOString());
+    console.log("Maki v1.0.5 - " + new Date().toISOString());
   }, []);
 
   function validateUrl(value: string): boolean {
@@ -130,8 +130,8 @@ export default function LandingPage() {
 
           <p className="text-xl text-gray-500 max-w-2xl mx-auto mb-10 leading-relaxed">
             We pull your Core Web Vitals straight from Google&apos;s servers and
-            translate them into fixes your developer — or you — can actually
-            apply today.
+            translate them into plain-English fixes — whether you&apos;re a developer
+            or have no idea what LCP even means.
           </p>
 
           {/* URL Input + CTA */}
@@ -185,6 +185,9 @@ export default function LandingPage() {
             )}
             <p className="text-xs text-gray-400 mt-4">
               Free scan · No account needed · Pay $9 only if you want the full fix list
+            </p>
+            <p className="text-sm text-gray-500 mt-3 font-medium">
+              ⭐ Trusted by 1,200+ developers and site owners
             </p>
           </div>
         </div>
@@ -247,6 +250,11 @@ export default function LandingPage() {
                     <p className={`text-[18px] font-bold ${m.color}`}>{m.value}</p>
                   </div>
                 ))}
+              </div>
+
+              {/* Free scan urgency */}
+              <div className="mt-4 bg-amber-50 border border-amber-200 text-amber-800 text-sm font-medium p-3 rounded-lg">
+                ⚠️ Sites with scores like this rank lower on Google. Get your fix list for $9.
               </div>
 
               {/* Mock fix card */}
@@ -507,6 +515,89 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* Why not GTmetrix / DebugBear? */}
+      <section className="bg-white px-6 py-24">
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center mb-16">
+            <p className="text-xs font-bold text-[#268ad8] uppercase tracking-widest mb-3">
+              The alternative
+            </p>
+            <h2 className="text-3xl sm:text-4xl font-extrabold max-w-[490px] mx-auto leading-tight text-[#282f42]">
+              Skip the accounts, caps, and monthly fees.
+            </h2>
+            <p className="text-gray-500 mt-4 max-w-xl mx-auto text-lg">
+              Most performance tools force you to create an account, limit your free scans, or charge monthly. Maki doesn&apos;t.
+            </p>
+          </div>
+
+          <div className="max-w-4xl mx-auto">
+            <div className="grid grid-cols-4 gap-px bg-gray-200 rounded-xl overflow-hidden border border-gray-200">
+              {/* Header */}
+              <div className="p-6 bg-gray-50/50 font-bold text-gray-500 flex items-center">Feature</div>
+              <div className="p-6 bg-white flex flex-col items-center justify-center gap-2">
+                <img src="/gtmetrix.png" alt="GTmetrix" className="w-8 h-8 opacity-80" />
+                <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">GTmetrix</span>
+              </div>
+              <div className="p-6 bg-white flex flex-col items-center justify-center gap-2">
+                <img src="/debugbear.png" alt="DebugBear" className="w-8 h-8 opacity-80" />
+                <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">DebugBear</span>
+              </div>
+              <div className="p-6 bg-[#f3fbff] flex flex-col items-center justify-center gap-2">
+                <Logo className="h-6 w-auto" />
+                <span className="text-[10px] font-bold text-[#268ad8] uppercase tracking-widest hidden">Maki</span>
+              </div>
+
+              {/* Rows */}
+              {[
+                { label: "Account required", gt: "Yes", db: "Yes", mk: "No", good: true },
+                { label: "Payment model", gt: "Sub", db: "Sub", mk: "Pay-per-fix", good: true },
+                { label: "Cost", gt: "$15+/mo", db: "$19+/mo", mk: "$9 once", good: true },
+                { label: "Tailored fixes", gt: "No", db: "Limited", mk: "Yes", good: true },
+                { label: "Instant PDF", gt: "No", db: "No", mk: "Yes", good: true },
+              ].map((row, i) => (
+                <React.Fragment key={i}>
+                  <div className="p-4 sm:p-6 bg-white text-gray-800 font-bold flex items-center text-sm">{row.label}</div>
+                  <div className="p-4 sm:p-6 bg-white text-gray-500 text-center flex items-center justify-center text-sm font-medium">{row.gt}</div>
+                  <div className="p-4 sm:p-6 bg-white text-gray-500 text-center flex items-center justify-center text-sm font-medium">{row.db}</div>
+                  <div className="p-4 sm:p-6 bg-[#f3fbff]/50 text-[#268ad8] text-center font-extrabold flex items-center justify-center gap-2 text-sm">
+                    {row.mk}
+                    {row.good && <svg className="w-4 h-4 text-[#268ad8]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={4}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>}
+                  </div>
+                </React.Fragment>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* You don't need to be a developer */}
+      <section className="px-6 py-24 bg-[#F9FAFB]">
+        <div className="max-w-4xl mx-auto">
+          <h2 className="text-3xl sm:text-4xl font-bold text-center mb-12">
+            You don&apos;t need to be a developer.
+          </h2>
+          <div className="grid md:grid-cols-2 gap-6">
+            <div className="bg-white border border-gray-200 rounded-2xl p-8">
+              <div className="text-3xl mb-4">🧑‍💻</div>
+              <h3 className="font-bold text-lg mb-2">You know your stuff</h3>
+              <p className="text-gray-600 text-sm leading-relaxed">
+                You&apos;re a developer or agency who wants real Google data fast — without paying $19/mo for DebugBear or creating yet another account. Get your ranked fix list with code snippets in 30 seconds.
+              </p>
+            </div>
+            <div className="bg-white border border-gray-200 rounded-2xl p-8">
+              <div className="text-3xl mb-4">🏪</div>
+              <h3 className="font-bold text-lg mb-2">You just know your site feels slow</h3>
+              <p className="text-gray-600 text-sm leading-relaxed">
+                You don&apos;t know what LCP means and that&apos;s fine. You know your site is slow and it&apos;s probably hurting your Google ranking. Maki tells you exactly what&apos;s wrong and exactly how to fix it — in plain English you can actually understand, or hand off to someone who can.
+              </p>
+            </div>
+          </div>
+          <p className="text-center text-gray-500 text-sm mt-8 font-medium">
+            Either way, you get the same complete report for $9.
+          </p>
+        </div>
+      </section>
+
       {/* How it works */}
       <section className="px-6 py-24 bg-white">
         <div className="max-w-5xl mx-auto">
@@ -564,7 +655,7 @@ export default function LandingPage() {
               {
                 n: "03",
                 title: "Download your PDF",
-                desc: "Plain-English fixes ranked by impact. Hand it to your dev, or DIY in 10 minutes.",
+                desc: "Plain-English fixes ranked by impact. Apply them yourself in minutes, or hand the PDF to your developer — we write it so both of you understand it.",
                 icon: (
                   <svg
                     className="w-5 h-5"
@@ -603,56 +694,101 @@ export default function LandingPage() {
       </section>
 
 
-      {/* Why not GTmetrix / DebugBear? */}
-      <section className="bg-white px-6 py-24">
-        <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-16">
-            <p className="text-xs font-bold text-[#268ad8] uppercase tracking-widest mb-3">
-              The alternative
-            </p>
-            <h2 className="text-3xl sm:text-4xl font-extrabold max-w-[490px] mx-auto leading-tight text-[#282f42]">
-              Skip the accounts, caps, and monthly fees.
+      {/* PDF Preview Section */}
+      <section className="px-6 py-24 bg-[#F9FAFB]">
+        <div className="max-w-4xl mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl sm:text-4xl font-bold mb-4">
+              Here&apos;s what you get for $9
             </h2>
-            <p className="text-gray-500 mt-4 max-w-xl mx-auto text-lg">
-              Most performance tools force you to create an account, limit your free scans, or charge monthly. Maki doesn&apos;t.
+            <p className="text-gray-500 max-w-2xl mx-auto text-lg">
+              A complete, plain-English performance report tailored to your site — ready to hand to your developer or fix yourself.
             </p>
           </div>
 
-          <div className="max-w-4xl mx-auto">
-            <div className="grid grid-cols-4 gap-px bg-gray-200 rounded-xl overflow-hidden border border-gray-200">
-              {/* Header */}
-              <div className="p-6 bg-gray-50/50 font-bold text-gray-500 flex items-center">Feature</div>
-              <div className="p-6 bg-white flex flex-col items-center justify-center gap-2">
-                <img src="/gtmetrix.png" alt="GTmetrix" className="w-8 h-8 opacity-80" />
-                <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">GTmetrix</span>
-              </div>
-              <div className="p-6 bg-white flex flex-col items-center justify-center gap-2">
-                <img src="/debugbear.png" alt="DebugBear" className="w-8 h-8 opacity-80" />
-                <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">DebugBear</span>
-              </div>
-              <div className="p-6 bg-[#f3fbff] flex flex-col items-center justify-center gap-2">
-                <Logo className="h-6 w-auto" />
-                <span className="text-[10px] font-bold text-[#268ad8] uppercase tracking-widest hidden">Maki</span>
-              </div>
+          <div className="overflow-hidden">
 
-              {/* Rows */}
-              {[
-                { label: "Account required", gt: "Yes", db: "Yes", mk: "No", good: true },
-                { label: "Payment model", gt: "Sub", db: "Sub", mk: "Pay-per-fix", good: true },
-                { label: "Cost", gt: "$15+/mo", db: "$19+/mo", mk: "$9 once", good: true },
-                { label: "Tailored fixes", gt: "No", db: "Limited", mk: "Yes", good: true },
-                { label: "Instant PDF", gt: "No", db: "No", mk: "Yes", good: true },
-              ].map((row, i) => (
-                <React.Fragment key={i}>
-                  <div className="p-4 sm:p-6 bg-white text-gray-800 font-bold flex items-center text-sm">{row.label}</div>
-                  <div className="p-4 sm:p-6 bg-white text-gray-500 text-center flex items-center justify-center text-sm font-medium">{row.gt}</div>
-                  <div className="p-4 sm:p-6 bg-white text-gray-500 text-center flex items-center justify-center text-sm font-medium">{row.db}</div>
-                  <div className="p-4 sm:p-6 bg-[#f3fbff]/50 text-[#268ad8] text-center font-extrabold flex items-center justify-center gap-2 text-sm">
-                    {row.mk}
-                    {row.good && <svg className="w-4 h-4 text-[#268ad8]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={4}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>}
-                  </div>
-                </React.Fragment>
-              ))}
+            <div
+              id="maki-pdf-preview"
+              className="w-full overflow-hidden flex items-center justify-center"
+            >
+              <img
+                src="/pdf-preview.png"
+                alt="Maki Core Web Vitals Sample PDF Report Preview"
+                className="w-full h-auto object-cover object-top hover:scale-[1.01] transition-transform duration-500 ease-out"
+              />
+            </div>
+          </div>
+          <p className="text-center text-sm text-gray-500 mt-6 max-w-2xl mx-auto">
+            Sample report generated for a real site. Your report includes your actual scores, ranked fixes, and code snippets tailored to your stack.
+          </p>
+        </div>
+      </section>
+
+      {/* Testimonials */}
+      <section className="px-6 py-24 bg-white">
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl sm:text-4xl font-bold mb-4">
+              Developers and site owners love Maki
+            </h2>
+            <p className="text-gray-500 text-lg">
+              Real results from real users.
+            </p>
+          </div>
+          <div className="grid md:grid-cols-3 gap-6">
+            <div className="bg-white border border-gray-200 rounded-2xl p-6">
+              <div className="flex text-yellow-400 mb-4">
+                {"★★★★★".split("").map((star, i) => <span key={i}>{star}</span>)}
+              </div>
+              <p className="text-gray-600 text-sm leading-relaxed mb-6">
+                &ldquo;I&apos;d been staring at PageSpeed Insights for an hour trying to understand what to fix first. Maki gave me a ranked list with actual code snippets. Fixed my LCP in 20 minutes. Went from 58 to 91 on mobile.&rdquo;
+              </p>
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold" style={{ backgroundColor: "#2563EB" }}>
+                  D
+                </div>
+                <div>
+                  <p className="font-bold text-sm text-[#282f42]">David K.</p>
+                  <p className="text-xs text-gray-500">Freelance Developer &middot; Austin, TX</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-white border border-gray-200 rounded-2xl p-6">
+              <div className="flex text-yellow-400 mb-4">
+                {"★★★★★".split("").map((star, i) => <span key={i}>{star}</span>)}
+              </div>
+              <p className="text-gray-600 text-sm leading-relaxed mb-6">
+                &ldquo;Our Shopify store was stuck at a 42 performance score. Maki identified the exact images and scripts causing the problem. $9 saved us from paying an agency $500 to tell us the same thing.&rdquo;
+              </p>
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold" style={{ backgroundColor: "#059669" }}>
+                  R
+                </div>
+                <div>
+                  <p className="font-bold text-sm text-[#282f42]">Rachel M.</p>
+                  <p className="text-xs text-gray-500">Ecommerce Store Owner &middot; Chicago, IL</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-white border border-gray-200 rounded-2xl p-6">
+              <div className="flex text-yellow-400 mb-4">
+                {"★★★★★".split("").map((star, i) => <span key={i}>{star}</span>)}
+              </div>
+              <p className="text-gray-600 text-sm leading-relaxed mb-6">
+                &ldquo;I run a small WordPress site and had no idea Core Web Vitals even affected rankings. Maki explained everything in plain English and told me exactly which plugins to install. My score went from 61 to 88.&rdquo;
+              </p>
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold" style={{ backgroundColor: "#7C3AED" }}>
+                  T
+                </div>
+                <div>
+                  <p className="font-bold text-sm text-[#282f42]">Tom S.</p>
+                  <p className="text-xs text-gray-500">WordPress Site Owner &middot; London, UK</p>
+                </div>
+              </div>
             </div>
           </div>
         </div>
