@@ -139,11 +139,12 @@ export default function LandingPage() {
       {/* Hero */}
       <section className="px-6 pt-12 pb-28 bg-[#f3fbff] relative overflow-hidden">
         {/* Decorative Background Assets */}
-        <div className="absolute top-[-20%] left-[-10%] w-[50vw] h-[50vw] bg-[#268ad8] opacity-5 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute bottom-[-10%] right-[-5%] w-[40vw] h-[40vw] bg-[#c84367] opacity-5 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute inset-0 bg-[url('/sprinkles.png')] opacity-10 bg-cover mix-blend-overlay animate-gentle-bg pointer-events-none"></div>
+        <div className="absolute top-[-20%] left-[-10%] w-[60vw] h-[60vw] bg-[#268ad8] opacity-15 rounded-full blur-[100px] pointer-events-none animate-pulse" style={{ animationDuration: '8s' }} />
+        <div className="absolute bottom-[-10%] right-[-5%] w-[50vw] h-[50vw] bg-[#c84367] opacity-10 rounded-full blur-[100px] pointer-events-none animate-pulse" style={{ animationDuration: '12s' }} />
 
         <div className="max-w-4xl mx-auto text-center relative z-10">
-          <Image src="/mascot.png" alt="Maki mascot" width={100} height={100} className="mx-auto mb-6 drop-shadow-lg animate-bob hidden sm:block" />
+          <Image src="/mascot.png" alt="Maki mascot" width={120} height={120} className="w-20 h-20 sm:w-28 sm:h-28 mx-auto mb-6 drop-shadow-xl animate-bob" />
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight mb-6 leading-tight">
             Fix what&apos;s slowing down your WordPress site.
           </h1>
