@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Logo } from "./Logo";
+import Image from "next/image";
 import { SchemaMarkup } from "./SchemaMarkup";
 import { PrivacyModal, TermsModal } from "./LegalModals";
 
@@ -136,8 +137,13 @@ export default function LandingPage() {
       </header>
 
       {/* Hero */}
-      <section className="px-6 pt-16 pb-28 bg-[#f3fbff]">
-        <div className="max-w-4xl mx-auto text-center">
+      <section className="px-6 pt-12 pb-28 bg-[#f3fbff] relative overflow-hidden">
+        {/* Decorative Background Assets */}
+        <div className="absolute top-[-20%] left-[-10%] w-[50vw] h-[50vw] bg-[#268ad8] opacity-5 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute bottom-[-10%] right-[-5%] w-[40vw] h-[40vw] bg-[#c84367] opacity-5 rounded-full blur-3xl pointer-events-none" />
+
+        <div className="max-w-4xl mx-auto text-center relative z-10">
+          <Image src="/mascot.png" alt="Maki mascot" width={100} height={100} className="mx-auto mb-6 drop-shadow-lg animate-bob hidden sm:block" />
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight mb-6 leading-tight">
             Fix what&apos;s slowing down your WordPress site.
           </h1>
@@ -146,21 +152,24 @@ export default function LandingPage() {
             Paste your URL. Maki scans your site with Google PageSpeed Insights, detects your WordPress setup when possible, and shows you what to fix first.
           </p>
 
-          {/* URL Input + CTA */}
-          <div className="w-full max-w-xl mx-auto">
+          <div className="w-full max-w-xl mx-auto relative">
             {loading ? (
-              <div className="border border-gray-200 rounded-xl p-5 bg-white shadow-sm">
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="w-5 h-5 border-2 border-gray-200 border-t-[#268ad8] rounded-full animate-spin shrink-0" />
-                  <span className="text-sm font-medium text-[#282f42]">
-                    {scanProgress < 30 ? "Fetching PageSpeed data from Google…" : scanProgress < 60 ? "Detecting WordPress setup…" : scanProgress < 90 ? "Identifying performance problems…" : "Almost done…"}
-                  </span>
+              <div className="border-2 border-[#268ad8]/30 rounded-2xl p-8 bg-white shadow-xl relative overflow-hidden animate-slide-up-fade">
+                <div className="absolute inset-0 bg-[url('/sprinkles.png')] opacity-[0.03] bg-cover mix-blend-overlay animate-gentle-bg pointer-events-none"></div>
+                <Image src="/mascot.png" alt="Maki is scanning" width={60} height={60} className="mx-auto mb-4 animate-bob drop-shadow-md" />
+                <div className="text-center mb-6">
+                  <h3 className="font-bold text-lg text-[#282f42] mb-1">
+                    {scanProgress < 30 ? "Fetching PageSpeed data..." : scanProgress < 60 ? "Detecting WordPress setup..." : scanProgress < 90 ? "Identifying performance problems..." : "Almost done..."}
+                  </h3>
+                  <p className="text-xs text-gray-500 font-medium">This usually takes about 10-15 seconds.</p>
                 </div>
-                <div className="w-full bg-gray-100 rounded-full h-2 overflow-hidden">
+                <div className="w-full bg-blue-50 rounded-full h-3 overflow-hidden shadow-inner relative z-10 border border-blue-100">
                   <div
-                    className="bg-[#268ad8] h-2 rounded-full transition-all duration-500 ease-out"
+                    className="bg-gradient-to-r from-[#268ad8] to-[#c84367] h-full rounded-full transition-all duration-500 ease-out relative"
                     style={{ width: `${scanProgress}%` }}
-                  />
+                  >
+                    <div className="absolute top-0 right-0 bottom-0 left-0 bg-[linear-gradient(45deg,rgba(255,255,255,0.2)_25%,transparent_25%,transparent_50%,rgba(255,255,255,0.2)_50%,rgba(255,255,255,0.2)_75%,transparent_75%,transparent)] bg-[length:1rem_1rem] animate-[gentleBg_1s_linear_infinite]" />
+                  </div>
                 </div>
               </div>
             ) : (
@@ -275,64 +284,86 @@ export default function LandingPage() {
             </p>
           </div>
 
-          <div className="bg-white border border-gray-200 rounded-2xl shadow-xl overflow-hidden max-w-2xl mx-auto">
+          <div className="bg-white border-2 border-[#268ad8]/20 rounded-3xl shadow-2xl overflow-hidden max-w-2xl mx-auto relative">
+            <div className="absolute inset-0 bg-[url('/sprinkles.png')] opacity-[0.02] bg-cover mix-blend-overlay pointer-events-none"></div>
             {/* Browser chrome */}
-            <div className="border-b border-gray-100 px-4 py-3 flex items-center gap-2 bg-gray-50">
-              <div className="flex gap-1.5">
-                <span className="w-3 h-3 rounded-full bg-gray-300" />
-                <span className="w-3 h-3 rounded-full bg-gray-300" />
-                <span className="w-3 h-3 rounded-full bg-gray-300" />
+            <div className="border-b border-gray-100 px-5 py-3 flex items-center gap-2 bg-[#f9fafb] relative z-10">
+              <div className="flex gap-2">
+                <span className="w-3.5 h-3.5 rounded-full bg-red-400" />
+                <span className="w-3.5 h-3.5 rounded-full bg-amber-400" />
+                <span className="w-3.5 h-3.5 rounded-full bg-green-400" />
               </div>
-              <div className="flex-1 mx-4 bg-white border border-gray-200 rounded-md px-3 py-1 text-xs text-gray-500 text-center font-mono">
+              <div className="flex-1 mx-4 bg-white border border-gray-200 rounded-lg px-3 py-1.5 text-xs text-gray-500 text-center font-mono shadow-inner">
                 getmaki.app/report
               </div>
             </div>
 
             {/* Mock Dashboard */}
-            <div className="p-4 sm:p-8">
-              <div className="flex justify-between items-start mb-6">
+            <div className="p-6 sm:p-10 relative z-10">
+              <div className="flex justify-between items-start mb-8">
                 <div>
-                  <h3 className="text-xl font-bold">example.com</h3>
-                  <span className="text-xs font-medium text-[#268ad8] bg-blue-50 px-2 py-0.5 rounded mt-1 inline-block">WordPress detected</span>
+                  <h3 className="text-2xl font-black text-[#282f42] mb-1">example.com</h3>
+                  <span className="text-[10px] font-black uppercase tracking-widest text-[#268ad8] bg-blue-50 px-2.5 py-1 rounded-md border border-blue-100">WordPress detected</span>
                 </div>
-                <div className="text-center bg-gray-50 px-4 py-2 rounded-lg">
-                  <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Performance</p>
-                  <p className="text-2xl font-bold text-red-500">58</p>
+                <div className="text-center bg-[#282f42] text-white px-5 py-3 rounded-2xl shadow-lg transform rotate-2">
+                  <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Performance</p>
+                  <p className="text-3xl font-black text-red-400">58</p>
                 </div>
               </div>
 
               <div className="mb-6">
-                <p className="font-semibold text-gray-900 mb-2">3 high-impact fixes</p>
-                
-                <div className="border border-gray-200 rounded-xl overflow-hidden">
-                  <div className="bg-gray-50 px-4 py-2 border-b text-[10px] font-bold text-gray-500 uppercase tracking-widest">
+                <div className="border-2 border-red-100 shadow-lg shadow-red-500/5 rounded-2xl overflow-hidden relative bg-white">
+                  
+                  <div className="bg-[#f9fafb] px-5 py-3 text-[10px] font-black text-[#c84367] uppercase tracking-widest flex items-center gap-2">
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
                     Next Priority Fix
                   </div>
-                  <div className="p-4 bg-white">
-                    <div className="flex items-center gap-2 mb-2">
-                      <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-red-100 text-red-700">High impact</span>
+                  
+                  <div className="p-6">
+                    <div className="flex items-center gap-2 mb-3">
+                      <span className="text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-md border bg-[#c84367]/10 text-[#c84367] border-[#c84367]/20">High impact</span>
                     </div>
-                    <h4 className="font-bold text-lg mb-1">Your main image is lazy-loaded</h4>
-                    <p className="text-xs text-gray-500 font-mono mb-4">hero-home.webp</p>
+                    <h4 className="font-bold text-xl text-[#282f42] mb-3">Your main image is lazy-loaded</h4>
                     
-                    <div className="bg-blue-50 border border-blue-100 rounded-lg p-3 mb-4">
-                      <p className="text-xs font-bold text-[#268ad8] uppercase tracking-wider mb-2">Detected Setup</p>
-                      <p className="text-sm font-medium text-blue-900">WordPress &middot; GeneratePress &middot; Perfmatters</p>
+                    <div className="mb-5">
+                      <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5">Affected resource</p>
+                      <div className="bg-gray-100 border border-gray-200 rounded p-2 text-xs font-mono text-gray-600 truncate max-w-full inline-block">
+                        hero-home.webp
+                      </div>
                     </div>
-
+                    
                     <div className="mb-6">
-                      <p className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">How to fix</p>
-                      <ol className="list-decimal pl-5 text-sm space-y-1 text-gray-700">
-                        <li>Open WordPress Admin.</li>
-                        <li>Go to Settings &rarr; Perfmatters.</li>
-                        <li>Open the Lazy Load tab.</li>
-                        <li>Add <span className="font-mono bg-gray-100 px-1 rounded">hero-home.webp</span> to the exclusion list.</li>
-                        <li>Clear cache.</li>
-                      </ol>
+                      <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5">Detected Setup</p>
+                      <div className="flex flex-wrap gap-2">
+                        <span className="text-xs font-bold bg-blue-50 text-[#268ad8] border border-blue-100 px-2.5 py-1 rounded-md">WordPress</span>
+                        <span className="text-xs font-bold bg-blue-50 text-[#268ad8] border border-blue-100 px-2.5 py-1 rounded-md">GeneratePress</span>
+                        <span className="text-xs font-bold bg-blue-50 text-[#268ad8] border border-blue-100 px-2.5 py-1 rounded-md">Perfmatters</span>
+                      </div>
                     </div>
 
-                    <div className="flex justify-between items-center border-t pt-4">
-                      <button className="text-sm px-4 py-2 rounded-full border bg-white text-[#268ad8] border-[#268ad8] font-medium">
+                    <div className="bg-[#f9fafb] p-5 rounded-xl border border-gray-100 mb-6">
+                      <p className="text-xs font-bold text-[#268ad8] uppercase tracking-widest mb-4">How to fix</p>
+                      <div className="space-y-4 ml-1">
+                        {[
+                          "Open WordPress Admin.",
+                          "Go to Settings → Perfmatters.",
+                          "Open the Lazy Load tab.",
+                          <span>Add <span className="font-mono bg-white border px-1.5 py-0.5 rounded text-[10px]">hero-home.webp</span> to the exclusion list.</span>,
+                          "Clear cache."
+                        ].map((step, idx, arr) => (
+                          <div key={idx} className="flex gap-3 items-start relative">
+                            {idx !== arr.length - 1 && <div className="absolute left-3 top-7 bottom-[-16px] w-0.5 bg-gray-200"></div>}
+                            <div className="w-6 h-6 rounded-full bg-[#268ad8] text-white flex items-center justify-center text-xs font-bold shrink-0 relative z-10 shadow-sm">
+                              {idx + 1}
+                            </div>
+                            <div className="pt-0.5 text-[#282f42] text-sm font-medium leading-relaxed">{step}</div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="flex justify-end pt-2">
+                      <button className="text-sm px-6 py-2.5 rounded-full border-2 font-bold bg-white text-[#268ad8] border-[#268ad8] hover:bg-[#268ad8] hover:text-white transition-all shadow-sm">
                         Mark as fixed
                       </button>
                     </div>

@@ -77,8 +77,11 @@ export default async function ScanTeaserPage({
         </div>
       </header>
 
-      <section className="px-6 py-12 sm:py-20">
-        <div className="max-w-2xl mx-auto">
+      <section className="px-6 py-12 sm:py-20 relative overflow-hidden bg-[#f3fbff]">
+        {/* Gentle background decoration */}
+        <div className="absolute top-[-10%] right-[-10%] w-[50vw] h-[50vw] bg-[#268ad8] opacity-[0.03] rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute bottom-[-10%] left-[-10%] w-[40vw] h-[40vw] bg-[#c84367] opacity-[0.03] rounded-full blur-3xl pointer-events-none" />
+        <div className="max-w-2xl mx-auto relative z-10">
           <p className="text-sm text-gray-500 mb-2 truncate text-center">
             Results for{" "}
             <span className="font-mono text-gray-700">{teaser.url}</span>

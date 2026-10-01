@@ -41,4 +41,43 @@ body {
     from { transform: translateY(2rem); }
     to { transform: translateY(0); }
   }
+
+  @keyframes mascotBob {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-8px) rotate(2deg); }
+  }
+
+  @keyframes popIn {
+    0% { transform: scale(0.8); opacity: 0; }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); opacity: 1; }
+  }
+
+  @keyframes slideUpFade {
+    from { transform: translateY(10px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+
+  @keyframes gentleBg {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  .animate-bob {
+    animation: mascotBob 4s ease-in-out infinite;
+  }
+
+  .animate-pop {
+    animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+  }
+
+  .animate-slide-up-fade {
+    animation: slideUpFade 0.4s ease-out forwards;
+  }
+
+  .animate-gentle-bg {
+    background-size: 200% 200%;
+    animation: gentleBg 15s ease infinite;
+  }
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import { AuditResult } from "@/lib/types";
 import { WordPressFixRecommendation } from "@/lib/wp-fixes/types";
 
@@ -160,94 +161,121 @@ export default function Dashboard({ audit, scanId, initialRetests }: DashboardPr
     const isCompleted = completedFixIds.includes(fix.fixId);
     const isExpanded = expandedFixId === fix.fixId;
 
+    const impactStyle = 
+      fix.impact === 'high' ? 'bg-[#c84367]/10 text-[#c84367] border-[#c84367]/20' : 
+      fix.impact === 'medium' ? 'bg-amber-100 text-amber-700 border-amber-200' : 
+      'bg-blue-100 text-[#268ad8] border-blue-200';
+
     return (
-      <div key={fix.fixId} className={`border rounded-xl mb-4 overflow-hidden bg-white shadow-sm transition-all ${isCompleted ? 'opacity-70' : ''}`}>
+      <div key={fix.fixId} className={`border rounded-2xl mb-4 overflow-hidden shadow-sm transition-all ${isCompleted ? 'bg-gray-50 border-gray-100 opacity-60' : 'bg-white border-gray-200'}`}>
         {/* Collapsed Header */}
         <div 
-          className="p-4 cursor-pointer flex flex-col md:flex-row md:items-center gap-3 hover:bg-gray-50 transition-colors"
+          className="p-5 cursor-pointer flex flex-col md:flex-row md:items-start gap-4 hover:bg-[#f3fbff]/50 transition-colors"
           onClick={() => setExpandedFixId(isExpanded ? null : fix.fixId)}
         >
           <div className="flex-1">
-            <div className="flex items-center gap-2 mb-1">
-              <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded ${
-                fix.impact === 'high' ? 'bg-red-100 text-red-700' : 
-                fix.impact === 'medium' ? 'bg-amber-100 text-amber-700' : 
-                'bg-blue-100 text-blue-700'
-              }`}>
+            <div className="flex flex-wrap items-center gap-2 mb-2">
+              <span className={`text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-md border ${impactStyle}`}>
                 {fix.impact} impact
               </span>
               {isCompleted && (
-                <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-green-100 text-green-700 flex items-center gap-1">
-                  <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                <span className="text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-md bg-green-100 text-green-700 border border-green-200 flex items-center gap-1">
+                  <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
                   Fixed
                 </span>
               )}
             </div>
-            <h3 className={`font-semibold text-gray-900 ${isCompleted ? 'line-through' : ''}`}>{fix.title}</h3>
+            <h3 className={`font-bold text-lg text-[#282f42] leading-snug ${isCompleted ? 'line-through text-gray-500' : ''}`}>{fix.title}</h3>
             {fix.resource && (
-              <p className="text-xs text-gray-500 mt-1 font-mono truncate max-w-full">
-                {typeof fix.resource === 'string' ? fix.resource.split('/').pop() : 'Multiple resources'}
-              </p>
-            )}
-            {fix.context?.plugin && (
-              <p className="text-xs text-indigo-600 mt-1 flex items-center gap-1">
-                <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
-                {fix.context.plugin}
-              </p>
+              <div className="mt-2 flex items-center gap-2 flex-wrap">
+                <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Resource</span>
+                <span className="text-xs bg-gray-100 text-gray-600 font-mono px-2 py-0.5 rounded truncate max-w-[200px] sm:max-w-xs border border-gray-200">
+                  {typeof fix.resource === 'string' ? fix.resource.split('/').pop() : 'Multiple resources'}
+                </span>
+              </div>
             )}
           </div>
-          <div className="flex items-center justify-between md:justify-end gap-3 mt-2 md:mt-0">
+          <div className="flex items-center justify-between md:justify-end gap-4 mt-2 md:mt-0 pt-2 md:pt-0">
              <button 
                 onClick={(e) => { e.stopPropagation(); toggleFix(fix.fixId); }}
-                className={`text-sm px-4 py-1.5 rounded-full border transition-colors ${
-                  isCompleted ? 'bg-gray-100 text-gray-700 border-gray-200 hover:bg-gray-200' : 'bg-white text-[#268ad8] border-[#268ad8] hover:bg-blue-50'
+                className={`text-sm px-5 py-2 rounded-full border-2 font-bold transition-all ${
+                  isCompleted ? 'bg-green-50 text-green-600 border-green-200 hover:bg-green-100' : 'bg-white text-[#268ad8] border-[#268ad8] hover:bg-[#268ad8] hover:text-white'
                 }`}
               >
-                {isCompleted ? 'Unmark' : 'Mark as fixed'}
+                {isCompleted ? '✓ Fixed' : 'Mark as fixed'}
               </button>
-            <svg className={`w-5 h-5 text-gray-400 transition-transform ${isExpanded ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+            <div className={`w-8 h-8 rounded-full flex items-center justify-center bg-gray-50 text-gray-400 transition-transform ${isExpanded ? 'rotate-180 bg-gray-200 text-gray-600' : ''}`}>
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+            </div>
           </div>
         </div>
 
         {/* Expanded Content */}
         {isExpanded && (
-          <div className="p-4 border-t bg-gray-50 text-sm text-gray-800">
-            <div className="mb-6">
-              <h4 className="font-semibold text-xs text-gray-500 uppercase tracking-wider mb-2">How to fix</h4>
-              <ol className="list-decimal pl-5 space-y-2">
+          <div className="p-6 border-t border-gray-100 bg-[#f9fafb] text-sm text-[#282f42]">
+            
+            {/* Context/Setup Chips */}
+            {wpContext && (
+              <div className="mb-6 flex flex-wrap items-center gap-2">
+                <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mr-1">Detected Setup</span>
+                <span className="text-xs font-bold bg-blue-50 text-[#268ad8] border border-blue-100 px-2 py-1 rounded-md">WordPress</span>
+                {wpContext.theme && <span className="text-xs font-bold bg-blue-50 text-[#268ad8] border border-blue-100 px-2 py-1 rounded-md">{wpContext.theme.name}</span>}
+                {wpContext.pageBuilder && <span className="text-xs font-bold bg-blue-50 text-[#268ad8] border border-blue-100 px-2 py-1 rounded-md">{wpContext.pageBuilder.name}</span>}
+                {fix.context?.plugin && <span className="text-xs font-bold bg-blue-50 text-[#268ad8] border border-blue-100 px-2 py-1 rounded-md">{fix.context.plugin}</span>}
+              </div>
+            )}
+
+            <div className="mb-8">
+              <h4 className="font-bold text-xs text-[#268ad8] uppercase tracking-widest mb-4 flex items-center gap-2">
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                How to fix
+              </h4>
+              <div className="space-y-4 ml-1">
                 {fix.steps.map((step, idx) => (
-                  <li key={idx} className="pl-1">{step}</li>
+                  <div key={idx} className="flex gap-3 items-start relative">
+                    {idx !== fix.steps.length - 1 && <div className="absolute left-3 top-7 bottom-[-16px] w-0.5 bg-gray-200"></div>}
+                    <div className="w-6 h-6 rounded-full bg-[#268ad8] text-white flex items-center justify-center text-xs font-bold shrink-0 relative z-10 shadow-sm">
+                      {idx + 1}
+                    </div>
+                    <div className="pt-0.5 text-[#282f42] font-medium leading-relaxed">{step}</div>
+                  </div>
                 ))}
-              </ol>
+              </div>
             </div>
 
             {fix.resource && (
-              <div className="mb-6">
-                <h4 className="font-semibold text-xs text-gray-500 uppercase tracking-wider mb-2">Affected Resource</h4>
-                <div className="bg-white border rounded p-2 text-xs font-mono overflow-x-auto whitespace-pre">
+              <div className="mb-6 bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
+                <h4 className="font-bold text-[10px] text-gray-500 uppercase tracking-widest mb-2">Affected Resource</h4>
+                <div className="text-xs font-mono text-gray-600 overflow-x-auto whitespace-pre bg-gray-50 p-2 rounded border border-gray-100">
                   {typeof fix.resource === 'string' ? fix.resource : fix.resource.join('\n')}
                 </div>
               </div>
             )}
 
             <div className="mb-6">
-              <h4 className="font-semibold text-xs text-gray-500 uppercase tracking-wider mb-2">Verify</h4>
-              <ul className="list-disc pl-5 space-y-1">
+              <h4 className="font-bold text-xs text-gray-500 uppercase tracking-widest mb-3">Verify it worked</h4>
+              <ul className="space-y-2">
                 {fix.verification.map((v, idx) => (
-                  <li key={idx} className="pl-1">{v}</li>
+                  <li key={idx} className="flex items-start gap-2 text-gray-600">
+                    <svg className="w-4 h-4 text-green-500 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                    <span>{v}</span>
+                  </li>
                 ))}
               </ul>
             </div>
 
             {fix.caution && fix.caution.length > 0 && (
-              <div className="mb-4 bg-amber-50 border border-amber-200 rounded p-3 text-amber-800">
-                <h4 className="font-semibold text-xs uppercase tracking-wider mb-1 flex items-center gap-1">
+              <div className="mb-2 bg-[#fff8e6] border border-[#f5d061] rounded-xl p-4 text-[#8a6100]">
+                <h4 className="font-bold text-xs uppercase tracking-widest mb-2 flex items-center gap-1.5">
                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
                   Caution
                 </h4>
-                <ul className="list-disc pl-5 space-y-1">
+                <ul className="space-y-1">
                   {fix.caution.map((c, idx) => (
-                    <li key={idx} className="pl-1">{c}</li>
+                    <li key={idx} className="flex items-start gap-2 text-sm">
+                      <span className="opacity-50 mt-0.5">•</span>
+                      <span>{c}</span>
+                    </li>
                   ))}
                 </ul>
               </div>
@@ -259,45 +287,53 @@ export default function Dashboard({ audit, scanId, initialRetests }: DashboardPr
   };
 
   return (
-    <div className="min-h-screen bg-[#f9fafb] font-sans pb-24 md:pb-0">
+    <div className="min-h-screen bg-[#f3fbff] font-sans pb-24 md:pb-0 relative overflow-hidden">
       
+      {/* Gentle background decoration */}
+      <div className="absolute top-[-100px] left-[-100px] w-[500px] h-[500px] bg-[#c84367]/5 rounded-full blur-[100px] pointer-events-none" />
+      <div className="absolute top-[20%] right-[-150px] w-[600px] h-[600px] bg-[#268ad8]/5 rounded-full blur-[120px] pointer-events-none" />
+
       {/* Mobile Nav */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t z-50 flex justify-around p-2 pb-safe">
-        <button onClick={() => setActiveTab('overview')} className={`flex flex-col items-center p-2 ${activeTab === 'overview' ? 'text-[#268ad8]' : 'text-gray-500'}`}>
+      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t z-50 flex justify-around p-2 pb-safe shadow-[0_-10px_40px_rgba(0,0,0,0.05)]">
+        <button onClick={() => setActiveTab('overview')} className={`flex flex-col items-center p-2 transition-colors ${activeTab === 'overview' ? 'text-[#c84367]' : 'text-gray-400 hover:text-gray-600'}`}>
           <svg className="w-6 h-6 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
-          <span className="text-[10px] font-medium">Overview</span>
+          <span className="text-[10px] font-bold tracking-wide">Overview</span>
         </button>
-        <button onClick={() => setActiveTab('fixes')} className={`flex flex-col items-center p-2 ${activeTab === 'fixes' ? 'text-[#268ad8]' : 'text-gray-500'}`}>
+        <button onClick={() => setActiveTab('fixes')} className={`flex flex-col items-center p-2 transition-colors relative ${activeTab === 'fixes' ? 'text-[#c84367]' : 'text-gray-400 hover:text-gray-600'}`}>
           <svg className="w-6 h-6 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" /></svg>
-          <span className="text-[10px] font-medium">Fixes</span>
+          <span className="text-[10px] font-bold tracking-wide">Fixes</span>
+          {totalFixes > completedCount && <span className="absolute top-1 right-2 w-2 h-2 bg-[#c84367] rounded-full"></span>}
         </button>
-        <button onClick={() => setActiveTab('setup')} className={`flex flex-col items-center p-2 ${activeTab === 'setup' ? 'text-[#268ad8]' : 'text-gray-500'}`}>
+        <button onClick={() => setActiveTab('setup')} className={`flex flex-col items-center p-2 transition-colors ${activeTab === 'setup' ? 'text-[#c84367]' : 'text-gray-400 hover:text-gray-600'}`}>
           <svg className="w-6 h-6 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
-          <span className="text-[10px] font-medium">Setup</span>
+          <span className="text-[10px] font-bold tracking-wide">Setup</span>
         </button>
       </div>
 
-      <div className="max-w-6xl mx-auto md:flex min-h-screen">
+      <div className="max-w-6xl mx-auto md:flex min-h-screen relative z-10">
         
         {/* Desktop Sidebar */}
-        <div className="hidden md:block w-64 border-r bg-white p-6 sticky top-0 h-screen overflow-y-auto">
-          <div className="mb-8">
-            <h1 className="text-2xl font-bold text-[#282f42] tracking-tight">Maki</h1>
+        <div className="hidden md:block w-72 bg-white/80 backdrop-blur-xl border-r border-gray-100 p-8 sticky top-0 h-screen overflow-y-auto">
+          <div className="mb-10 flex items-center gap-3">
+            <div className="w-10 h-10 bg-[#268ad8] rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/20">
+              <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+            </div>
+            <h1 className="text-2xl font-black text-[#282f42] tracking-tight">Maki</h1>
           </div>
           
-          <nav className="space-y-2">
-            <button onClick={() => setActiveTab('overview')} className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${activeTab === 'overview' ? 'bg-blue-50 text-[#268ad8]' : 'text-gray-600 hover:bg-gray-50'}`}>
+          <nav className="space-y-3">
+            <button onClick={() => setActiveTab('overview')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-colors ${activeTab === 'overview' ? 'bg-white shadow-sm border border-gray-100 text-[#c84367]' : 'text-gray-500 hover:bg-white/50 hover:text-gray-900'}`}>
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
               Overview
             </button>
-            <button onClick={() => setActiveTab('fixes')} className={`w-full flex items-center justify-between px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${activeTab === 'fixes' ? 'bg-blue-50 text-[#268ad8]' : 'text-gray-600 hover:bg-gray-50'}`}>
+            <button onClick={() => setActiveTab('fixes')} className={`w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-bold transition-colors ${activeTab === 'fixes' ? 'bg-white shadow-sm border border-gray-100 text-[#c84367]' : 'text-gray-500 hover:bg-white/50 hover:text-gray-900'}`}>
               <div className="flex items-center gap-3">
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" /></svg>
                 Fixes
               </div>
-              {totalFixes > 0 && <span className="bg-gray-100 text-gray-600 py-0.5 px-2 rounded-full text-xs">{totalFixes - completedCount}</span>}
+              {totalFixes > completedCount && <span className="bg-[#c84367] text-white py-0.5 px-2.5 rounded-full text-[10px] font-black">{totalFixes - completedCount}</span>}
             </button>
-            <button onClick={() => setActiveTab('setup')} className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${activeTab === 'setup' ? 'bg-blue-50 text-[#268ad8]' : 'text-gray-600 hover:bg-gray-50'}`}>
+            <button onClick={() => setActiveTab('setup')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-colors ${activeTab === 'setup' ? 'bg-white shadow-sm border border-gray-100 text-[#c84367]' : 'text-gray-500 hover:bg-white/50 hover:text-gray-900'}`}>
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
               Setup
             </button>
@@ -305,37 +341,42 @@ export default function Dashboard({ audit, scanId, initialRetests }: DashboardPr
         </div>
 
         {/* Main Content */}
-        <main className="flex-1 p-4 md:p-8 md:max-w-3xl">
+        <main className="flex-1 p-4 md:p-10 md:max-w-3xl lg:max-w-4xl xl:max-w-5xl">
           
           {/* Header Block (Always visible on mobile Overview, or desktop) */}
           {(activeTab === 'overview' || typeof window === 'undefined' || window.innerWidth >= 768) && (
             <>
               {retests.length > 0 ? (
-                <div className="bg-white rounded-2xl p-6 border shadow-sm mb-6 border-indigo-100 relative overflow-hidden">
-                  <div className="absolute top-0 left-0 w-1 h-full bg-[#268ad8]"></div>
-                  <h2 className="text-xl font-bold text-gray-900 mb-6">Before & After</h2>
+                <div className="bg-white rounded-3xl p-6 md:p-8 border shadow-xl shadow-blue-900/5 mb-8 border-[#268ad8]/20 relative overflow-hidden">
+                  <div className="absolute top-0 left-0 w-2 h-full bg-gradient-to-b from-[#268ad8] to-[#c84367]"></div>
                   
-                  <div className="flex text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 px-1">
+                  {completedCount === totalFixes && (
+                    <Image src="/celebrate.png" alt="Celebrate" width={60} height={60} className="absolute top-4 right-4 opacity-20 animate-pop pointer-events-none" />
+                  )}
+
+                  <h2 className="text-2xl font-black text-[#282f42] mb-6 tracking-tight">Before & After</h2>
+                  
+                  <div className="flex text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3 px-1 border-b border-gray-100 pb-2">
                     <div className="w-1/3">Metric</div>
                     <div className="w-1/4 text-center">Original</div>
                     <div className="w-5/12 text-right">Latest</div>
                   </div>
                   
-                  <div className="bg-gray-50/50 rounded-xl px-4 py-2 border">
-                    {renderComparisonRow("Performance", audit.mobileScore, retests[retests.length - 1].performanceScore ?? "N/A", false)}
+                  <div className="bg-gray-50/50 rounded-2xl px-5 py-3 border border-gray-100/80">
+                    {renderComparisonRow("Performance score", audit.mobileScore, retests[retests.length - 1].performanceScore ?? "N/A", false)}
                     {renderComparisonRow("LCP", audit.cwvScores.lcp.value.replace('s',''), retests[retests.length - 1].lcp.value.replace('s',''))}
                     {renderComparisonRow("INP", audit.cwvScores.inp.value.replace('ms',''), retests[retests.length - 1].inp.value.replace('ms',''))}
                     {renderComparisonRow("CLS", audit.cwvScores.cls.value, retests[retests.length - 1].cls.value)}
                   </div>
                   
                   {retests.length > 1 && (
-                    <details className="mt-4 text-xs">
-                      <summary className="text-gray-500 cursor-pointer hover:text-gray-700 outline-none font-medium">Previous tests ({retests.length})</summary>
-                      <div className="mt-3 pl-2 space-y-2 text-gray-600 border-l-2 border-gray-100">
+                    <details className="mt-6 text-sm">
+                      <summary className="text-[#268ad8] cursor-pointer hover:underline outline-none font-bold">View past re-tests ({retests.length})</summary>
+                      <div className="mt-4 pl-4 space-y-3 border-l-2 border-gray-100">
                         {retests.map((rt, i) => (
-                          <div key={i} className="flex justify-between pl-3">
-                            <span>{new Date(rt.createdAt).toLocaleString(undefined, { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })}</span>
-                            <span className="font-mono bg-gray-100 px-1.5 rounded text-[10px]">Score: {rt.performanceScore ?? "N/A"}</span>
+                          <div key={i} className="flex justify-between items-center text-gray-600">
+                            <span className="font-medium">{new Date(rt.createdAt).toLocaleString(undefined, { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })}</span>
+                            <span className="font-mono bg-white border shadow-sm px-2 py-0.5 rounded-md text-xs font-bold text-[#282f42]">Score: {rt.performanceScore ?? "N/A"}</span>
                           </div>
                         ))}
                       </div>
@@ -343,38 +384,37 @@ export default function Dashboard({ audit, scanId, initialRetests }: DashboardPr
                   )}
                 </div>
               ) : (
-                <div className="bg-white rounded-2xl p-6 border shadow-sm mb-6">
-                  <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-4">
-                    <div>
-                      <h2 className="text-xl font-bold text-gray-900 mb-1">{domain}</h2>
-                      <div className="flex items-center gap-2 mb-2">
-                        <span className="text-sm font-medium text-[#268ad8] bg-blue-50 px-2 py-0.5 rounded">
-                          {getWpStatusText()}
-                        </span>
-                      </div>
-                      <p className="text-sm text-gray-500">{getTechString()}</p>
+                <div className="bg-white rounded-3xl p-6 md:p-8 border shadow-xl shadow-blue-900/5 mb-8 flex flex-col md:flex-row md:justify-between md:items-center gap-6 relative overflow-hidden">
+                  <div className="z-10 relative flex-1">
+                    <h2 className="text-2xl font-black text-[#282f42] mb-2 truncate">{domain}</h2>
+                    <div className="flex items-center gap-3 mb-3 flex-wrap">
+                      <span className="text-[10px] font-black uppercase tracking-widest text-[#268ad8] bg-blue-50 border border-blue-100 px-3 py-1 rounded-full">
+                        {getWpStatusText()}
+                      </span>
                     </div>
-                    
-                    <div className="bg-gray-50 p-4 rounded-xl flex gap-6 text-center">
-                      <div>
-                        <p className="text-xs text-gray-500 uppercase tracking-wider mb-1 font-semibold">Performance</p>
-                        <p className={`text-3xl font-bold ${scoreColor(audit.mobileScore)}`}>{audit.mobileScore}</p>
-                      </div>
+                  </div>
+                  
+                  <div className="bg-[#282f42] p-5 rounded-2xl flex gap-6 text-center shadow-lg relative overflow-hidden z-10 shrink-0 min-w-[160px] justify-center">
+                    <div className="absolute inset-0 bg-[url('/sprinkles.png')] opacity-10 bg-cover mix-blend-overlay pointer-events-none"></div>
+                    <div>
+                      <p className="text-[10px] text-gray-400 uppercase tracking-widest font-black mb-1">Performance score</p>
+                      <p className={`text-4xl font-black ${audit.mobileScore >= 90 ? 'text-green-400' : audit.mobileScore >= 50 ? 'text-amber-400' : 'text-red-400'}`}>{audit.mobileScore}</p>
+                      <p className="text-[8px] text-gray-500 uppercase tracking-widest mt-1">Google PageSpeed</p>
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-3 gap-4 mt-6 pt-6 border-t border-gray-100">
-                    <div className="text-center">
-                      <p className="text-xs text-gray-500 font-semibold mb-1">LCP</p>
-                      <p className={`text-lg font-bold ${metricColor(audit.cwvScores.lcp.status)}`}>{audit.cwvScores.lcp.value}</p>
+                  <div className="grid grid-cols-3 gap-3 w-full md:w-auto md:min-w-[250px] shrink-0">
+                    <div className="bg-gray-50 p-3 rounded-xl border border-gray-100 text-center">
+                      <p className="text-[10px] text-gray-400 font-black tracking-widest uppercase mb-1">LCP</p>
+                      <p className={`text-lg font-black ${metricColor(audit.cwvScores.lcp.status)}`}>{audit.cwvScores.lcp.value}</p>
                     </div>
-                    <div className="text-center">
-                      <p className="text-xs text-gray-500 font-semibold mb-1">INP</p>
-                      <p className={`text-lg font-bold ${metricColor(audit.cwvScores.inp.status)}`}>{audit.cwvScores.inp.value}</p>
+                    <div className="bg-gray-50 p-3 rounded-xl border border-gray-100 text-center">
+                      <p className="text-[10px] text-gray-400 font-black tracking-widest uppercase mb-1">INP</p>
+                      <p className={`text-lg font-black ${metricColor(audit.cwvScores.inp.status)}`}>{audit.cwvScores.inp.value}</p>
                     </div>
-                    <div className="text-center">
-                      <p className="text-xs text-gray-500 font-semibold mb-1">CLS</p>
-                      <p className={`text-lg font-bold ${metricColor(audit.cwvScores.cls.status)}`}>{audit.cwvScores.cls.value}</p>
+                    <div className="bg-gray-50 p-3 rounded-xl border border-gray-100 text-center">
+                      <p className="text-[10px] text-gray-400 font-black tracking-widest uppercase mb-1">CLS</p>
+                      <p className={`text-lg font-black ${metricColor(audit.cwvScores.cls.status)}`}>{audit.cwvScores.cls.value}</p>
                     </div>
                   </div>
                 </div>
@@ -454,20 +494,84 @@ export default function Dashboard({ audit, scanId, initialRetests }: DashboardPr
                   </div>
 
                   {nextFix && (
-                    <div className="mt-6 border-t pt-6">
-                      <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Priority Next Fix</p>
-                      <div className="border border-red-100 bg-red-50/30 rounded-xl p-4">
-                        <h4 className="font-semibold text-gray-900 mb-1">{nextFix.title}</h4>
-                        {nextFix.resource && <p className="text-xs font-mono text-gray-500 truncate">{typeof nextFix.resource === 'string' ? nextFix.resource.split('/').pop() : 'Multiple resources'}</p>}
-                        <button 
-                          onClick={() => {
-                            setActiveTab('fixes');
-                            setExpandedFixId(nextFix.fixId);
-                          }}
-                          className="mt-3 text-sm font-medium text-[#268ad8] hover:underline"
-                        >
-                          View instructions →
-                        </button>
+                    <div className="mt-8 relative animate-slide-up-fade">
+                      <p className="text-[10px] font-black text-[#c84367] uppercase tracking-widest mb-3 flex items-center gap-2">
+                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                        Next Priority Fix
+                      </p>
+                      
+                      <Image src="/mascot.png" alt="" width={60} height={60} className="absolute -top-12 right-0 hidden sm:block animate-bob pointer-events-none drop-shadow-md z-10" />
+
+                      <div className="bg-white border-2 border-red-100 shadow-xl shadow-red-500/5 rounded-2xl overflow-hidden relative z-0">
+                        <div className="p-6 cursor-pointer hover:bg-gray-50 transition-colors" onClick={() => { setActiveTab('fixes'); setExpandedFixId(nextFix.fixId); }}>
+                          <div className="flex flex-wrap gap-2 items-center mb-3">
+                            <span className="text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-md border bg-[#c84367]/10 text-[#c84367] border-[#c84367]/20">
+                              High Impact
+                            </span>
+                          </div>
+                          
+                          <h4 className="font-bold text-xl text-[#282f42] mb-3 leading-snug">{nextFix.title}</h4>
+                          
+                          {nextFix.resource && (
+                            <div className="mb-4">
+                              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5">Affected resource</p>
+                              <div className="bg-gray-100 border border-gray-200 rounded p-2 text-xs font-mono text-gray-600 truncate max-w-full inline-block">
+                                {typeof nextFix.resource === 'string' ? nextFix.resource : nextFix.resource[0]}
+                                {Array.isArray(nextFix.resource) && nextFix.resource.length > 1 && ` (+${nextFix.resource.length - 1} more)`}
+                              </div>
+                            </div>
+                          )}
+
+                          {wpContext && (
+                            <div className="mb-6">
+                              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5 flex items-center gap-1.5">
+                                <Image src="/mascot.png" alt="" width={16} height={16} className="sm:hidden" />
+                                Maki detected this setup:
+                              </p>
+                              <div className="flex flex-wrap gap-2">
+                                <span className="text-xs font-bold bg-blue-50 text-[#268ad8] border border-blue-100 px-2.5 py-1 rounded-md">WordPress</span>
+                                {wpContext.theme && <span className="text-xs font-bold bg-blue-50 text-[#268ad8] border border-blue-100 px-2.5 py-1 rounded-md">{wpContext.theme.name}</span>}
+                                {wpContext.pageBuilder && <span className="text-xs font-bold bg-blue-50 text-[#268ad8] border border-blue-100 px-2.5 py-1 rounded-md">{wpContext.pageBuilder.name}</span>}
+                                {nextFix.context?.plugin && <span className="text-xs font-bold bg-blue-50 text-[#268ad8] border border-blue-100 px-2.5 py-1 rounded-md">{nextFix.context.plugin}</span>}
+                              </div>
+                            </div>
+                          )}
+
+                          <div className="bg-[#f9fafb] p-5 rounded-xl border border-gray-100">
+                            <h5 className="font-bold text-xs text-[#268ad8] uppercase tracking-widest mb-4">How to fix</h5>
+                            <div className="space-y-4 ml-1">
+                              {nextFix.steps.slice(0, 3).map((step, idx) => (
+                                <div key={idx} className="flex gap-3 items-start relative">
+                                  {idx !== Math.min(nextFix.steps.length, 3) - 1 && <div className="absolute left-3 top-7 bottom-[-16px] w-0.5 bg-gray-200"></div>}
+                                  <div className="w-6 h-6 rounded-full bg-[#268ad8] text-white flex items-center justify-center text-xs font-bold shrink-0 relative z-10 shadow-sm">
+                                    {idx + 1}
+                                  </div>
+                                  <div className="pt-0.5 text-[#282f42] text-sm font-medium leading-relaxed">{step}</div>
+                                </div>
+                              ))}
+                              {nextFix.steps.length > 3 && (
+                                <div className="flex gap-3 items-center mt-2 pl-1.5 opacity-50">
+                                  <div className="w-1.5 h-1.5 rounded-full bg-[#268ad8]"></div>
+                                  <div className="w-1.5 h-1.5 rounded-full bg-[#268ad8]"></div>
+                                  <div className="w-1.5 h-1.5 rounded-full bg-[#268ad8]"></div>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+
+                          <div className="mt-5 flex items-center justify-between">
+                            <span className="text-sm font-bold text-[#c84367] flex items-center gap-1 group">
+                              View full instructions
+                              <svg className="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+                            </span>
+                            <button 
+                              onClick={(e) => { e.stopPropagation(); toggleFix(nextFix.fixId); }}
+                              className="text-sm px-5 py-2.5 rounded-full border-2 font-bold bg-white text-[#268ad8] border-[#268ad8] hover:bg-[#268ad8] hover:text-white transition-all shadow-sm shadow-[#268ad8]/10"
+                            >
+                              Mark as fixed
+                            </button>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   )}
