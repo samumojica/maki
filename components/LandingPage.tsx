@@ -135,6 +135,7 @@ export default function LandingPage() {
       <section className="px-6 pt-16 pb-28 bg-[#f3fbff]">
         <div className="max-w-5xl mx-auto text-center">
           {/* Eyebrow badge */}
+          {/*
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-gray-200 bg-white mb-8">
             <span className="relative flex items-center justify-center">
               <span className="absolute w-3 h-3 bg-green-500 rounded-full opacity-60 animate-ping" />
@@ -144,18 +145,22 @@ export default function LandingPage() {
               Live data from Google PageSpeed Insights
             </span>
           </div>
+          */}
 
           <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold tracking-tight mb-6 leading-[1.05]">
-            Fix what&apos;s slowing down your{" "}
-            <span className="relative inline-block mt-2">
-              <img src="/sprinkles.png" alt="" className="absolute -top-6 -right-6 w-12 h-12 pointer-events-none select-none opacity-80" aria-hidden="true" />
-              <span className="text-[#c84367]">WordPress</span>
+            Fix what&apos;s slowing down your
+            <br className="hidden sm:block" />
+            {" "}
+            <span className="whitespace-nowrap">
+              <span className="relative inline-block mt-2">
+                <img src="/sprinkles.png" alt="" className="absolute -top-6 -right-6 w-12 h-12 pointer-events-none select-none opacity-80" aria-hidden="true" />
+                <span className="text-[#c84367]">WordPress</span>
+              </span>{" "}
+              site.
             </span>
-            <br />
-            site.
           </h1>
 
-          <p className="text-xl text-gray-500 max-w-2xl mx-auto mb-10 leading-relaxed">
+          <p className="text-xl text-gray-500 max-w-[720px] mx-auto mb-10 leading-relaxed">
             Paste your URL. Maki scans your site with Google PageSpeed Insights, detects your WordPress setup when possible, and shows you what to fix first.
           </p>
 
