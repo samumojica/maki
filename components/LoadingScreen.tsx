@@ -7,7 +7,7 @@ const STEPS = [
   { label: "Verifying your access…", duration: 1500 },
   { label: "Unlocking Lighthouse performance data…", duration: 4000 },
   { label: "Generating stack-tailored fix snippets…", duration: 5000 },
-  { label: "Preparing your actionable PDF report…", duration: 4000 },
+  { label: "Preparing your actionable WordPress fix plan…", duration: 4000 },
 ];
 
 export default function LoadingScreen() {
@@ -99,7 +99,7 @@ export default function LoadingScreen() {
       </div>
       
       <p className="text-sm text-gray-400 mt-8 font-medium animate-pulse">
-        Generating high-fidelity PDF fixes...
+        Generating high-fidelity WordPress fixes...
       </p>
     </div>
   );

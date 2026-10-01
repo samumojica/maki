@@ -44,13 +44,36 @@ export interface SEOSnippet {
   lang: string;
 }
 
+export interface DetectedTechnology {
+  type: "theme" | "plugin" | "builder" | "cdn" | "script" | "platform";
+  name: string;
+  slug?: string;
+  confidence: "confirmed" | "likely" | "unknown";
+  evidence: string[];
+}
+
+export interface WordPressContext {
+  status: "confirmed" | "likely" | "unknown";
+  eligible: boolean;
+  theme?: DetectedTechnology;
+  pageBuilder?: DetectedTechnology;
+  performancePlugins: DetectedTechnology[];
+  imagePlugins: DetectedTechnology[];
+  cdn?: DetectedTechnology;
+  thirdPartyScripts: DetectedTechnology[];
+  allDetected: DetectedTechnology[];
+}
+
 export interface SiteInfo {
   detectedPlatform: DetectedPlatform;
   serverSoftware?: string;
   serverCountry?: string;
   cdnDetected?: string;
   technologies?: string[];
+  wordpressContext?: WordPressContext;
 }
+
+import { WordPressFixRecommendation } from "./wp-fixes/types";
 
 export interface AuditResult {
   url: string;
@@ -71,7 +94,8 @@ export interface AuditResult {
     seo: number;
   };
   fieldDataAvailable: boolean;
-  topFixes: TopFix[];
+  topFixes: TopFix[]; // Legacy AI generated
+  structuredFixes?: WordPressFixRecommendation[]; // New deterministic fixes
   quickWin: QuickWin;
   seoSnippets: SEOSnippet[];
   checklistAfter: string[];
@@ -81,12 +105,24 @@ export interface AuditResult {
   detectedPlatform?: DetectedPlatform;
 }
 
+export interface RetestRecord {
+  id: string;
+  createdAt: number;
+  performanceScore: number | null;
+  lcp: CWVMetric;
+  inp: CWVMetric;
+  cls: CWVMetric;
+  ttfb?: CWVMetric;
+}
+
 export interface ScanStoreEntry {
   scanId: string;
   url: string;
   tier: Tier;
   audit: AuditResult;
   createdAt: number;
+  unlocked?: boolean;
+  retests?: RetestRecord[];
 }
 
 export interface TeaserResult {

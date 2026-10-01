@@ -34,7 +34,12 @@ function ResultsContent() {
           throw new Error(data.error ?? "Audit failed");
         }
 
-        setAudit(data);
+        if (data.scanId) {
+          // Redirect to the clean permanent URL
+          window.location.href = `/report/${data.scanId}`;
+        } else {
+          setAudit(data);
+        }
       } catch (err) {
         console.error(err);
         setError(

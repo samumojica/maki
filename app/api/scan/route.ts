@@ -71,6 +71,8 @@ export async function POST(req: NextRequest) {
       import("@/lib/scan-store"),
     ]);
 
+    const { detectWordPressContext } = await import("@/lib/wp-detection");
+
     console.log(`[scan] Starting scan for ${url}`);
 
     // Fetch PSI data and geo in parallel
@@ -81,6 +83,7 @@ export async function POST(req: NextRequest) {
 
     // Extract technology info from PSI response
     const siteInfoExtracted = extractSiteInfo(psiData);
+    const wordpressContext = detectWordPressContext(psiData);
 
     // Build server context for the AI prompt
     const serverContext = {
@@ -88,6 +91,7 @@ export async function POST(req: NextRequest) {
       serverSoftware: siteInfoExtracted.serverSoftware,
       cdnDetected: siteInfoExtracted.cdnDetected,
       technologies: siteInfoExtracted.technologies,
+      wordpressContext,
     };
 
     console.log(`[scan] Server context:`, serverContext);
@@ -95,7 +99,7 @@ export async function POST(req: NextRequest) {
     const audit = await translatePSIWithFallback(psiData, url, serverContext);
 
     const scanId = crypto.randomUUID();
-    putScan({ scanId, url, tier, audit, createdAt: Date.now() });
+    await putScan({ scanId, url, tier, audit, createdAt: Date.now(), unlocked: false });
 
     const teaser: TeaserResult = {
       url: audit.url,

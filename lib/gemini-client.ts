@@ -272,7 +272,7 @@ async function callGemini(
   psiData: object,
   url: string,
   model: string,
-  serverContext: { serverCountry?: string | null; serverSoftware?: string; cdnDetected?: string; technologies?: string[] }
+  serverContext: { serverCountry?: string | null; serverSoftware?: string; cdnDetected?: string; technologies?: string[]; wordpressContext?: any }
 ): Promise<AuditResult> {
   const apiKey = process.env.GOOGLE_GEMINI_API_KEY;
   if (!apiKey) throw new Error("GOOGLE_GEMINI_API_KEY is not set");
@@ -303,11 +303,19 @@ async function callGemini(
     serverCountry: serverContext.serverCountry ?? undefined,
     cdnDetected: serverContext.cdnDetected,
     technologies: serverContext.technologies,
+    wordpressContext: serverContext.wordpressContext,
   };
 
   // Detect if CrUX field data is available
   const loading = (psi.mobile as Record<string, unknown>)?.loadingExperience as Record<string, unknown> | undefined;
   const fieldDataAvailable = loading?.overall_category != null;
+
+  // Deterministic WP fixes
+  let structuredFixes: any[] = [];
+  if (serverContext.wordpressContext?.eligible) {
+    const { matchWordPressFixes } = await import("./wp-fixes/matcher");
+    structuredFixes = matchWordPressFixes(psiData as any, serverContext.wordpressContext);
+  }
 
   return {
     url,
@@ -321,13 +329,14 @@ async function callGemini(
     detectedPlatform, // backward compat
     // Ensure seoSnippets exists even if AI didn't return it
     seoSnippets: parsed.seoSnippets ?? [],
+    structuredFixes,
   } as AuditResult;
 }
 
 async function callLlama(
   psiData: object,
   url: string,
-  serverContext: { serverCountry?: string | null; serverSoftware?: string; cdnDetected?: string; technologies?: string[] }
+  serverContext: { serverCountry?: string | null; serverSoftware?: string; cdnDetected?: string; technologies?: string[]; wordpressContext?: any }
 ): Promise<AuditResult> {
   const apiKey = process.env.GROQ_API_KEY;
   if (!apiKey) throw new Error("GROQ_API_KEY is not set");
@@ -367,16 +376,24 @@ async function callLlama(
 
   const detectedPlatform = (parsed.detectedPlatform as DetectedPlatform) ?? "unknown";
 
-  const siteInfo: SiteInfo = {
+    const siteInfo: SiteInfo = {
     detectedPlatform,
     serverSoftware: serverContext.serverSoftware,
     serverCountry: serverContext.serverCountry ?? undefined,
     cdnDetected: serverContext.cdnDetected,
     technologies: serverContext.technologies,
+    wordpressContext: serverContext.wordpressContext,
   };
 
   const loading = (psi.mobile as Record<string, unknown>)?.loadingExperience as Record<string, unknown> | undefined;
   const fieldDataAvailable = loading?.overall_category != null;
+
+  // Deterministic WP fixes
+  let structuredFixes: any[] = [];
+  if (serverContext.wordpressContext?.eligible) {
+    const { matchWordPressFixes } = await import("./wp-fixes/matcher");
+    structuredFixes = matchWordPressFixes(psiData as any, serverContext.wordpressContext);
+  }
 
   return {
     url,
@@ -389,6 +406,7 @@ async function callLlama(
     fieldDataAvailable,
     detectedPlatform,
     seoSnippets: parsed.seoSnippets ?? [],
+    structuredFixes,
   } as AuditResult;
 }
 
@@ -423,7 +441,7 @@ function sanitizeAuditResult(result: AuditResult): AuditResult {
 export async function translatePSIWithFallback(
   psiData: object,
   url: string,
-  serverContext: { serverCountry?: string | null; serverSoftware?: string; cdnDetected?: string; technologies?: string[] } = { technologies: [] }
+  serverContext: { serverCountry?: string | null; serverSoftware?: string; cdnDetected?: string; technologies?: string[]; wordpressContext?: any } = { technologies: [] }
 ): Promise<AuditResult> {
   let result: AuditResult;
   try {

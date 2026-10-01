@@ -16,7 +16,7 @@ export function SchemaMarkup() {
     "@type": "WebApplication",
     name: "Maki",
     url: "https://getmaki.app",
-    description: "Core Web Vitals checker that gives you a tailored, plain-English performance report with exact fixes.",
+    description: "WordPress performance fixer that gives you tailored, step-by-step instructions to improve your Core Web Vitals.",
     applicationCategory: "DeveloperApplication",
     operatingSystem: "Web",
     brand: {
@@ -39,9 +39,9 @@ export function SchemaMarkup() {
     featureList: [
       "Core Web Vitals Audit (LCP, INP, CLS)",
       "Lighthouse Performance Scoring",
-      "Tailored Fix Snippets",
-      "PDF Report Export",
-      "Technology & Stack Detection"
+      "Tailored WordPress Fixes",
+      "Interactive Dashboard",
+      "Manual Re-testing"
     ]
   };
 

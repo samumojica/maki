@@ -6,24 +6,19 @@ const geist = Geist({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL ?? "https://getmaki.app"),
-  title: "Maki — Core Web Vitals Checker & Performance Report for $9",
+  title: "Maki — Fix what's slowing down your WordPress site.",
   description:
-    "Check your Core Web Vitals for free. Get a tailored, plain-English performance report with exact fixes — no account, no login, no subscription. Better than GTmetrix and DebugBear. One-time $9 payment, instant PDF.",
+    "See what's slowing down your WordPress site, then get step-by-step fixes tailored to your setup. No account or subscription required.",
   keywords: [
+    "wordpress performance",
     "core web vitals",
-    "core web vitals checker",
-    "improve core web vitals",
-    "pagespeed insights report",
-    "website performance audit",
-    "LCP INP CLS checker",
-    "GTmetrix alternative",
-    "DebugBear alternative",
-    "web performance report",
+    "pagespeed insights",
+    "wordpress speed optimization"
   ],
   openGraph: {
-    title: "Maki — Check Your Core Web Vitals for Free",
+    title: "Maki — WordPress Performance Fixer",
     description:
-      "Real data from Google PageSpeed Insights, translated into plain English fixes. No account. No subscription. Tailored to your site.",
+      "Fix what's slowing down your WordPress site. Get exact step-by-step instructions for your specific setup.",
     type: "website",
     url: "https://getmaki.app",
     siteName: "Maki",
@@ -32,15 +27,15 @@ export const metadata: Metadata = {
         url: "/social.png",
         width: 1200,
         height: 630,
-        alt: "Maki — Core Web Vitals Checker",
+        alt: "Maki — WordPress Performance Fixer",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Maki — Core Web Vitals Checker",
+    title: "Maki — WordPress Performance Fixer",
     description:
-      "Check your Core Web Vitals for free. Get a tailored performance report with exact fixes — no account needed.",
+      "Fix what's slowing down your WordPress site. Get exact step-by-step instructions for your specific setup.",
     images: ["/social.png"],
   },
   alternates: {

@@ -14,7 +14,7 @@ export default async function ScanTeaserPage({
   params: Promise<{ scanId: string }>;
 }) {
   const { scanId } = await params;
-  const entry = getScan(scanId);
+  const entry = await getScan(scanId);
 
   if (!entry) {
     return (
@@ -45,42 +45,62 @@ export default async function ScanTeaserPage({
   };
 
   const colors = verdictColor(teaser.verdict);
+  const wpContext = entry.audit.siteInfo?.wordpressContext;
+  
+  let wpDetectionStatus = "";
+  if (wpContext?.status === "confirmed") {
+    wpDetectionStatus = "WordPress detected";
+  } else if (wpContext?.status === "likely") {
+    wpDetectionStatus = "WordPress likely detected";
+  }
+
+  const wpTechnologies = wpContext?.allDetected?.map(t => t.name).join(" · ") || "";
+  const highImpactCount = entry.audit.structuredFixes?.filter((f: any) => f.impact === "high").length || 0;
+  const additionalCount = entry.audit.structuredFixes?.filter((f: any) => f.impact !== "high").length || 0;
+
+  const metricColor = (status: "pass" | "fail" | "needs-improvement") => {
+    if (status === "pass") return "text-green-600";
+    if (status === "needs-improvement") return "text-amber-500";
+    return "text-red-600";
+  };
+
+  const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 
   return (
-    <main className="min-h-screen bg-gray-50 text-[#282f42]">
+    <main className="min-h-screen bg-gray-50 text-[#282f42] font-sans">
       <header className="px-6 py-5 border-b border-gray-200 bg-white">
         <div className="max-w-3xl mx-auto flex items-center justify-between">
           <Link href="/">
             <Logo className="h-7 w-auto" />
           </Link>
-          <span className="text-sm text-gray-500">Free preview</span>
+          <span className="text-sm text-gray-500 font-medium">Free preview</span>
         </div>
       </header>
 
-      <section className="px-6 py-20">
-        <div className="max-w-3xl mx-auto">
-          <p className="text-sm text-gray-500 mb-2 truncate">
+      <section className="px-6 py-12 sm:py-20">
+        <div className="max-w-2xl mx-auto">
+          <p className="text-sm text-gray-500 mb-2 truncate text-center">
             Results for{" "}
             <span className="font-mono text-gray-700">{teaser.url}</span>
           </p>
-          <h1 className="text-3xl sm:text-4xl font-black mb-10 tracking-tight">
+          <h1 className="text-3xl sm:text-4xl font-black mb-8 tracking-tight text-center">
             Your site&apos;s verdict
           </h1>
 
           <div
-            className={`animate-in fade-in slide-in-from-bottom-8 duration-1000 ease-out rounded-[2.5rem] border-2 ${colors.border} ${colors.bg} p-8 sm:p-12 mb-8 flex flex-col sm:flex-row items-center gap-8 sm:gap-10 text-center sm:text-left overflow-hidden relative shadow-xl shadow-gray-200/50`}
+            className={`animate-in fade-in slide-in-from-bottom-8 duration-1000 ease-out rounded-3xl border-2 ${colors.border} ${colors.bg} p-6 sm:p-10 mb-8 flex flex-col sm:flex-row items-center gap-6 sm:gap-10 text-center sm:text-left overflow-hidden relative shadow-xl shadow-gray-200/50 bg-white`}
           >
-            <div className="shrink-0">
+            <div className="shrink-0 scale-90 sm:scale-100">
               <Speedometer verdict={teaser.verdict} score={teaser.mobileScore} />
             </div>
             
             <div className="flex-1">
               <div className="flex flex-col items-center sm:items-start mb-1">
                 <div 
-                  className="px-3 py-1 rounded-full bg-white/50 border border-current font-black text-sm tracking-widest uppercase mb-2"
+                  className="px-3 py-1 rounded-full bg-white border border-current font-black text-sm tracking-widest uppercase mb-2"
                   style={{ color: colors.hex }}
                 >
-                  Score: {teaser.mobileScore}
+                  Performance score: {teaser.mobileScore}
                 </div>
               </div>
               <div
@@ -92,51 +112,77 @@ export default async function ScanTeaserPage({
               >
                 {verdictLabel(teaser.verdict)}
               </div>
-              <p className="text-lg sm:text-xl font-bold text-gray-800 leading-tight">
+              <p className="text-base sm:text-lg font-bold text-gray-800 leading-tight">
                 {verdictSublabel(teaser.verdict)}
               </p>
             </div>
           </div>
 
           <div className="bg-white border border-gray-200 rounded-3xl p-6 sm:p-8 mb-8 shadow-sm">
-            <h2 className="text-xs font-semibold tracking-wider uppercase text-gray-500 mb-4">
-              What&apos;s behind this verdict
-            </h2>
-            <div className="space-y-3 text-gray-600">
-              <div className="flex items-start gap-3">
-                <span className="text-[#268ad8] mt-0.5">✦</span>
-                <span>Your exact LCP, INP, and CLS values</span>
+            {wpDetectionStatus && (
+              <div className="mb-6 border-b border-gray-100 pb-6">
+                <div className="flex flex-wrap gap-2 items-center justify-between">
+                  <div>
+                    <span className="text-sm font-bold text-[#268ad8] bg-blue-50 px-2.5 py-1 rounded-md">
+                      {wpDetectionStatus}
+                    </span>
+                    {wpTechnologies && (
+                      <p className="text-sm text-gray-500 mt-2 font-medium">{wpTechnologies}</p>
+                    )}
+                  </div>
+                </div>
               </div>
-              <div className="flex items-start gap-3">
-                <span className="text-[#268ad8] mt-0.5">✦</span>
-                <span>Mobile and desktop performance scores</span>
+            )}
+
+            <div className="grid grid-cols-3 gap-4 mb-8">
+              <div className="text-center">
+                <p className="text-xs text-gray-500 font-bold tracking-widest uppercase mb-1">LCP</p>
+                <p className={`text-xl font-bold ${metricColor(entry.audit.cwvScores.lcp.status)}`}>{entry.audit.cwvScores.lcp.value}</p>
+                <p className={`text-[10px] font-bold uppercase mt-1 ${metricColor(entry.audit.cwvScores.lcp.status)}`}>{capitalize(entry.audit.cwvScores.lcp.status.replace('-', ' '))}</p>
               </div>
-              <div className="flex items-start gap-3">
-                <span className="text-[#268ad8] mt-0.5">✦</span>
-                <span>
-                  The 7 biggest problems on your site — ranked by impact
-                </span>
+              <div className="text-center">
+                <p className="text-xs text-gray-500 font-bold tracking-widest uppercase mb-1">INP</p>
+                <p className={`text-xl font-bold ${metricColor(entry.audit.cwvScores.inp.status)}`}>{entry.audit.cwvScores.inp.value}</p>
+                {entry.audit.cwvScores.inp.value.includes("N/A") ? (
+                  <p className="text-[10px] font-bold uppercase mt-1 text-gray-400">Field Data Only</p>
+                ) : (
+                  <p className={`text-[10px] font-bold uppercase mt-1 ${metricColor(entry.audit.cwvScores.inp.status)}`}>{capitalize(entry.audit.cwvScores.inp.status.replace('-', ' '))}</p>
+                )}
               </div>
-              <div className="flex items-start gap-3">
-                <span className="text-[#268ad8] mt-0.5">✦</span>
-                <span>Step-by-step fix instructions tailored to your stack</span>
+              <div className="text-center">
+                <p className="text-xs text-gray-500 font-bold tracking-widest uppercase mb-1">CLS</p>
+                <p className={`text-xl font-bold ${metricColor(entry.audit.cwvScores.cls.status)}`}>{entry.audit.cwvScores.cls.value}</p>
+                <p className={`text-[10px] font-bold uppercase mt-1 ${metricColor(entry.audit.cwvScores.cls.status)}`}>{capitalize(entry.audit.cwvScores.cls.status.replace('-', ' '))}</p>
               </div>
-              <div className="flex items-start gap-3">
-                <span className="text-[#268ad8] mt-0.5">✦</span>
-                <span>A 10-minute quick win + infrastructure tips</span>
-              </div>
-              <div className="flex items-start gap-3">
-                <span className="text-[#268ad8] mt-0.5">✦</span>
-                <span>Downloadable PDF report</span>
-              </div>
+            </div>
+
+            <div className="bg-gray-50 border border-gray-100 rounded-2xl p-5 text-center">
+              <p className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-2">We found:</p>
+              <p className="text-lg font-bold text-gray-900">{highImpactCount} high-impact fixes</p>
+              {additionalCount > 0 && <p className="text-sm text-gray-600 mt-1">{additionalCount} additional improvements</p>}
             </div>
           </div>
 
-          <UnlockButton scanId={scanId} score={teaser.mobileScore} />
+          {wpContext?.eligible === false ? (
+            <div className="bg-amber-50 border border-amber-200 rounded-3xl p-6 sm:p-8 text-center text-amber-900 shadow-sm">
+              <h2 className="text-lg font-bold mb-2">We couldn&apos;t confidently detect WordPress on this site.</h2>
+              <p className="text-sm">
+                Maki currently creates detailed fix plans specifically for WordPress sites.
+              </p>
+            </div>
+          ) : (
+            <>
+              <UnlockButton scanId={scanId} score={teaser.mobileScore} />
 
-          <p className="text-center text-xs text-gray-500 mt-6">
-            One-time payment · No subscription · Instant PDF
-          </p>
+              <p className="text-center text-xs font-medium text-gray-500 mt-6 flex justify-center items-center gap-2 flex-wrap">
+                <span>One-time payment</span>
+                <span className="w-1 h-1 rounded-full bg-gray-300 hidden sm:block"></span>
+                <span>No subscription</span>
+                <span className="w-1 h-1 rounded-full bg-gray-300 hidden sm:block"></span>
+                <span>No account required</span>
+              </p>
+            </>
+          )}
         </div>
       </section>
     </main>

@@ -5,9 +5,43 @@ import { useRouter } from "next/navigation";
 import { Logo } from "./Logo";
 import { SchemaMarkup } from "./SchemaMarkup";
 import { PrivacyModal, TermsModal } from "./LegalModals";
-import { FAQ_ITEMS } from "@/lib/faq-data";
 
 type Tier = "basic" | "pro";
+
+const FAQ_ITEMS = [
+  {
+    q: "Is the scan really free?",
+    a: "Yes. You can see your PageSpeed results and detected issues before paying."
+  },
+  {
+    q: "What do I get for $9?",
+    a: "The full interactive WordPress fix plan with exact remediation steps, progress tracking, and manual re-testing."
+  },
+  {
+    q: "Does Maki change my WordPress site?",
+    a: "No. Maki tells you exactly what to change; you remain in control."
+  },
+  {
+    q: "Do I need to install a plugin?",
+    a: "No. Maki analyzes your site from the outside using Google PageSpeed Insights and identifies your current setup."
+  },
+  {
+    q: "Does Maki work with Shopify, Webflow, or Squarespace?",
+    a: "Maki V1 is currently focused specifically on WordPress."
+  },
+  {
+    q: "What if Maki can't detect WordPress?",
+    a: "You can still see the free performance results, but the paid WordPress fix plan will not be offered."
+  },
+  {
+    q: "Is this a subscription?",
+    a: "No. $9 one-time."
+  },
+  {
+    q: "Does this guarantee a higher Google ranking?",
+    a: "No. Maki focuses on improving site performance and Core Web Vitals. Search rankings depend on many factors, but faster sites create a better experience for visitors."
+  }
+];
 
 export default function LandingPage() {
   const router = useRouter();
@@ -19,7 +53,7 @@ export default function LandingPage() {
   const [termsOpen, setTermsOpen] = useState(false);
 
   useEffect(() => {
-    console.log("Maki v1.0.5 - " + new Date().toISOString());
+    console.log("Maki v1.1.0 - " + new Date().toISOString());
   }, []);
 
   function validateUrl(value: string): boolean {
@@ -57,7 +91,6 @@ export default function LandingPage() {
     setLoading(tier);
     setScanProgress(0);
 
-    // Animate progress bar
     const interval = setInterval(() => {
       setScanProgress((p) => (p >= 90 ? 90 : p + Math.random() * 15));
     }, 600);
@@ -86,7 +119,7 @@ export default function LandingPage() {
   }
 
   return (
-    <main className="min-h-screen bg-white flex flex-col text-[#282f42]">
+    <main className="min-h-screen bg-white flex flex-col text-[#282f42] font-sans">
       {/* Nav */}
       <header className="px-6 py-4 bg-[#f3fbff]">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
@@ -95,7 +128,7 @@ export default function LandingPage() {
           </div>
           <a
             href="#pricing"
-            className="text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-lg px-4 py-2 hover:bg-gray-50 hover:text-[#282f42] transition-colors"
+            className="text-sm font-medium text-[#268ad8] hover:text-[#1e6fb0] transition-colors"
           >
             Pricing
           </a>
@@ -104,44 +137,23 @@ export default function LandingPage() {
 
       {/* Hero */}
       <section className="px-6 pt-16 pb-28 bg-[#f3fbff]">
-        <div className="max-w-5xl mx-auto text-center">
-          {/* Eyebrow badge */}
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-gray-200 bg-white mb-8">
-            <span className="relative flex items-center justify-center">
-              <span className="absolute w-3 h-3 bg-green-500 rounded-full opacity-60 animate-ping" />
-              <span className="relative w-2.5 h-2.5 bg-green-500 rounded-full shadow-[0_0_10px_2px_rgba(34,197,94,0.7)]" />
-            </span>
-            <span className="text-xs font-medium text-gray-700">
-              Live data from Google PageSpeed Insights
-            </span>
-          </div>
-
-          <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold tracking-tight mb-6 leading-[1.05]">
-            Your site&apos;s{" "}
-            <span className="relative inline-block">
-              <img src="/sprinkles.png" alt="" className="absolute -top-8 left-[109%] -translate-x-1/2 w-12 h-12 pointer-events-none select-none" aria-hidden="true" />
-              <span className="text-[#c84367]">real</span>
-            </span>
-            <br />
-            performance score.
-            <br />
-            <span className="text-[#268ad8]">Stop guessing. Start fixing.</span>
+        <div className="max-w-4xl mx-auto text-center">
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight mb-6 leading-tight">
+            Fix what&apos;s slowing down your WordPress site.
           </h1>
 
-          <p className="text-xl text-gray-500 max-w-2xl mx-auto mb-10 leading-relaxed">
-            We pull your Core Web Vitals straight from Google&apos;s servers and
-            translate them into plain-English fixes — whether you&apos;re a developer
-            or have no idea what LCP even means.
+          <p className="text-lg sm:text-xl text-gray-600 max-w-3xl mx-auto mb-10 leading-relaxed">
+            Paste your URL. Maki scans your site with Google PageSpeed Insights, detects your WordPress setup when possible, and shows you what to fix first.
           </p>
 
           {/* URL Input + CTA */}
           <div className="w-full max-w-xl mx-auto">
             {loading ? (
-              <div className="border border-gray-200 rounded-xl p-5 bg-white">
+              <div className="border border-gray-200 rounded-xl p-5 bg-white shadow-sm">
                 <div className="flex items-center gap-3 mb-3">
                   <div className="w-5 h-5 border-2 border-gray-200 border-t-[#268ad8] rounded-full animate-spin shrink-0" />
                   <span className="text-sm font-medium text-[#282f42]">
-                    {scanProgress < 30 ? "Fetching PageSpeed data from Google…" : scanProgress < 60 ? "Analyzing your Core Web Vitals…" : scanProgress < 90 ? "Generating your tailored report…" : "Almost done…"}
+                    {scanProgress < 30 ? "Fetching PageSpeed data from Google…" : scanProgress < 60 ? "Detecting WordPress setup…" : scanProgress < 90 ? "Identifying performance problems…" : "Almost done…"}
                   </span>
                 </div>
                 <div className="w-full bg-gray-100 rounded-full h-2 overflow-hidden">
@@ -150,14 +162,10 @@ export default function LandingPage() {
                     style={{ width: `${scanProgress}%` }}
                   />
                 </div>
-                <p className="text-xs text-gray-400 mt-2">This usually takes 15–25 seconds</p>
               </div>
             ) : (
               <>
-                <div className="flex flex-col sm:flex-row sm:items-center border border-gray-300 rounded-xl overflow-hidden focus-within:ring-4 focus-within:ring-[#e8f3fb] focus-within:border-[#268ad8] bg-white transition-all">
-                  <span className="hidden sm:inline pl-5 text-gray-400 text-base select-none shrink-0">
-                    https://
-                  </span>
+                <div className="flex flex-col sm:flex-row sm:items-center border-2 border-gray-200 rounded-xl overflow-hidden focus-within:ring-4 focus-within:ring-[#e8f3fb] focus-within:border-[#268ad8] bg-white transition-all shadow-sm">
                   <input
                     id="url-input"
                     type="text"
@@ -166,16 +174,16 @@ export default function LandingPage() {
                       setUrl(e.target.value);
                       setUrlError("");
                     }}
-                    placeholder="yourwebsite.com"
-                    className="flex-1 py-4 px-4 sm:px-2 text-[#282f42] placeholder-gray-400 outline-none text-base"
+                    placeholder="https://yourwordpresssite.com"
+                    className="flex-1 py-4 px-5 text-[#282f42] placeholder-gray-400 outline-none text-base w-full"
                     onKeyDown={(e) => e.key === "Enter" && handleScan("basic")}
                   />
                   <button
                     onClick={() => handleScan("basic")}
                     disabled={loading !== null}
-                    className="m-1.5 px-6 py-3 sm:py-2.5 rounded-lg bg-[#268ad8] text-white text-sm font-semibold hover:bg-[#1e6fb0] transition-colors disabled:opacity-60 shrink-0"
+                    className="m-1.5 px-6 py-3.5 sm:py-3 rounded-lg bg-[#268ad8] text-white text-sm font-bold hover:bg-[#1e6fb0] transition-colors disabled:opacity-60 shrink-0"
                   >
-                    Audit my site →
+                    Scan my WordPress site
                   </button>
                 </div>
                 {urlError && (
@@ -183,418 +191,26 @@ export default function LandingPage() {
                 )}
               </>
             )}
-            <p className="text-xs text-gray-400 mt-4">
-              Free scan · No account needed · Pay $9 only if you want the full fix list
-            </p>
-            <p className="text-sm text-gray-500 mt-3 font-medium">
-              ⭐ Trusted by 1,200+ developers and site owners
-            </p>
-          </div>
-        </div>
-
-        {/* Mock preview dashboard */}
-        <div className="max-w-4xl mx-auto mt-[111px] relative group">
-          <img
-            src="/mascot.png"
-            alt="Maki Mascot"
-            className="absolute -top-[82px] left-0 right-0 mx-auto sm:left-0 sm:right-auto sm:ml-[20px] sm:-top-[130px] w-32 sm:w-48 h-auto z-[9] transition-transform duration-500 group-hover:-translate-y-4"
-          />
-          <div className="bg-white border border-gray-200 rounded-2xl shadow-xl overflow-hidden relative z-10">
-            {/* Browser chrome */}
-            <div className="border-b border-gray-100 px-4 py-3 flex items-center gap-2 bg-gray-50">
-              <div className="flex gap-1.5">
-                <span className="w-3 h-3 rounded-full bg-gray-300" />
-                <span className="w-3 h-3 rounded-full bg-gray-300" />
-                <span className="w-3 h-3 rounded-full bg-gray-300" />
-              </div>
-              <div className="flex-1 mx-4 bg-white border border-gray-200 rounded-md px-3 py-1 text-xs text-gray-500 text-center">
-                getmaki.app/results
-              </div>
-            </div>
-
-            {/* Mock report */}
-            <div className="p-8">
-              <div className="flex items-start justify-between mb-6">
-                <div>
-                  <p className="text-xs text-gray-500 mb-1">
-                    yourwebsite.com
-                  </p>
-                  <h3 className="text-xl font-bold">Performance Report</h3>
-                </div>
-                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-red-50 border border-red-200 text-red-700 text-xs font-semibold">
-                  <span className="w-1.5 h-1.5 bg-red-500 rounded-full" />
-                  Needs Work
-                </span>
-              </div>
-
-              {/* CWV metrics preview */}
-              <div className="grid grid-cols-3 gap-3">
-                {[
-                  { label: "LCP", value: "4.2s", status: "fail", color: "text-red-600" },
-                  { label: "INP", value: "320ms", status: "fail", color: "text-red-600" },
-                  { label: "CLS", value: "0.05", status: "pass", color: "text-green-600" },
-                ].map((m) => (
-                  <div
-                    key={m.label}
-                    className="border border-gray-200 rounded-xl p-4"
-                  >
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-xs font-medium text-gray-500">
-                        {m.label}
-                      </span>
-                      <span
-                        className={`w-2 h-2 rounded-full ${m.status === "pass" ? "bg-green-500" : "bg-red-500"
-                          }`}
-                      />
-                    </div>
-                    <p className={`text-[18px] font-bold ${m.color}`}>{m.value}</p>
-                  </div>
-                ))}
-              </div>
-
-              {/* Free scan urgency */}
-              <div className="mt-4 bg-amber-50 border border-amber-200 text-amber-800 text-sm font-medium p-3 rounded-lg">
-                ⚠️ Sites with scores like this rank lower on Google. Get your fix list for $9.
-              </div>
-
-              {/* Mock fix card */}
-              <div className="mt-4 border border-gray-200 rounded-xl p-4">
-                <div className="flex items-start gap-3">
-                  <span className="w-5 h-5 rounded-full bg-[#268ad8] text-white text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">
-                    1
-                  </span>
-                  <div className="flex-1">
-                    <p className="font-semibold text-sm mb-1">
-                      Hero image is loading too slowly
-                    </p>
-                    <p className="text-xs text-gray-500 leading-relaxed">
-                      Your visitors see a blank page for 2.3 extra seconds.
-                      Install <span className="font-medium text-[#282f42]">Smush</span> or{" "}
-                      <span className="font-medium text-[#282f42]">ShortPixel</span>{" "}
-                      to compress it down from 850KB to ~120KB.
-                    </p>
-                  </div>
-                  <span className="text-xs font-semibold text-green-600 shrink-0">
-                    −1.5s
-                  </span>
-                </div>
-              </div>
+            
+            <div className="flex flex-wrap justify-center items-center gap-x-4 gap-y-2 mt-5 text-xs text-gray-500 font-medium">
+              <span className="flex items-center gap-1">
+                <svg className="w-3.5 h-3.5 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
+                Uses Google PageSpeed Insights
+              </span>
+              <span className="flex items-center gap-1">
+                <svg className="w-3.5 h-3.5 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
+                Free scan
+              </span>
+              <span className="flex items-center gap-1">
+                <svg className="w-3.5 h-3.5 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
+                No account required
+              </span>
+              <span className="flex items-center gap-1">
+                <svg className="w-3.5 h-3.5 text-[#268ad8]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
+                Full fix plan is $9 one-time
+              </span>
             </div>
           </div>
-
-          {/* Floating badge */}
-          <div className="hidden sm:flex absolute -bottom-4 -right-4 items-center gap-2 bg-white border border-gray-200 shadow-lg rounded-full px-4 py-2 z-[11]">
-            <span className="w-2 h-2 bg-green-500 rounded-full" />
-            <span className="text-xs font-medium">Real Chrome user data</span>
-          </div>
-        </div>
-      </section>
-
-      {/* Powered by / Browser compatibility strip */}
-      <section className="px-6 py-12 bg-white">
-        <div className="max-w-4xl mx-auto flex flex-col md:flex-row items-center justify-center gap-8 md:gap-16">
-          <div className="flex flex-col items-center gap-3">
-            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Powered By</p>
-            <div className="flex items-center gap-2 text-gray-600 font-semibold">
-              <svg className="w-7 h-7" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M 20 80 A 40 40 0 1 1 80 80" stroke="#EFF6FF" strokeWidth="14" strokeLinecap="round" />
-                <path d="M 20 80 A 40 40 0 0 1 65 21" stroke="#0057E7" strokeWidth="14" strokeLinecap="round" />
-                <path d="M 65 21 A 40 40 0 0 1 80 80" stroke="#A855F7" strokeWidth="14" strokeLinecap="round" />
-                <path d="M 42 63 L 75 25 L 58 67 Z" fill="#38BDF8" />
-                <circle cx="50" cy="65" r="14" fill="#38BDF8" />
-                <circle cx="50" cy="65" r="6" fill="#0057E7" />
-              </svg>
-              PageSpeed Insights
-            </div>
-          </div>
-          <div className="hidden md:block w-px h-10 bg-gray-200" />
-          <div className="flex flex-col items-center gap-3">
-            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Works with data from all major browsers</p>
-            <div className="flex flex-wrap justify-center items-center gap-6">
-              <div className="flex items-center gap-2 text-gray-500 font-medium">
-                <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/chrome/chrome-original.svg" alt="Chrome" className="w-5 h-5" />
-                Chrome
-              </div>
-              <div className="flex items-center gap-2 text-gray-500 font-medium">
-                <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/firefox/firefox-original.svg" alt="Firefox" className="w-5 h-5" />
-                Firefox
-              </div>
-              <div className="flex items-center gap-2 text-gray-500 font-medium">
-                <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/safari/safari-original.svg" alt="Safari" className="w-5 h-5" />
-                Safari
-              </div>
-              <div className="flex items-center gap-2 text-gray-500 font-medium">
-                <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/opera/opera-original.svg" alt="Opera" className="w-5 h-5" />
-                Opera
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* What are Core Web Vitals? */}
-      <section className="px-6 py-24 bg-white">
-        <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-14">
-            <p className="text-xs font-semibold text-[#c84367] uppercase tracking-widest mb-3">
-              Understanding the metrics
-            </p>
-            <h2 className="text-3xl sm:text-4xl font-bold max-w-2xl mx-auto leading-tight">
-              What are Core Web Vitals?
-            </h2>
-            <p className="text-gray-500 mt-4 max-w-2xl mx-auto">
-              Core Web Vitals are three metrics Google uses to measure how fast and smooth your website feels to real visitors. Since 2021, they directly affect your Google search ranking.
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
-            {[
-              {
-                code: "LCP",
-                name: "Largest Contentful Paint",
-                desc: "How fast the biggest element loads. Think: your hero image or main heading appearing on screen.",
-                good: "≤ 2.5s",
-                poor: "> 4.0s",
-                color: "#268ad8",
-              },
-              {
-                code: "INP",
-                name: "Interaction to Next Paint",
-                desc: "How quickly your page responds when someone clicks, taps, or types. Slow INP = buttons feel frozen.",
-                good: "≤ 200ms",
-                poor: "> 500ms",
-                color: "#16a34a",
-              },
-              {
-                code: "CLS",
-                name: "Cumulative Layout Shift",
-                desc: "How much stuff jumps around as the page loads. High CLS = visitors accidentally click the wrong thing.",
-                good: "≤ 0.1",
-                poor: "> 0.25",
-                color: "#d97706",
-              },
-            ].map((metric) => (
-              <div key={metric.code} className="bg-white border border-gray-200 rounded-2xl p-6">
-                <div className="flex items-center gap-3 mb-4">
-                  <div
-                    className="w-10 h-10 rounded-lg flex items-center justify-center text-white font-bold text-sm"
-                    style={{ backgroundColor: metric.color }}
-                  >
-                    {metric.code}
-                  </div>
-                  <div>
-                    <p className="text-sm font-semibold text-[#282f42]">{metric.name}</p>
-                    <p className="text-[10px] font-mono text-gray-400">{metric.code}</p>
-                  </div>
-                </div>
-                <p className="text-sm text-gray-600 leading-relaxed mb-4">{metric.desc}</p>
-                <div className="flex gap-2">
-                  <span className="text-xs bg-green-50 text-green-700 border border-green-200 rounded-full px-2.5 py-1 font-medium">
-                    Good: {metric.good}
-                  </span>
-                  <span className="text-xs bg-red-50 text-red-700 border border-red-200 rounded-full px-2.5 py-1 font-medium">
-                    Poor: {metric.poor}
-                  </span>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <div className="text-center mt-10">
-            <p className="text-sm text-gray-500 max-w-lg mx-auto">
-              Failing these metrics means Google may rank your site lower — and visitors bounce before they see your content.{" "}
-              <strong className="text-[#282f42]">Maki tells you exactly how to fix them.</strong>
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* AI can't do this */}
-      <section className="px-6 py-24 bg-[#F9FAFB]">
-        <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-12">
-            <p className="text-xs font-semibold text-[#268AD8] uppercase tracking-widest mb-3">
-              The honest truth
-            </p>
-            <h2 className="text-3xl sm:text-4xl font-bold max-w-2xl mx-auto leading-tight">
-              ChatGPT, Claude, and Gemini can&apos;t do this.
-            </h2>
-            <p className="text-gray-500 mt-4 max-w-xl mx-auto">
-              We know because we tried. Here&apos;s what happens when you ask
-              them for your site&apos;s real performance score:
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-2 gap-4 max-w-4xl mx-auto">
-            {/* ChatGPT fake response */}
-            <div className="bg-white border border-gray-200 rounded-2xl p-6">
-              <div className="flex items-center gap-2 mb-4">
-                <div className="w-6 h-6 rounded-full bg-[#268ad8] flex items-center justify-center">
-                  <svg
-                    className="w-3 h-3 text-white"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth={3}
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M6 18L18 6M6 6l12 12"
-                    />
-                  </svg>
-                </div>
-                <span className="text-sm font-semibold text-[#268ad8]">
-                  ChatGPT / Claude / Gemini
-                </span>
-              </div>
-              <div className="space-y-2 text-sm text-gray-600 leading-relaxed">
-                <p className="bg-gray-50 border border-gray-100 rounded-lg p-3 italic">
-                  &ldquo;I&apos;m sorry, I can&apos;t browse the web or access
-                  real-time performance data. You&apos;ll need to check
-                  PageSpeed Insights manually…&rdquo;
-                </p>
-                <p className="text-xs text-gray-400 pt-2">
-                  Or worse — they hallucinate scores that look real but
-                  aren&apos;t.
-                </p>
-              </div>
-            </div>
-
-            {/* Our real response */}
-            <div className="bg-[#282f42] text-white rounded-2xl p-6">
-              <div className="flex items-center gap-2 mb-4">
-                <div className="w-6 h-6 rounded-full bg-green-500 flex items-center justify-center">
-                  <svg
-                    className="w-3.5 h-3.5 text-white"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth={3}
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M5 13l4 4L19 7"
-                    />
-                  </svg>
-                </div>
-                <span className="text-sm font-semibold">Maki</span>
-              </div>
-              <div className="space-y-2 text-sm">
-                <div className="bg-white/5 border border-white/10 rounded-lg p-3">
-                  <p className="text-gray-300 mb-2">
-                    Pulled from Google&apos;s servers just now:
-                  </p>
-                  <div className="grid grid-cols-3 gap-2 text-center">
-                    <div>
-                      <p className="text-xs text-gray-400">LCP</p>
-                      <p className="font-bold text-red-400">4.2s</p>
-                    </div>
-                    <div>
-                      <p className="text-xs text-gray-400">INP</p>
-                      <p className="font-bold text-red-400">320ms</p>
-                    </div>
-                    <div>
-                      <p className="text-xs text-gray-400">CLS</p>
-                      <p className="font-bold text-green-400">0.05</p>
-                    </div>
-                  </div>
-                </div>
-                <p className="text-xs text-gray-400 pt-2">
-                  Measured from real Chrome users, not guessed.
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <p className="text-center text-sm text-gray-500 mt-10 max-w-xl mx-auto">
-            We&apos;re the bridge: we pull the official Google data, then use AI
-            to translate it into plain English fixes. The best of both.
-          </p>
-        </div>
-      </section>
-
-      {/* Why not GTmetrix / DebugBear? */}
-      <section className="bg-white px-6 py-24">
-        <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-16">
-            <p className="text-xs font-bold text-[#268ad8] uppercase tracking-widest mb-3">
-              The alternative
-            </p>
-            <h2 className="text-3xl sm:text-4xl font-extrabold max-w-[490px] mx-auto leading-tight text-[#282f42]">
-              Skip the accounts, caps, and monthly fees.
-            </h2>
-            <p className="text-gray-500 mt-4 max-w-xl mx-auto text-lg">
-              Most performance tools force you to create an account, limit your free scans, or charge monthly. Maki doesn&apos;t.
-            </p>
-          </div>
-
-          <div className="max-w-4xl mx-auto">
-            <div className="grid grid-cols-4 gap-px bg-gray-200 rounded-xl overflow-hidden border border-gray-200">
-              {/* Header */}
-              <div className="p-6 bg-gray-50/50 font-bold text-gray-500 flex items-center">Feature</div>
-              <div className="p-6 bg-white flex flex-col items-center justify-center gap-2">
-                <img src="/gtmetrix.png" alt="GTmetrix" className="w-8 h-8 opacity-80" />
-                <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">GTmetrix</span>
-              </div>
-              <div className="p-6 bg-white flex flex-col items-center justify-center gap-2">
-                <img src="/debugbear.png" alt="DebugBear" className="w-8 h-8 opacity-80" />
-                <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">DebugBear</span>
-              </div>
-              <div className="p-6 bg-[#f3fbff] flex flex-col items-center justify-center gap-2">
-                <Logo className="h-6 w-auto" />
-                <span className="text-[10px] font-bold text-[#268ad8] uppercase tracking-widest hidden">Maki</span>
-              </div>
-
-              {/* Rows */}
-              {[
-                { label: "Account required", gt: "Yes", db: "Yes", mk: "No", good: true },
-                { label: "Payment model", gt: "Sub", db: "Sub", mk: "Pay-per-fix", good: true },
-                { label: "Cost", gt: "$15+/mo", db: "$19+/mo", mk: "$9 once", good: true },
-                { label: "Tailored fixes", gt: "No", db: "Limited", mk: "Yes", good: true },
-                { label: "Instant PDF", gt: "No", db: "No", mk: "Yes", good: true },
-              ].map((row, i) => (
-                <React.Fragment key={i}>
-                  <div className="p-4 sm:p-6 bg-white text-gray-800 font-bold flex items-center text-sm">{row.label}</div>
-                  <div className="p-4 sm:p-6 bg-white text-gray-500 text-center flex items-center justify-center text-sm font-medium">{row.gt}</div>
-                  <div className="p-4 sm:p-6 bg-white text-gray-500 text-center flex items-center justify-center text-sm font-medium">{row.db}</div>
-                  <div className="p-4 sm:p-6 bg-[#f3fbff]/50 text-[#268ad8] text-center font-extrabold flex items-center justify-center gap-2 text-sm">
-                    {row.mk}
-                    {row.good && <svg className="w-4 h-4 text-[#268ad8]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={4}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>}
-                  </div>
-                </React.Fragment>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* You don't need to be a developer */}
-      <section className="px-6 py-24 bg-[#F9FAFB]">
-        <div className="max-w-4xl mx-auto">
-          <h2 className="text-3xl sm:text-4xl font-bold text-center mb-12">
-            You don&apos;t need to be a developer.
-          </h2>
-          <div className="grid md:grid-cols-2 gap-6">
-            <div className="bg-white border border-gray-200 rounded-2xl p-8">
-              <div className="text-3xl mb-4">🧑‍💻</div>
-              <h3 className="font-bold text-lg mb-2">You know your stuff</h3>
-              <p className="text-gray-600 text-sm leading-relaxed">
-                You&apos;re a developer or agency who wants real Google data fast — without paying $19/mo for DebugBear or creating yet another account. Get your ranked fix list with code snippets in 30 seconds.
-              </p>
-            </div>
-            <div className="bg-white border border-gray-200 rounded-2xl p-8">
-              <div className="text-3xl mb-4">🏪</div>
-              <h3 className="font-bold text-lg mb-2">You just know your site feels slow</h3>
-              <p className="text-gray-600 text-sm leading-relaxed">
-                You don&apos;t know what LCP means and that&apos;s fine. You know your site is slow and it&apos;s probably hurting your Google ranking. Maki tells you exactly what&apos;s wrong and exactly how to fix it — in plain English you can actually understand, or hand off to someone who can.
-              </p>
-            </div>
-          </div>
-          <p className="text-center text-gray-500 text-sm mt-8 font-medium">
-            Either way, you get the same complete report for $9.
-          </p>
         </div>
       </section>
 
@@ -602,88 +218,42 @@ export default function LandingPage() {
       <section className="px-6 py-24 bg-white">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-16">
-            <p className="text-xs font-semibold text-[#c84367] uppercase tracking-widest mb-3">
-              How it works
-            </p>
             <h2 className="text-3xl sm:text-4xl font-bold">
-              From URL to PDF in 30 seconds.
+              How it works
             </h2>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-6">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
               {
-                n: "01",
-                title: "Enter your URL",
-                desc: "We fetch your real performance data directly from Google PageSpeed Insights.",
-                icon: (
-                  <svg
-                    className="w-5 h-5"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth={2}
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"
-                    />
-                  </svg>
-                ),
+                n: "STEP 1",
+                title: "Scan your WordPress site",
+                desc: "Paste your URL. Maki runs a fresh PageSpeed test.",
               },
               {
-                n: "02",
-                title: "Pay $9 once",
-                desc: "Secure checkout via Stripe. No recurring charges. No account needed. Ever.",
-                icon: (
-                  <svg
-                    className="w-5 h-5"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth={2}
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"
-                    />
-                  </svg>
-                ),
+                n: "STEP 2",
+                title: "See what's actually slowing it down",
+                desc: "Maki identifies the biggest performance problems and detects your WordPress setup when possible.",
               },
               {
-                n: "03",
-                title: "Download your PDF",
-                desc: "Plain-English fixes ranked by impact. Apply them yourself in minutes, or hand the PDF to your developer — we write it so both of you understand it.",
-                icon: (
-                  <svg
-                    className="w-5 h-5"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth={2}
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
-                    />
-                  </svg>
-                ),
+                n: "STEP 3",
+                title: "Unlock your exact fix plan",
+                desc: "For $9 one-time, get prioritized WordPress-specific instructions based on your detected setup.",
               },
+              {
+                n: "STEP 4",
+                title: "Fix and re-test",
+                desc: "Apply the changes, mark fixes complete, and run a fresh test to compare before vs. after.",
+              }
             ].map((step) => (
               <div
                 key={step.n}
-                className="relative border border-gray-200 rounded-2xl p-6 hover:border-gray-300 transition-colors"
+                className="relative bg-[#f9fafb] border border-gray-100 rounded-2xl p-6"
               >
-                <span className="text-sm font-bold text-gray-400 mb-4 block">
+                <span className="text-[10px] font-extrabold text-[#268ad8] uppercase tracking-widest mb-3 block">
                   {step.n}
                 </span>
-                <div className="w-10 h-10 rounded-lg bg-[#268ad8] text-white flex items-center justify-center mb-4">
-                  {step.icon}
-                </div>
-                <h3 className="font-semibold text-base mb-1.5">{step.title}</h3>
+                <h3 className="font-bold text-lg mb-2 text-gray-900 leading-snug">{step.title}</h3>
                 <p className="text-sm text-gray-500 leading-relaxed">
                   {step.desc}
                 </p>
@@ -693,102 +263,122 @@ export default function LandingPage() {
         </div>
       </section>
 
-
-      {/* PDF Preview Section */}
-      <section className="px-6 py-24 bg-[#F9FAFB]">
+      {/* Product Preview */}
+      <section className="px-6 py-24 bg-[#F9FAFB] border-y border-gray-200">
         <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-12">
+          <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold mb-4">
-              Here&apos;s what you get for $9
+              Maki tells you exactly what to do.
             </h2>
-            <p className="text-gray-500 max-w-2xl mx-auto text-lg">
-              A complete, plain-English performance report tailored to your site — ready to hand to your developer or fix yourself.
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              You shouldn't need to understand Lighthouse reports. Maki turns performance data into specific WordPress actions.
             </p>
           </div>
 
-          <div className="overflow-hidden">
+          <div className="bg-white border border-gray-200 rounded-2xl shadow-xl overflow-hidden max-w-2xl mx-auto">
+            {/* Browser chrome */}
+            <div className="border-b border-gray-100 px-4 py-3 flex items-center gap-2 bg-gray-50">
+              <div className="flex gap-1.5">
+                <span className="w-3 h-3 rounded-full bg-gray-300" />
+                <span className="w-3 h-3 rounded-full bg-gray-300" />
+                <span className="w-3 h-3 rounded-full bg-gray-300" />
+              </div>
+              <div className="flex-1 mx-4 bg-white border border-gray-200 rounded-md px-3 py-1 text-xs text-gray-500 text-center font-mono">
+                getmaki.app/report
+              </div>
+            </div>
 
-            <div
-              id="maki-pdf-preview"
-              className="w-full overflow-hidden flex items-center justify-center"
-            >
-              <img
-                src="/pdf-preview.png"
-                alt="Maki Core Web Vitals Sample PDF Report Preview"
-                className="w-full h-auto object-cover object-top hover:scale-[1.01] transition-transform duration-500 ease-out"
-              />
+            {/* Mock Dashboard */}
+            <div className="p-4 sm:p-8">
+              <div className="flex justify-between items-start mb-6">
+                <div>
+                  <h3 className="text-xl font-bold">example.com</h3>
+                  <span className="text-xs font-medium text-[#268ad8] bg-blue-50 px-2 py-0.5 rounded mt-1 inline-block">WordPress detected</span>
+                </div>
+                <div className="text-center bg-gray-50 px-4 py-2 rounded-lg">
+                  <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Performance</p>
+                  <p className="text-2xl font-bold text-red-500">58</p>
+                </div>
+              </div>
+
+              <div className="mb-6">
+                <p className="font-semibold text-gray-900 mb-2">3 high-impact fixes</p>
+                
+                <div className="border border-gray-200 rounded-xl overflow-hidden">
+                  <div className="bg-gray-50 px-4 py-2 border-b text-[10px] font-bold text-gray-500 uppercase tracking-widest">
+                    Next Priority Fix
+                  </div>
+                  <div className="p-4 bg-white">
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-red-100 text-red-700">High impact</span>
+                    </div>
+                    <h4 className="font-bold text-lg mb-1">Your main image is lazy-loaded</h4>
+                    <p className="text-xs text-gray-500 font-mono mb-4">hero-home.webp</p>
+                    
+                    <div className="bg-blue-50 border border-blue-100 rounded-lg p-3 mb-4">
+                      <p className="text-xs font-bold text-[#268ad8] uppercase tracking-wider mb-2">Detected Setup</p>
+                      <p className="text-sm font-medium text-blue-900">WordPress &middot; GeneratePress &middot; Perfmatters</p>
+                    </div>
+
+                    <div className="mb-6">
+                      <p className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">How to fix</p>
+                      <ol className="list-decimal pl-5 text-sm space-y-1 text-gray-700">
+                        <li>Open WordPress Admin.</li>
+                        <li>Go to Settings &rarr; Perfmatters.</li>
+                        <li>Open the Lazy Load tab.</li>
+                        <li>Add <span className="font-mono bg-gray-100 px-1 rounded">hero-home.webp</span> to the exclusion list.</li>
+                        <li>Clear cache.</li>
+                      </ol>
+                    </div>
+
+                    <div className="flex justify-between items-center border-t pt-4">
+                      <button className="text-sm px-4 py-2 rounded-full border bg-white text-[#268ad8] border-[#268ad8] font-medium">
+                        Mark as fixed
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-          <p className="text-center text-sm text-gray-500 mt-6 max-w-2xl mx-auto">
-            Sample report generated for a real site. Your report includes your actual scores, ranked fixes, and code snippets tailored to your stack.
-          </p>
         </div>
       </section>
 
-      {/* Testimonials */}
+      {/* Why Maki */}
       <section className="px-6 py-24 bg-white">
-        <div className="max-w-5xl mx-auto">
+        <div className="max-w-4xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-3xl sm:text-4xl font-bold mb-4">
-              Developers and site owners love Maki
+            <h2 className="text-3xl sm:text-4xl font-bold">
+              Why Maki is different
             </h2>
-            <p className="text-gray-500 text-lg">
-              Real results from real users.
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto mt-4">
+              We don't just tell you what's wrong. We tell you how to fix it in WordPress.
             </p>
           </div>
-          <div className="grid md:grid-cols-3 gap-6">
-            <div className="bg-white border border-gray-200 rounded-2xl p-6">
-              <div className="flex text-yellow-400 mb-4">
-                {"★★★★★".split("").map((star, i) => <span key={i}>{star}</span>)}
-              </div>
-              <p className="text-gray-600 text-sm leading-relaxed mb-6">
-                &ldquo;I&apos;d been staring at PageSpeed Insights for an hour trying to understand what to fix first. Maki gave me a ranked list with actual code snippets. Fixed my LCP in 20 minutes. Went from 58 to 91 on mobile.&rdquo;
-              </p>
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold" style={{ backgroundColor: "#2563EB" }}>
-                  D
-                </div>
-                <div>
-                  <p className="font-bold text-sm text-[#282f42]">David K.</p>
-                  <p className="text-xs text-gray-500">Freelance Developer &middot; Austin, TX</p>
-                </div>
-              </div>
+
+          <div className="grid sm:grid-cols-2 gap-6 max-w-3xl mx-auto">
+            <div className="bg-gray-50 rounded-2xl p-8 border border-gray-200">
+              <span className="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest mb-2 block">Generic tools</span>
+              <p className="text-lg font-medium text-gray-900 mb-4">"Reduce unused JavaScript."</p>
+              <p className="text-sm text-gray-500">You are left to figure out which plugin is causing the issue and how to disable it safely without breaking your site.</p>
+            </div>
+            
+            <div className="bg-blue-50/50 rounded-2xl p-8 border border-blue-100 relative">
+              <span className="text-[10px] font-extrabold text-[#268ad8] uppercase tracking-widest mb-2 block">Maki</span>
+              <p className="text-lg font-medium text-[#268ad8] mb-4">"Perfmatters is detected. Review Script Manager and unload this specific asset."</p>
+              <p className="text-sm text-gray-600">When Maki detects your setup, it gives you exact steps for the tools you already have installed.</p>
             </div>
 
-            <div className="bg-white border border-gray-200 rounded-2xl p-6">
-              <div className="flex text-yellow-400 mb-4">
-                {"★★★★★".split("").map((star, i) => <span key={i}>{star}</span>)}
-              </div>
-              <p className="text-gray-600 text-sm leading-relaxed mb-6">
-                &ldquo;Our Shopify store was stuck at a 42 performance score. Maki identified the exact images and scripts causing the problem. $9 saved us from paying an agency $500 to tell us the same thing.&rdquo;
-              </p>
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold" style={{ backgroundColor: "#059669" }}>
-                  R
-                </div>
-                <div>
-                  <p className="font-bold text-sm text-[#282f42]">Rachel M.</p>
-                  <p className="text-xs text-gray-500">Ecommerce Store Owner &middot; Chicago, IL</p>
-                </div>
-              </div>
+            <div className="bg-gray-50 rounded-2xl p-8 border border-gray-200">
+              <span className="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest mb-2 block">Generic tools</span>
+              <p className="text-lg font-medium text-gray-900 mb-4">"Improve LCP."</p>
+              <p className="text-sm text-gray-500">You search Google for 30 minutes trying to understand what an LCP element even is.</p>
             </div>
 
-            <div className="bg-white border border-gray-200 rounded-2xl p-6">
-              <div className="flex text-yellow-400 mb-4">
-                {"★★★★★".split("").map((star, i) => <span key={i}>{star}</span>)}
-              </div>
-              <p className="text-gray-600 text-sm leading-relaxed mb-6">
-                &ldquo;I run a small WordPress site and had no idea Core Web Vitals even affected rankings. Maki explained everything in plain English and told me exactly which plugins to install. My score went from 61 to 88.&rdquo;
-              </p>
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold" style={{ backgroundColor: "#7C3AED" }}>
-                  T
-                </div>
-                <div>
-                  <p className="font-bold text-sm text-[#282f42]">Tom S.</p>
-                  <p className="text-xs text-gray-500">WordPress Site Owner &middot; London, UK</p>
-                </div>
-              </div>
+            <div className="bg-blue-50/50 rounded-2xl p-8 border border-blue-100 relative">
+              <span className="text-[10px] font-extrabold text-[#268ad8] uppercase tracking-widest mb-2 block">Maki</span>
+              <p className="text-lg font-medium text-[#268ad8] mb-4">"Your hero image is the LCP element and appears to be lazy-loaded. Exclude it from lazy loading."</p>
+              <p className="text-sm text-gray-600">Maki pinpoints the exact file and the exact reason it's failing, giving you a clear path forward.</p>
             </div>
           </div>
         </div>
@@ -797,112 +387,79 @@ export default function LandingPage() {
       {/* Pricing */}
       <section
         id="pricing"
-        className="bg-[#f3fbff] px-6 py-24 overflow-hidden relative group"
+        className="bg-[#111827] text-white px-6 py-24"
       >
-        {/* Celebrate mascot */}
-        <img
-          src="/celebrate.png"
-          alt="Celebrate Mascot"
-          className="absolute top-[394px] left-[114px] w-[476px] h-auto z-[9] transition-transform duration-500 group-hover:-rotate-2 group-hover:-translate-y-2 pointer-events-none opacity-100 hidden md:block"
-        />
-
-        <div className="max-w-4xl mx-auto relative z-10">
-          <div className="text-center mb-14">
-            <p className="text-xs font-semibold text-[#c84367] uppercase tracking-widest mb-3">
-              Pricing
-            </p>
+        <div className="max-w-4xl mx-auto">
+          <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold">
-              One-time payment. No subscription.
+              Simple pricing.
             </h2>
-            <p className="text-gray-500 mt-4">
-              Pay for what you need. Nothing more.
+            <p className="text-gray-400 mt-4 text-lg">
+              Start with the free scan.
             </p>
           </div>
 
           <div className="max-w-md mx-auto relative z-10">
-            {/* Single Tier */}
-            <div className="bg-[#282f42] text-white rounded-3xl p-8 flex flex-col relative z-10">
-              <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#c84367] text-white text-xs font-bold px-4 py-1.5 rounded-full uppercase tracking-widest shadow-sm">
-                Full Report
-              </span>
-              <div className="mb-8 mt-2 text-center">
-                <div className="flex items-baseline justify-center gap-1">
-                  <span className="text-6xl font-extrabold tracking-tight text-white">$9</span>
-                  <span className="text-gray-400 font-medium">/ once</span>
-                </div>
-                <p className="text-sm text-gray-400 mt-3">
-                  Everything you need to fix your Core Web Vitals
-                </p>
+            <div className="bg-white text-gray-900 rounded-3xl p-8 flex flex-col shadow-2xl">
+              <div className="mb-2">
+                <h3 className="text-xl font-extrabold">WordPress Fix Plan</h3>
               </div>
-              <ul className="text-sm text-gray-200 space-y-4 mb-8 flex-1 px-4">
+              <div className="mb-6 flex items-baseline gap-2">
+                <span className="text-5xl font-extrabold">$9</span>
+                <span className="text-gray-500 font-medium">One-time</span>
+              </div>
+              
+              <ul className="text-sm text-gray-600 space-y-4 mb-8 flex-1">
                 {[
-                  "Complete performance audit",
-                  "LCP, INP, CLS + Lighthouse scores",
-                  "Top 7 ranked fixes with code snippets",
-                  "Technology & server detection",
-                  "Plugin links & resource guides",
-                  "SEO snippets (copy-paste ready)",
-                  "Quick win (under 10 min)",
-                  "Instant PDF download",
+                  "Prioritized WordPress fixes",
+                  "Plugin & theme-specific instructions (when detected)",
+                  "Affected resources pinpointed",
+                  "Progress checklist",
+                  "Manual re-tests",
+                  "Before / after comparison"
                 ].map((f) => (
                   <li key={f} className="flex items-start gap-3">
-                    <svg
-                      className="w-5 h-5 text-[#c84367] shrink-0"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                      strokeWidth={3}
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M5 13l4 4L19 7"
-                      />
+                    <svg className="w-5 h-5 text-green-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                     </svg>
                     <span className="font-medium">{f}</span>
                   </li>
                 ))}
               </ul>
+              
               <button
-                onClick={() => handleScan("basic")}
-                disabled={loading !== null}
-                className="w-full py-4 rounded-xl bg-[#268ad8] text-white text-base font-bold hover:bg-[#1e6fb0] transition-colors disabled:opacity-60"
+                onClick={() => {
+                  window.scrollTo({ top: 0, behavior: "smooth" });
+                  setTimeout(() => {
+                    document.querySelector("input")?.focus();
+                  }, 500);
+                }}
+                className="w-full py-4 rounded-xl bg-gray-900 text-white text-base font-bold hover:bg-gray-800 transition-colors"
               >
-                {loading === "basic" ? "Scanning…" : "Audit my site now"}
+                Scan my site first
               </button>
-              <div className="flex items-center justify-center gap-1.5 mt-4 opacity-80">
-                <span className="text-xs text-gray-400">Secure checkout via</span>
-                <span className="font-bold tracking-tight italic text-[#635BFF] text-[15px] font-sans">stripe</span>
-              </div>
             </div>
           </div>
-
-          <p className="text-center text-xs text-gray-400 mt-10">
-            No account. No subscription. No email required. Just a PDF.
-          </p>
         </div>
       </section>
 
       {/* FAQ */}
-      <section className="px-6 py-24">
-        <div className="max-w-2xl mx-auto">
+      <section className="px-6 py-24 bg-white">
+        <div className="max-w-3xl mx-auto">
           <div className="text-center mb-12">
-            <p className="text-xs font-semibold text-[#268ad8] uppercase tracking-widest mb-3">
-              Questions
-            </p>
-            <h2 className="text-3xl sm:text-4xl font-bold">Good to know.</h2>
+            <h2 className="text-3xl sm:text-4xl font-bold">FAQ</h2>
           </div>
 
-          <div className="space-y-3">
+          <div className="space-y-4">
             {FAQ_ITEMS.map((item, i) => (
               <details
                 key={i}
-                className="group border border-gray-200 rounded-xl bg-white"
+                className="group border border-gray-200 rounded-xl bg-gray-50"
               >
-                <summary className="flex items-center justify-between px-5 py-4 cursor-pointer list-none">
-                  <span className="font-medium text-[#282f42]">{item.q}</span>
+                <summary className="flex items-center justify-between px-6 py-5 cursor-pointer list-none focus:outline-none">
+                  <span className="font-bold text-gray-900">{item.q}</span>
                   <svg
-                    className="w-4 h-4 text-[#c84367] transition-transform group-open:rotate-180"
+                    className="w-5 h-5 text-gray-400 transition-transform group-open:rotate-180"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -915,7 +472,7 @@ export default function LandingPage() {
                     />
                   </svg>
                 </summary>
-                <div className="px-5 pb-4 text-sm text-gray-600 leading-relaxed">
+                <div className="px-6 pb-5 text-gray-600 leading-relaxed border-t border-gray-200 pt-4">
                   {item.a}
                 </div>
               </details>
@@ -924,124 +481,20 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Final CTA Redesign */}
-      <section className="px-6 py-28 bg-[#F9FAFB] text-[#282f42] relative overflow-hidden">
-        <div className="max-w-4xl mx-auto text-center relative z-10">
-          <h2 className="text-4xl sm:text-5xl font-extrabold mb-6 tracking-tight leading-tight">
-            Ready to see your <span className="text-[#c84367]">real</span> score?
-          </h2>
-          <p className="text-lg text-gray-500 mb-12 max-w-xl mx-auto">
-            Get your PageSpeed fixes in plain English. No accounts, no waiting, just results.
-          </p>
-
-          <div className="flex flex-col items-center gap-10">
-            <button
-              onClick={() => {
-                window.scrollTo({ top: 0, behavior: "smooth" });
-                setTimeout(() => {
-                  document.querySelector("input")?.focus();
-                }, 500);
-              }}
-              className="group relative inline-flex items-center gap-3 px-10 py-5 bg-[#268ad8] text-white rounded-2xl text-lg font-bold hover:bg-[#1e6fb0] transition-all"
-            >
-              Audit my site now
-              <svg
-                className="w-5 h-5 transition-transform group-hover:translate-x-1"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={2.5}
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M17 8l4 4m0 0l-4 4m4-4H3"
-                />
-              </svg>
-            </button>
-
-            {/* Redesigned No-fuss badges */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 w-full max-w-3xl mt-4">
-              {[
-                {
-                  label: "No account", sub: "Zero signup required"
-                },
-                {
-                  label: "No login", sub: "Just paste your URL"
-                },
-                {
-                  label: "One-time $9", sub: "No subscription ever"
-                },
-              ].map((item) => (
-                <div key={item.label} className="bg-white border border-gray-200 rounded-2xl p-5">
-                  <p className="text-base font-bold text-[#282f42] mb-1">{item.label}</p>
-                  <p className="text-xs text-gray-500 font-medium">{item.sub}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <p className="text-xs text-gray-400 mt-12">
-            Enter your URL above — PDF in your hands in 30 seconds.
-          </p>
-        </div>
-      </section>
-
       {/* Footer */}
-      <footer className="border-t border-[#1e2435] bg-[#282f42] text-gray-500 px-6 py-12">
-        <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div className="flex flex-col gap-4">
-            <div className="flex items-center gap-2">
-              <Logo className="h-6 w-auto" color="white" />
-              <span className="text-sm font-medium text-white hidden">Maki</span>
-            </div>
-            <span className="text-xs text-gray-400 max-w-sm">
-              Instant Core Web Vitals audits and tailored performance reports.
-            </span>
-            <span className="text-[10px] text-gray-500 max-w-sm mt-4">
-              Not affiliated with, endorsed by, or associated with Google or Alphabet Inc.
-            </span>
+      <footer className="bg-white border-t border-gray-200 text-gray-500 px-6 py-12">
+        <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
+          <div className="flex items-center gap-2">
+            <Logo className="h-6 w-auto grayscale opacity-70" />
           </div>
-
-          <div className="flex flex-col gap-3 text-sm">
-            <h4 className="text-white font-semibold mb-1">Product</h4>
-            <a href="#pricing" className="hover:text-white transition-colors">Pricing</a>
-            <a href="https://developers.google.com/speed/docs/insights/v5/about" target="_blank" rel="noreferrer" className="hover:text-white transition-colors">PageSpeed Insights API</a>
-            <a href="https://web.dev/vitals/" target="_blank" rel="noreferrer" className="hover:text-white transition-colors">About Core Web Vitals</a>
-          </div>
-
-          <div className="flex flex-col gap-3 text-sm">
-            <h4 className="text-white font-semibold mb-1">Legal & Contact</h4>
-            <button
-              onClick={() => setPrivacyOpen(true)}
-              className="text-left hover:text-white transition-colors"
-            >
-              Privacy Policy
-            </button>
-            <button
-              onClick={() => setTermsOpen(true)}
-              className="text-left hover:text-white transition-colors"
-            >
-              Terms & Conditions
-            </button>
-            <a
-              href="mailto:support@getmaki.app"
-              className="hover:text-white transition-colors"
-            >
-              support@getmaki.app
-            </a>
-
+          <div className="flex gap-6 text-sm font-medium">
+            <button onClick={() => setPrivacyOpen(true)} className="hover:text-gray-900 transition-colors">Privacy Policy</button>
+            <button onClick={() => setTermsOpen(true)} className="hover:text-gray-900 transition-colors">Terms & Conditions</button>
+            <a href="mailto:support@getmaki.app" className="hover:text-gray-900 transition-colors">Support</a>
           </div>
         </div>
-
-        <div className="max-w-6xl mx-auto mt-12 pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4 text-xs">
-          <span>© {new Date().getFullYear()} Maki. All rights reserved.</span>
-          <div className="flex gap-4">
-            {/* Backlinks for SEO */}
-            <a href="https://getmaki.app" className="hover:text-white transition-colors">Core Web Vitals Checker</a>
-            <a href="https://getmaki.app" className="hover:text-white transition-colors">PageSpeed Report</a>
-            <a href="https://getmaki.app" className="hover:text-white transition-colors">GTmetrix Alternative</a>
-          </div>
+        <div className="max-w-6xl mx-auto mt-8 text-center md:text-left text-xs text-gray-400">
+          © {new Date().getFullYear()} Maki. Not affiliated with Google or WordPress.
         </div>
       </footer>
 

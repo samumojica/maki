@@ -18,7 +18,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Missing scanId" }, { status: 400 });
     }
 
-    const entry = getScan(scanId);
+    const entry = await getScan(scanId);
     if (!entry) {
       return NextResponse.json(
         { error: "Scan expired. Please run a new scan." },

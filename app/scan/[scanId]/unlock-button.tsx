@@ -272,7 +272,7 @@ export default function UnlockButton({
         onClick={() => setShowModal(true)}
         className="w-full bg-[#268ad8] text-white px-8 py-5 rounded-full text-xl font-black hover:bg-[#1e6fb0] transition-all shadow-xl shadow-[#268ad8]/30 hover:scale-[1.02] active:scale-[0.98]"
       >
-        Unlock Full Report — {PRICE_LABEL}
+        Unlock my WordPress fix plan — {PRICE_LABEL}
       </button>
 
       {showModal && (
@@ -281,3 +281,4 @@ export default function UnlockButton({
     </>
   );
 }
+
