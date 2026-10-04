@@ -6,6 +6,7 @@ import { Suspense } from "react";
 import LoadingScreen from "@/components/LoadingScreen";
 import ResultsPage from "@/components/ResultsPage";
 import { AuditResult } from "@/lib/types";
+import { FIX_PLAN_ITEM, track } from "@/lib/analytics";
 
 function ResultsContent() {
   const searchParams = useSearchParams();
@@ -34,7 +35,18 @@ function ResultsContent() {
           throw new Error(data.error ?? "Audit failed");
         }
 
+        // Payment verified by /api/audit. GA4 de-duplicates purchases by transaction_id,
+        // so a reload of this page won't double count.
+        track("purchase", {
+          transaction_id: sessionId,
+          currency: "USD",
+          value: FIX_PLAN_ITEM.price,
+          items: [FIX_PLAN_ITEM],
+        });
+
         if (data.scanId) {
+          // Give gtag a moment to send the purchase before navigating away
+          await new Promise((r) => setTimeout(r, 300));
           // Redirect to the clean permanent URL
           window.location.href = `/report/${data.scanId}`;
         } else {

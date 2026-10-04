@@ -7,6 +7,7 @@ import {
 } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import type { Verdict } from "@/lib/types";
+import { FIX_PLAN_ITEM, track } from "@/lib/analytics";
 
 // Load Stripe once outside render
 const stripePromise = loadStripe(
@@ -269,7 +270,10 @@ export default function UnlockButton({
   return (
     <>
       <button
-        onClick={() => setShowModal(true)}
+        onClick={() => {
+          track("begin_checkout", { currency: "USD", value: FIX_PLAN_ITEM.price, items: [FIX_PLAN_ITEM] });
+          setShowModal(true);
+        }}
         className="w-full bg-[#268ad8] text-white px-8 py-5 rounded-full text-xl font-black hover:bg-[#1e6fb0] transition-all shadow-xl shadow-[#268ad8]/30 hover:scale-[1.02] active:scale-[0.98]"
       >
         Unlock my WordPress fix plan — {PRICE_LABEL}

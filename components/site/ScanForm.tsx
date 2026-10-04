@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { track } from "@/lib/analytics";
 
 type Tier = "basic" | "pro";
 
@@ -43,6 +44,7 @@ export function ScanForm({ tone = "dark", id = "url-input" }: { tone?: "dark" | 
 
     setLoading(true);
     setScanProgress(0);
+    track("scan_started", { form_location: id });
 
     const interval = setInterval(() => {
       setScanProgress((p) => (p >= 90 ? 90 : p + Math.random() * 15));
@@ -60,12 +62,14 @@ export function ScanForm({ tone = "dark", id = "url-input" }: { tone?: "dark" | 
 
       clearInterval(interval);
       setScanProgress(100);
+      track("scan_completed", { form_location: id });
       await new Promise((r) => setTimeout(r, 400));
       router.push(`/scan/${data.scanId}`);
     } catch (err) {
       clearInterval(interval);
       setScanProgress(0);
       console.error(err);
+      track("scan_failed", { form_location: id, error_message: String((err as Error).message).slice(0, 100) });
       setUrlError((err as Error).message || "Something went wrong. Please try again.");
       setLoading(false);
     }

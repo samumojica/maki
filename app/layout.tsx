@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Bricolage_Grotesque, Geist, Geist_Mono } from "next/font/google";
+import { GoogleAnalytics } from "@next/third-parties/google";
 import { SITE_NAME, SITE_URL, jsonLd } from "@/lib/seo/site";
+import { ANALYTICS_ENABLED, GA_ID } from "@/lib/analytics";
 import "./globals.css";
 
 const geist = Geist({ subsets: ["latin"], variable: "--font-geist-sans" });
@@ -84,6 +86,7 @@ export default function RootLayout({
         {children}
         <script type="application/ld+json" dangerouslySetInnerHTML={jsonLd(organizationSchema)} />
       </body>
+      {ANALYTICS_ENABLED && <GoogleAnalytics gaId={GA_ID} />}
     </html>
   );
 }
