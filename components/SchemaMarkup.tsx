@@ -1,4 +1,5 @@
 import { FAQ_ITEMS } from "@/lib/faq-data";
+import { SITE_URL, jsonLd } from "@/lib/seo/site";
 
 export function SchemaMarkup() {
   const faqSchema = {
@@ -15,25 +16,16 @@ export function SchemaMarkup() {
     "@context": "https://schema.org",
     "@type": "WebApplication",
     name: "Maki",
-    url: "https://getmaki.app",
+    url: SITE_URL,
     description: "WordPress performance fixer that gives you tailored, step-by-step instructions to improve your Core Web Vitals.",
     applicationCategory: "DeveloperApplication",
     operatingSystem: "Web",
-    brand: {
-      "@type": "Brand",
-      "name": "Maki",
-      "logo": "https://getmaki.app/assets/lighthouse.svg"
-    },
+    publisher: { "@id": `${SITE_URL}/#organization` },
     offers: {
       "@type": "Offer",
       price: "9.00",
       priceCurrency: "USD",
       availability: "https://schema.org/InStock",
-    },
-    author: {
-      "@type": "Organization",
-      "name": "Maki",
-      "url": "https://getmaki.app"
     },
     browserRequirements: "Requires Chrome, Firefox, Safari, or Edge",
     featureList: [
@@ -47,8 +39,8 @@ export function SchemaMarkup() {
 
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(productSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={jsonLd(faqSchema)} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={jsonLd(productSchema)} />
     </>
   );
 }

@@ -15,7 +15,10 @@ export interface WordPressFix {
   impact: "high" | "medium" | "low";
 
   appliesWhen: {
+    /** Triggers when any of these Lighthouse audits/insights scores below 0.9 (include both legacy and Lighthouse 13 ids). */
     lighthouseAuditIds?: string[];
+    /** Triggers when any network request URL contains one of these substrings. */
+    requestPatterns?: string[];
     metric?: "LCP" | "INP" | "CLS" | "TTFB" | "general";
   };
 

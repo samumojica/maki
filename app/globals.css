@@ -2,20 +2,85 @@
 
 :root {
   --background: #ffffff;
-  --foreground: #282f42;
+  --foreground: #0c0d24;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
+  --font-display: var(--font-bricolage);
   --font-mono: var(--font-geist-mono);
+}
+
+/* Maki V3 brand palette */
+@theme {
+  --color-ink: #0c0d24;
+  --color-ink-soft: #16183a;
+  --color-deep: #2e4957;
+  --color-mint: #9ee19a;
+  --color-mint-soft: #e7f8e5;
+  --color-maki: #268ad8;
+  --color-maki-dark: #1e6fb0;
+  --color-paper: #f5f7f4;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+}
+
+/* Horizontal carousels that bleed off the right edge of the viewport */
+.no-scrollbar {
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.bleed-right {
+  /* left edge aligns with the max-w-6xl container, right edge hits the viewport */
+  padding-left: max(1.5rem, calc((100vw - 72rem) / 2 + 1.5rem));
+  padding-right: 1.5rem;
+  scroll-padding-left: max(1.5rem, calc((100vw - 72rem) / 2 + 1.5rem));
+}
+
+/* Long-form content (guides, fix pages) */
+.prose-maki h2 {
+  font-family: var(--font-bricolage), sans-serif;
+  font-size: 1.75rem;
+  font-weight: 800;
+  line-height: 1.2;
+  margin: 2.5rem 0 1rem;
+  color: var(--color-ink);
+}
+.prose-maki h3 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin: 1.75rem 0 0.5rem;
+  color: var(--color-ink);
+}
+.prose-maki p,
+.prose-maki li {
+  color: #3d4354;
+  line-height: 1.75;
+}
+.prose-maki p { margin: 0 0 1rem; }
+.prose-maki ul { list-style: disc; padding-left: 1.25rem; margin: 0 0 1rem; }
+.prose-maki ol { list-style: decimal; padding-left: 1.25rem; margin: 0 0 1rem; }
+.prose-maki li { margin: 0.35rem 0; }
+.prose-maki .not-prose ol,
+.prose-maki .not-prose ul { list-style: none; padding-left: 0; margin: 0; }
+.prose-maki .not-prose li { margin: 0; }
+.prose-maki .not-prose h3 { margin: 0; }
+.prose-maki a { color: var(--color-maki); text-decoration: underline; text-underline-offset: 3px; }
+.prose-maki code {
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: 0.875em;
+  background: var(--color-paper);
+  border: 1px solid #e3e7e1;
+  border-radius: 6px;
+  padding: 0.1rem 0.35rem;
 }
 
 @layer utilities {
@@ -74,6 +139,42 @@ body {
 
   .animate-slide-up-fade {
     animation: slideUpFade 0.4s ease-out forwards;
+  }
+
+  @keyframes floaty {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+
+  @keyframes spinSlow {
+    to { transform: rotate(360deg); }
+  }
+
+  @keyframes peek {
+    0%, 100% { transform: translateY(10px); }
+    45%, 60% { transform: translateY(0); }
+  }
+
+  @keyframes blobMorph {
+    0%, 100% { border-radius: 58% 42% 47% 53% / 50% 56% 44% 50%; }
+    33% { border-radius: 45% 55% 52% 48% / 58% 46% 54% 42%; }
+    66% { border-radius: 52% 48% 40% 60% / 46% 52% 48% 54%; }
+  }
+
+  .animate-blob {
+    animation: blobMorph 12s ease-in-out infinite;
+  }
+
+  .animate-peek {
+    animation: peek 4.5s ease-in-out infinite;
+  }
+
+  .animate-floaty {
+    animation: floaty 5s ease-in-out infinite;
+  }
+
+  .animate-spin-slow {
+    animation: spinSlow 40s linear infinite;
   }
 
   .animate-gentle-bg {

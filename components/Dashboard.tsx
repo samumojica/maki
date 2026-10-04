@@ -351,7 +351,7 @@ export default function Dashboard({ audit, scanId, initialRetests }: DashboardPr
                   <div className="absolute top-0 left-0 w-2 h-full bg-gradient-to-b from-[#268ad8] to-[#c84367]"></div>
                   
                   {completedCount === totalFixes && (
-                    <Image src="/celebrate.png" alt="Celebrate" width={60} height={60} className="absolute top-4 right-4 opacity-20 animate-pop pointer-events-none" />
+                    <Image src="/celebrate.svg" alt="Celebrate" width={45} height={60} className="absolute top-4 right-4 opacity-20 animate-pop pointer-events-none" />
                   )}
 
                   <h2 className="text-2xl font-black text-[#282f42] mb-6 tracking-tight">Before & After</h2>
@@ -500,7 +500,7 @@ export default function Dashboard({ audit, scanId, initialRetests }: DashboardPr
                         Next Priority Fix
                       </p>
                       
-                      <Image src="/mascot.png" alt="" width={60} height={60} className="absolute -top-12 right-0 hidden sm:block animate-bob pointer-events-none drop-shadow-md z-10" />
+                      <Image src="/mascot.svg" alt="" width={38} height={60} className="absolute -top-12 right-0 hidden sm:block animate-bob pointer-events-none drop-shadow-md z-10" />
 
                       <div className="bg-white border-2 border-red-100 shadow-xl shadow-red-500/5 rounded-2xl overflow-hidden relative z-0">
                         <div className="p-6 cursor-pointer hover:bg-gray-50 transition-colors" onClick={() => { setActiveTab('fixes'); setExpandedFixId(nextFix.fixId); }}>
@@ -525,7 +525,7 @@ export default function Dashboard({ audit, scanId, initialRetests }: DashboardPr
                           {wpContext && (
                             <div className="mb-6">
                               <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5 flex items-center gap-1.5">
-                                <Image src="/mascot.png" alt="" width={16} height={16} className="sm:hidden" />
+                                <Image src="/mascot.svg" alt="" width={10} height={16} className="sm:hidden" />
                                 Maki detected this setup:
                               </p>
                               <div className="flex flex-wrap gap-2">

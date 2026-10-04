@@ -6,7 +6,7 @@ export const renderBlockingCss: WordPressFix = {
   title: "Eliminate render-blocking CSS",
   impact: "high",
   appliesWhen: {
-    lighthouseAuditIds: ["render-blocking-resources"],
+    lighthouseAuditIds: ["render-blocking-insight", "render-blocking-resources"],
   },
   problem: "The browser must download and parse large CSS files before it can paint anything on the screen, causing a blank white screen delay.",
   whyItMatters: "Render-blocking resources heavily impact First Contentful Paint (FCP) and Largest Contentful Paint (LCP).",

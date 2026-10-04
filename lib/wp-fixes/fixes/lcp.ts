@@ -65,7 +65,7 @@ export const lcpImageTooLarge: WordPressFix = {
   title: "LCP image is too heavy",
   impact: "high",
   appliesWhen: {
-    lighthouseAuditIds: ["uses-optimized-images", "modern-image-formats", "uses-responsive-images"],
+    lighthouseAuditIds: ["image-delivery-insight", "uses-optimized-images", "modern-image-formats", "uses-responsive-images"],
     metric: "LCP"
   },
   problem: "The Largest Contentful Paint (LCP) image has a large file size, which takes too long to download.",

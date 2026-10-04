@@ -6,7 +6,7 @@ export const fontDisplay: WordPressFix = {
   title: "Ensure text remains visible during webfont load",
   impact: "medium",
   appliesWhen: {
-    lighthouseAuditIds: ["font-display"],
+    lighthouseAuditIds: ["font-display-insight", "font-display"],
   },
   problem: "Custom fonts hide text while they are downloading (FOIT - Flash of Invisible Text).",
   whyItMatters: "This delays the user's ability to read your content and worsens FCP/LCP.",
@@ -47,7 +47,7 @@ export const layoutShiftImages: WordPressFix = {
   title: "Images are causing layout shifts",
   impact: "high",
   appliesWhen: {
-    lighthouseAuditIds: ["layout-shift-elements"], // Requires custom matching for img tags
+    lighthouseAuditIds: ["unsized-images"], // plus custom matching on cls-culprits-insight / layout-shift-elements
     metric: "CLS"
   },
   problem: "Images are loading without explicit width and height attributes. When they finally load, they push other content out of the way.",
