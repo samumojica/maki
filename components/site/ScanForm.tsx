@@ -47,7 +47,7 @@ export function ScanForm({ tone = "dark", id = "url-input" }: { tone?: "dark" | 
     track("scan_started", { form_location: id });
 
     const interval = setInterval(() => {
-      setScanProgress((p) => (p >= 90 ? 90 : p + Math.random() * 6));
+      setScanProgress((p) => (p >= 90 ? 90 : p + Math.random() * 3.5));
     }, 600);
 
     try {
@@ -102,7 +102,7 @@ export function ScanForm({ tone = "dark", id = "url-input" }: { tone?: "dark" | 
             style={{ width: `${scanProgress}%` }}
           />
         </div>
-        <p className="text-xs mt-2 text-ink/55">This usually takes 30–45 seconds</p>
+        <p className="text-xs mt-2 text-ink/55">This usually takes about a minute</p>
       </div>
     );
   }
