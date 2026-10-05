@@ -48,7 +48,15 @@ const VERDICT_CONFIG: Record<
   },
 };
 
-export function Speedometer({ verdict, score }: { verdict: Verdict; score: number }) {
+export function Speedometer({
+  verdict,
+  score,
+  tone = "light",
+}: {
+  verdict: Verdict;
+  score: number;
+  tone?: "light" | "dark";
+}) {
   const config = VERDICT_CONFIG[verdict];
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const animRef = useRef<number>(0);
@@ -95,7 +103,7 @@ export function Speedometer({ verdict, score }: { verdict: Verdict; score: numbe
       // Track Background
       ctx.beginPath();
       ctx.arc(cx, cy, R, arcStart, arcEnd);
-      ctx.strokeStyle = "#f3f4f6";
+      ctx.strokeStyle = tone === "dark" ? "rgba(255,255,255,0.12)" : "#f3f4f6";
       ctx.lineWidth = 24;
       ctx.lineCap = "round";
       ctx.stroke();
@@ -105,7 +113,7 @@ export function Speedometer({ verdict, score }: { verdict: Verdict; score: numbe
       grad.addColorStop(0, "#ff4d4d");
       grad.addColorStop(0.4, "#ff9900");
       grad.addColorStop(0.7, "#eab308");
-      grad.addColorStop(1, "#00cc66");
+      grad.addColorStop(1, "#9ee19a");
 
       // Progress Arc
       const currentArcEnd = arcStart + ((angle + 90) / 180) * Math.PI;
@@ -127,7 +135,7 @@ export function Speedometer({ verdict, score }: { verdict: Verdict; score: numbe
       ctx.beginPath();
       ctx.moveTo(cx, cy);
       ctx.lineTo(needleX, needleY);
-      ctx.strokeStyle = config.color;
+      ctx.strokeStyle = tone === "dark" ? "#ffffff" : config.color;
       ctx.lineWidth = 4;
       ctx.lineCap = "round";
       ctx.stroke();
@@ -151,7 +159,7 @@ export function Speedometer({ verdict, score }: { verdict: Verdict; score: numbe
 
     animRef.current = requestAnimationFrame(animate);
     return () => cancelAnimationFrame(animRef.current);
-  }, [verdict, score, config]);
+  }, [verdict, score, config, tone]);
 
   return (
     <div className="relative flex flex-col items-center">
@@ -196,16 +204,16 @@ function CheckoutModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-md"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-ink/80 backdrop-blur-md"
       onClick={handleBackdrop}
     >
-      <div className="relative bg-white rounded-3xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+      <div className="relative bg-white rounded-[28px] shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between px-8 pt-8 pb-4">
           <div>
-            <p className="text-xs font-bold text-[#268ad8] uppercase tracking-[0.2em] mb-1">
+            <p className="text-xs font-bold text-maki uppercase tracking-[0.2em] mb-1">
               Unlock Full Access
             </p>
-            <p className="text-2xl font-black text-[#282f42] tracking-tight">
+            <p className="font-display text-2xl font-extrabold text-ink tracking-tight">
               Get Your Report — {PRICE_LABEL}
             </p>
           </div>
@@ -228,7 +236,7 @@ function CheckoutModal({
 
           {!clientSecret && !error && (
             <div className="flex flex-col items-center justify-center py-20 gap-4 text-gray-400">
-              <div className="w-8 h-8 border-3 border-gray-100 border-t-[#268ad8] rounded-full animate-spin" />
+              <div className="w-8 h-8 border-[3px] border-maki/15 border-t-maki rounded-full animate-spin" />
               <span className="text-sm font-bold tracking-tight">Securing session...</span>
             </div>
           )}
@@ -274,7 +282,7 @@ export default function UnlockButton({
           track("begin_checkout", { currency: "USD", value: FIX_PLAN_ITEM.price, items: [FIX_PLAN_ITEM] });
           setShowModal(true);
         }}
-        className="w-full bg-[#268ad8] text-white px-8 py-5 rounded-full text-xl font-black hover:bg-[#1e6fb0] transition-all shadow-xl shadow-[#268ad8]/30 hover:scale-[1.02] active:scale-[0.98]"
+        className="w-full bg-maki text-white px-8 py-5 rounded-2xl text-lg sm:text-xl font-bold hover:bg-maki-dark transition-all shadow-xl shadow-maki/30 hover:scale-[1.01] active:scale-[0.99]"
       >
         Unlock my WordPress fix plan — {PRICE_LABEL}
       </button>
