@@ -283,6 +283,12 @@ async function callGemini(
   const genModel = client.getGenerativeModel({
     model,
     systemInstruction: SYSTEM_PROMPT,
+    generationConfig: {
+      responseMimeType: "application/json",
+      // 2.5 Flash "thinks" by default, which pushed scans to ~80s and past the request timeout.
+      // This task is structured translation, not reasoning — skip thinking. (Not yet in this SDK's types.)
+      thinkingConfig: { thinkingBudget: 0 },
+    } as Record<string, unknown>,
   });
 
   const audit = await genModel.generateContent(buildPrompt(url, psiData, serverContext));
@@ -333,6 +339,9 @@ async function callGemini(
   } as AuditResult;
 }
 
+// llama-3.3-70b-versatile was retired by Groq; gpt-oss-120b supports JSON mode.
+const GROQ_MODEL = "openai/gpt-oss-120b";
+
 async function callLlama(
   psiData: object,
   url: string,
@@ -348,7 +357,7 @@ async function callLlama(
       Authorization: `Bearer ${apiKey}`,
     },
     body: JSON.stringify({
-      model: "llama-3.3-70b-versatile",
+      model: GROQ_MODEL,
       messages: [
         { role: "system", content: SYSTEM_PROMPT },
         { role: "user", content: buildPrompt(url, psiData, serverContext) },
@@ -451,10 +460,10 @@ export async function translatePSIWithFallback(
     console.warn("[audit] Gemini Flash failed:", (err as Error).message);
     try {
       console.log("[audit] Trying Gemini 2.5 Flash Lite...");
-      result = await callGemini(psiData, url, "gemini-2.5-flash-lite-preview-06-17", serverContext);
+      result = await callGemini(psiData, url, "gemini-2.5-flash-lite", serverContext);
     } catch (err2) {
       console.warn("[audit] Gemini Lite failed:", (err2 as Error).message);
-      console.log("[audit] Trying Groq Llama 3.3 70B...");
+      console.log(`[audit] Trying Groq ${GROQ_MODEL}...`);
       result = await callLlama(psiData, url, serverContext);
     }
   }
