@@ -17,3 +17,12 @@ function initFirebaseAdmin() {
 initFirebaseAdmin();
 
 export const db = getFirestore();
+
+// Audit objects carry optional fields (e.g. siteInfo.serverSoftware) that are often undefined.
+// Firestore rejects undefined values unless told to skip them. settings() may only be called
+// once per instance, so guard against module re-evaluation in dev.
+const globalForDb = globalThis as unknown as { __makiFirestoreConfigured?: boolean };
+if (!globalForDb.__makiFirestoreConfigured) {
+  db.settings({ ignoreUndefinedProperties: true });
+  globalForDb.__makiFirestoreConfigured = true;
+}

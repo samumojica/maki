@@ -78,12 +78,14 @@ export function ScanForm({ tone = "dark", id = "url-input" }: { tone?: "dark" | 
   if (loading) {
     return (
       <div
-        className={`rounded-2xl p-5 ${dark ? "bg-white/5 border border-white/15 text-white" : "bg-white border border-ink/10 text-ink"}`}
+        className={`rounded-2xl p-5 bg-white text-ink text-left ${
+          dark ? "shadow-[0_20px_60px_-15px_rgba(158,225,154,0.35)]" : "border-2 border-ink"
+        }`}
         role="status"
         aria-live="polite"
       >
         <div className="flex items-center gap-3 mb-3">
-          <div className="w-5 h-5 border-2 border-mint/30 border-t-mint rounded-full animate-spin shrink-0" />
+          <div className="w-5 h-5 border-2 border-maki/20 border-t-maki rounded-full animate-spin shrink-0" />
           <span className="text-sm font-medium">
             {scanProgress < 30
               ? "Fetching PageSpeed data from Google…"
@@ -94,13 +96,13 @@ export function ScanForm({ tone = "dark", id = "url-input" }: { tone?: "dark" | 
                   : "Almost done…"}
           </span>
         </div>
-        <div className={`w-full rounded-full h-2 overflow-hidden ${dark ? "bg-white/10" : "bg-ink/5"}`}>
+        <div className="w-full rounded-full h-2 overflow-hidden bg-ink/10">
           <div
-            className="bg-mint h-2 rounded-full transition-all duration-500 ease-out"
+            className="bg-maki h-2 rounded-full transition-all duration-500 ease-out"
             style={{ width: `${scanProgress}%` }}
           />
         </div>
-        <p className={`text-xs mt-2 ${dark ? "text-white/50" : "text-ink/50"}`}>This usually takes 15–25 seconds</p>
+        <p className="text-xs mt-2 text-ink/55">This usually takes 15–25 seconds</p>
       </div>
     );
   }
