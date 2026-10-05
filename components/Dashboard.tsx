@@ -607,6 +607,19 @@ export default function Dashboard({ audit, scanId, initialRetests }: DashboardPr
                   {fixes.map(fix => renderCard(fix))}
                 </div>
               )}
+
+              <div className="mt-8 rounded-2xl bg-[#0c0d24] text-white p-6 sm:flex sm:items-center sm:justify-between gap-6">
+                <div>
+                  <p className="font-bold text-lg">Short on time? We can apply these fixes for you.</p>
+                  <p className="text-sm text-white/60 mt-1">Backups first, fixed quote, before/after report.</p>
+                </div>
+                <a
+                  href={`/done-for-you?type=fix&from=dashboard&scan=${scanId}#quote`}
+                  className="mt-4 sm:mt-0 inline-block shrink-0 rounded-xl bg-[#9ee19a] text-[#0c0d24] font-bold px-5 py-3"
+                >
+                  Get a quote →
+                </a>
+              </div>
             </div>
           )}
 

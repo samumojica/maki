@@ -86,6 +86,12 @@ export function ScanCta({ heading = "Find out which of these your site has." }: 
           <div className="mt-8">
             <ScanForm tone="light" id="url-input-cta" />
           </div>
+          <p className="mt-4 text-sm text-ink/70">
+            Rather not do it yourself?{" "}
+            <Link href="/done-for-you?from=seo-cta" className="font-bold underline underline-offset-4">
+              We&apos;ll fix it for you →
+            </Link>
+          </p>
         </div>
         <Image src={mascot} alt="" sizes="170px" className="hidden md:block w-[170px] h-auto" />
       </div>

@@ -11,6 +11,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: SITE_URL, lastModified: now, changeFrequency: "weekly", priority: 1 },
     { url: `${SITE_URL}/fixes`, lastModified: now, changeFrequency: "weekly", priority: 0.8 },
     { url: `${SITE_URL}/guides`, lastModified: now, changeFrequency: "weekly", priority: 0.8 },
+    { url: `${SITE_URL}/done-for-you`, lastModified: now, changeFrequency: "monthly", priority: 0.9 },
     ...STACK_PAGES.map((s) => ({
       url: `${SITE_URL}/wordpress/${s.slug}`,
       lastModified: now,

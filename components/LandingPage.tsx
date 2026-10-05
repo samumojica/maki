@@ -292,6 +292,50 @@ export default function LandingPage({ hero = "centered" }: { hero?: "split" | "c
         </div>
       </section>
 
+      {/* ───────────────────────── Done for you ───────────────────────── */}
+      <section className="px-6 py-24 lg:py-28 bg-ink text-white relative overflow-hidden">
+        <div aria-hidden className="absolute -left-40 -bottom-40 w-[520px] h-[520px] rounded-full bg-maki/20 blur-[110px]" />
+        <div className="relative max-w-6xl mx-auto grid lg:grid-cols-[1.1fr_0.9fr] gap-12 items-center">
+          <div>
+            <p className="text-xs font-bold uppercase tracking-[0.2em] text-mint mb-3">Done for you</p>
+            <h2 className="font-display text-4xl sm:text-5xl font-extrabold tracking-tight leading-[1.05]">
+              Rather not touch your settings? <span className="text-mint">We&apos;ll do it.</span>
+            </h2>
+            <p className="mt-5 text-lg text-white/65 max-w-xl">
+              Send us your site and we&apos;ll fix your Core Web Vitals for you. No website yet? We build fast WordPress
+              sites from scratch.
+            </p>
+            <div className="mt-8 flex flex-wrap gap-3">
+              <Link
+                href="/done-for-you?type=fix&from=home#quote"
+                className="rounded-2xl bg-mint text-ink font-bold px-6 py-3.5 hover:brightness-95 transition"
+              >
+                Fix my site for me →
+              </Link>
+              <Link
+                href="/done-for-you?type=build&from=home#quote"
+                className="rounded-2xl border border-white/20 text-white font-bold px-6 py-3.5 hover:bg-white/10 transition"
+              >
+                I need a new website
+              </Link>
+            </div>
+          </div>
+          <ul className="grid sm:grid-cols-2 gap-4">
+            {[
+              { t: "Backups first", d: "Every change is reversible." },
+              { t: "Fixed quote", d: "Know the price before we start." },
+              { t: "Before / after", d: "Real PageSpeed data, not promises." },
+              { t: "WordPress experts", d: "Elementor, Divi, WooCommerce and more." },
+            ].map((x) => (
+              <li key={x.t} className="rounded-2xl border border-white/10 bg-white/5 p-5">
+                <p className="font-display text-lg font-extrabold">{x.t}</p>
+                <p className="mt-1 text-sm text-white/60">{x.d}</p>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+
       {/* ───────────────────────── FAQ + Guides ───────────────────────── */}
       <section className="px-6 py-24 lg:py-32 bg-white">
         <div className="max-w-6xl mx-auto grid lg:grid-cols-[0.8fr_1.2fr] gap-14">

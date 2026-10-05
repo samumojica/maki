@@ -186,6 +186,23 @@ export default async function ScanTeaserPage({
               </p>
             </>
           )}
+
+          <div className="mt-10 rounded-3xl bg-[#0c0d24] text-white p-6 sm:p-8 text-center">
+            <p className="text-lg font-bold">
+              {wpContext?.eligible === false ? "Want a fast WordPress site instead?" : "Rather not do it yourself?"}
+            </p>
+            <p className="text-sm text-white/60 mt-1">
+              {wpContext?.eligible === false
+                ? "We build WordPress sites that pass Core Web Vitals from day one."
+                : "We can apply every fix for you. Fixed quote, backups first."}
+            </p>
+            <Link
+              href={`/done-for-you?type=${wpContext?.eligible === false ? "build" : "fix"}&from=scan&scan=${scanId}#quote`}
+              className="mt-5 inline-block rounded-xl bg-[#9ee19a] text-[#0c0d24] font-bold px-6 py-3"
+            >
+              {wpContext?.eligible === false ? "Talk to us about a new site →" : "Have Maki's team fix it →"}
+            </Link>
+          </div>
         </div>
       </section>
     </main>

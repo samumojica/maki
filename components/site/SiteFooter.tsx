@@ -49,6 +49,9 @@ export function SiteFooter() {
           <Link href="/#pricing" className="hover:text-mint transition-colors">
             Pricing
           </Link>
+          <Link href="/done-for-you" className="hover:text-mint transition-colors">
+            Done for you
+          </Link>
           <LegalLinks />
           <a href="mailto:support@getmaki.app" className="hover:text-mint transition-colors">
             support@getmaki.app

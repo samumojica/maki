@@ -17,3 +17,7 @@ env:
     secret: GOOGLE_PSI_API_KEY
   - variable: GROQ_API_KEY
     secret: GROQ_API_KEY
+  - variable: RESEND_API_KEY
+    secret: RESEND_API_KEY
+  - variable: LEADS_TO_EMAIL
+    secret: LEADS_TO_EMAIL

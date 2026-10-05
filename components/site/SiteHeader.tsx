@@ -7,6 +7,7 @@ const NAV = [
   { href: "/fixes", label: "Fix library" },
   { href: "/guides", label: "Guides" },
   { href: "/#pricing", label: "Pricing" },
+  { href: "/done-for-you", label: "Done for you" },
 ];
 
 export function SiteHeader({ tone = "dark" }: { tone?: "dark" | "light" }) {
